@@ -1,7 +1,11 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
@@ -13,6 +17,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  */
 public class Limelight extends SubsystemBase {
 
+    private static final NetworkTable TABLE = NetworkTableInstance.getDefault().getTable("limelight");
+
+    /**
+     * Returns whether or not this Limelight can see a target.
+     * @return if the Limelight can see a target
+     */
+    public boolean hasTarget() {
+        return target() != null;
+    }
+
     /**
      * Uses the Limelight to retrieve target values.
      * This will be null if there is no target detected.
@@ -21,7 +35,16 @@ public class Limelight extends SubsystemBase {
      *         to the robot's center position.
      */
     public Pair<Integer, Transform3d> target() {
-        return null; // TODO
+        int id = (int) TABLE.getEntry("tid").getInteger(-1);
+        if (id == -1) return null;
+        
+        double[] pose = TABLE.getEntry("targetpose_robotspace").getDoubleArray(new double[0]);
+        if (pose.length != 6 || pose[2] < 1E-6) return null;
+        
+        return Pair.of(id, new Transform3d(
+            new Translation3d(pose[0], pose[1], pose[2]),
+            new Rotation3d(pose[3], pose[4], pose[5])
+        ));
     }
 
     /**
