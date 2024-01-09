@@ -8,6 +8,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import static frc.robot.Constants.*;
+
 /**
  * The Limelight subsystem.
  * 
@@ -84,7 +86,17 @@ public class Limelight extends SubsystemBase {
      * @return the robot's estimated position in the board.
      */
     public Transform3d estimatedPosition() {
-        return null; // TODO
+        Pair<Integer, Transform3d> target = target();
+        if (target == null) return null;
+
+        Transform3d originToTarget = APRILTAGS.get(target.getFirst());
+        if (originToTarget == null) return null;
+
+        Transform3d targetToRobot = target.getSecond().inverse();
+
+        Transform3d originToRobot = originToTarget.plus(targetToRobot);
+
+        return originToRobot;
     }
 
 
