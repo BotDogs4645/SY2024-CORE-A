@@ -14,6 +14,10 @@ import edu.wpi.first.math.geometry.Translation3d;
  */
 public class Constants {
 
+
+    public static final int kDriverControllerPort = 0;
+    public static final int pcmCanID = 1;
+
     public static class Limelight {
 
         // Limelight offset relative to the center of the robot.
