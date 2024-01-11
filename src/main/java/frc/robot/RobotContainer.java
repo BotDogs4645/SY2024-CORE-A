@@ -6,12 +6,16 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.subsystems.Limelight;
 
 /**
  * The robot container class. This houses the subsystems and a lot of the core
  * logic.
  */
 public class RobotContainer {
+
+  private final Limelight limelight = new Limelight();
+
   public RobotContainer() {
     configureBindings();
   }
@@ -20,5 +24,9 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
+  }
+
+  public Limelight getLimelight() {
+    return limelight;
   }
 }
