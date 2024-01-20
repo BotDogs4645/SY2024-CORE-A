@@ -49,8 +49,8 @@ public class Swerve extends SubsystemBase {
     AutoBuilder.configureHolonomic(
         this::getPose,
         this::resetOdometry,
-        this::getRobotRelativeSpeess,
-        this::driveRobotRelative,
+        () -> Constants.Swerve.swerveKinematics.toChassisSpeeds(getStates()),
+        speeds -> setModuleStates(Constants.Swerve.swerveKinematics.toSwerveModuleStates(speeds)),
         new HolonomicPathFollowerConfig(
           new PIDConstants(2.5, 0.0, 0),
           new PIDConstants(0.5, 0.0, 0.0),
@@ -93,22 +93,6 @@ public class Swerve extends SubsystemBase {
 
     for (SwerveModule mod : mSwerveMods) {
       mod.setDesiredState(desiredStates[mod.moduleNumber], false);
-    }
-  }
-
-  public ChassisSpeeds getRobotRelativeSpeess() {
-    ChassisSpeeds speed = Constants.Swerve.swerveKinematics.toChassisSpeeds(
-      this.getStates()
-    );
-    return speed;
-  }
-
-  public void driveRobotRelative(ChassisSpeeds speeds) {
-    SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(speeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
-
-    for (SwerveModule mod : mSwerveMods) {
-      mod.setDesiredState(swerveModuleStates[mod.moduleNumber], false);
     }
   }
 
