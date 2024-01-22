@@ -46,27 +46,21 @@ public class Swerve extends SubsystemBase {
 
     swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions());
 
+    var pathConfig = new HolonomicPathFollowerConfig(
+        new PIDConstants(2.5, 0.0, 0),
+        new PIDConstants(0.5, 0.0, 0.0),
+        Constants.Swerve.maxSpeed,
+        Constants.Swerve.wheelBase,
+        new ReplanningConfig());
+
     AutoBuilder.configureHolonomic(
         this::getPose,
         this::resetOdometry,
         () -> Constants.Swerve.swerveKinematics.toChassisSpeeds(getStates()),
         speeds -> setModuleStates(Constants.Swerve.swerveKinematics.toSwerveModuleStates(speeds)),
-        new HolonomicPathFollowerConfig(
-          new PIDConstants(2.5, 0.0, 0),
-          new PIDConstants(0.5, 0.0, 0.0),
-          Constants.Swerve.maxSpeed,
-          Constants.Swerve.wheelBase,
-          new ReplanningConfig()
-        ),
-        () -> {
-          var alliance = DriverStation.getAlliance();
-          if (alliance.isPresent()) {
-            return alliance.get() == DriverStation.Alliance.Red;
-          }
-          return false;
-        },
-        this
-        );
+        pathConfig,
+        () -> DriverStation.getAlliance().filter(a -> a == DriverStation.Alliance.Red).isPresent(),
+        this);
 
     field = new Field2d();
     SmartDashboard.putData("Field", field);
