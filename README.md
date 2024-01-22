@@ -2,6 +2,11 @@
 
 Core A code for the Chicago Style Bot Dogs during SY2024, for the 2024 Crescendo game.
 
+## Documentation
+JavaDocs are included in most source files.
+
+Electronics and Pneumatics Diagrams & Documentation: https://docs.google.com/document/d/1Hy8igRGvVcIlELJ_j0sovlJ61RMXrC3zumiDmch_16E/edit
+
 ## Usage
 This is installed just like any other WPILib 2024 project.
 
@@ -18,5 +23,3 @@ All significant changes should be:
 - Reviewed and, hopefully, merged
 
 Small changes that don't affect the robot's functionality, like fixing typos, should generally be added more quickly.
-
-https://docs.google.com/document/d/1Hy8igRGvVcIlELJ_j0sovlJ61RMXrC3zumiDmch_16E/edit - Electronics and Pneumatics Diagrams & Documentation 
