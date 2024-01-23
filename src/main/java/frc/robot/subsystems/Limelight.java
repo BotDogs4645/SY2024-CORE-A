@@ -1,34 +1,104 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.LimelightHelpers;
 
+import static frc.robot.Constants.*;
+
+/**
+ * The Limelight subsystem.
+ * 
+ * Limelight documentation: https://limelightvision.io/
+ * 
+ * We use the Limelight for location estimation with AprilTags.
+ */
 public class Limelight extends SubsystemBase {
-  /** Creates a new Limelight. */
 
-  private Swerve drivetrain;
-  private String LLName;
+    private static final NetworkTable TABLE = NetworkTableInstance.getDefault().getTable("limelight");
 
-  public Limelight(String LLName, Swerve drivetrain) {
-    this.LLName = LLName;
-    this.drivetrain = drivetrain;
-  }
+    /**
+     * Returns whether or not this Limelight can see a target.
+     * @return if the Limelight can see a target
+     */
+    public boolean hasTarget() {
+        return target() != null;
+    }
 
-  public Translation2d getTranslationToTag() {
-    // Pose2d pose = LimelightHelpers.getBotPose2d(LLName);
-    return new Translation2d();
-  }
-  public void getTarget() {
-  }
+    /**
+     * Uses the Limelight to retrieve target values.
+     * This will be null if there is no target detected.
+     * See {@link #targetId()} for notes on using the ID stored within the pair.
+     * @return a pair that includes the target's ID and transformation relative
+     *         to the robot's center position.
+     */
+    public Pair<Integer, Transform3d> target() {
+        int id = (int) TABLE.getEntry("tid").getInteger(-1);
+        if (id == -1) return null;
+        
+        double[] pose = TABLE.getEntry("targetpose_robotspace").getDoubleArray(new double[0]);
+        if (pose.length != 6 || pose[2] < 1E-6) return null;
+        
+        return Pair.of(id, new Transform3d(
+            new Translation3d(pose[0], pose[1], pose[2]),
+            new Rotation3d(pose[3], pose[4], pose[5])
+        ));
+    }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
+    /**
+     * Uses the Limelight to retrieve the ID of the target.
+     * If no target is spotted, this returns -1.
+     * If multiple targets, including the desired one, are visible, the
+     * Limelight will use the most confident result for position estimation.
+     * We therefore recommend that you do not use this ID and instead use the
+     * desired location along with {@link #targetPos()}.
+     * @return the ID of the target spotted, or -1 if there is not one.
+     */
+    public int targetId() {
+        var target = target();
+        return target != null ? target.getFirst() : -1;
+    }
+
+    /**
+     * Uses the Limelight to retrieve the offset of the target, relative to the
+     * robot's center position.
+     * If no target is spotted, this returns null.
+     * @return the spotted target offset, or null if none
+     */
+    public Transform3d targetPos() {
+        var target = target();
+        return target != null ? target.getSecond() : null;
+    }
+
+    /**
+     * Estimates the position of the robot, using the Limelight's knowledge of
+     * the position of each AprilTag in the game board.
+     * If no AprilTags are spotted, this returns null.
+     * 
+     * For a map of the game board and AprilTag positions, see
+     * {@link https://firstfrc.blob.core.windows.net/frc2024/FieldAssets/2024FieldDrawings.pdf},
+     * page 4.
+     * 
+     * @return the robot's estimated position in the board.
+     */
+    public Transform3d estimatedPosition() {
+        Pair<Integer, Transform3d> target = target();
+        if (target == null) return null;
+
+        Transform3d originToTarget = APRILTAGS.get(target.getFirst());
+        if (originToTarget == null) return null;
+
+        Transform3d targetToRobot = target.getSecond().inverse();
+
+        Transform3d originToRobot = originToTarget.plus(targetToRobot);
+
+        return originToRobot;
+    }
+
+
+    
 }
