@@ -11,11 +11,19 @@ import frc.lib.config.SwerveModuleConstants;
 
 public final class Constants {
 
+  public static final class Vision {
+    public static final double kLimelightAngleDegrees = 55;
+                                                      //height  //conversion const
+    public static final double kLimelightHeightMeters = 16 * 0.0254;
+  }
+
   public static final class Swerve {
     public static final double stickDeadband = 0.1;
 
     public static final int pigeonID = 14;
     public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
+
+
 
     /* Drivetrain Constants */
     public static final double trackWidth = Units.inchesToMeters(27.75);
