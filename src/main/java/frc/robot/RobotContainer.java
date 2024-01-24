@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Pneumatics;
 
@@ -17,6 +18,7 @@ import frc.robot.subsystems.Pneumatics;
 public class RobotContainer {
 
   private final Limelight limelight = new Limelight();
+  private final Arm arm = new Arm();
   private final Pneumatics m_pneumaticsSubsystem = new Pneumatics();
   private final CommandXboxController m_driverController = new CommandXboxController(Constants.kDriverControllerPort);
 
@@ -34,5 +36,9 @@ public class RobotContainer {
 
   public Limelight getLimelight() {
     return limelight;
+  }
+
+  public Arm getArm() {
+    return arm;
   }
 }
