@@ -5,12 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Limelight;
-
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to
@@ -21,23 +17,22 @@ import frc.robot.subsystems.Limelight;
  * project.
  */
 public class Robot extends TimedRobot {
-  private XboxController xbox = new XboxController(CONTROLLER);
-  private Limelight limelight = new Limelight();
-  private Arm arm = new Arm();
-  public static CTREConfigs ctreConfigs;
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
 
   @Override
   public void robotInit() {
-    ctreConfigs = new CTREConfigs();
     m_robotContainer = new RobotContainer();
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+
+    int id = m_robotContainer.getLimelight().targetId();
+    
+    m_robotContainer.getArm().moveArm(id);
   }
 
   @Override
@@ -51,6 +46,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.schedule();
+    }
   }
 
   @Override
@@ -61,6 +61,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.cancel();
+    }
   }
 
   @Override
@@ -80,3 +83,4 @@ public class Robot extends TimedRobot {
   @Override
   public void testExit() {}
 }
+
