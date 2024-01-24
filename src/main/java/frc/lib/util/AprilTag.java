@@ -29,6 +29,27 @@ public class AprilTag {
     this.height = height;
   }
 
+  public double[] targetToXYZVector() {
+    double[] targetVector = new double[3];
+
+    double z = height - Vision.kLimelightHeightMeters;
+    double y = z / Math.tan(Math.toRadians(LimelightHelpers.getTY("") + Vision.kLimelightAngleDegrees)); // also need Math.abs()?
+    double x = y * Math.tan(Math.toRadians(LimelightHelpers.getTX("")));
+
+    targetVector[0] = x;
+    targetVector[1] = y;
+    targetVector[2] = z;
+
+    return targetVector;
+  }
+
+  public double getDirectDistance() {
+    double[] targetVector = targetToXYZVector();
+    return (Math.pow(targetVector[0], 2) + Math.pow(targetVector[1], 2) + Math.pow(targetVector[2], 2));
+  }
+
+
+
   // public double[] targetToXYZVector() {
   // double[] targetVector = new double[3];
 
@@ -44,22 +65,4 @@ public class AprilTag {
   // return (/*placeholder*/3);
   // }
 
-  public double[] targetToXYZVector() {
-    double[] targetVector = new double[3];
-
-    double y = height - Vision.kLimelightHeightMeters;
-    double z = y / Math.tan(Math.toRadians(LimelightHelpers.getTY("") + Vision.kLimelightAngleDegrees)); // also need Math.abs()?
-    double x = z * Math.tan(Math.toRadians(LimelightHelpers.getTX("")));
-
-    targetVector[0] = x;
-    targetVector[1] = y;
-    targetVector[2] = z;
-
-    return targetVector;
-  }
-
-  public double getDirectDistance() {
-    double[] targetVector = targetToXYZVector();
-    return (Math.pow(targetVector[0],2) + Math.pow(targetVector[1],2) + Math.pow(targetVector[2],2));
-  }
 }
