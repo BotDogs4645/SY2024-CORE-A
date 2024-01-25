@@ -48,21 +48,4 @@ public class AprilTag {
     return (Math.pow(targetVector[0], 2) + Math.pow(targetVector[1], 2) + Math.pow(targetVector[2], 2));
   }
 
-
-
-  // public double[] targetToXYZVector() {
-  // double[] targetVector = new double[3];
-
-  // double d = getDirectDistance();
-
-  // double x = d * Math.sin(LimelightHelpers.getTX(""));
-  // targetVector[0] = x;
-
-  // return targetVector;
-  // }
-
-  // public double getDirectDistance() {
-  // return (/*placeholder*/3);
-  // }
-
 }
