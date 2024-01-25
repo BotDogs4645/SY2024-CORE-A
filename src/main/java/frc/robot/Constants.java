@@ -23,6 +23,9 @@ import frc.lib.config.SwerveModuleConstants;
  */
 public final class Constants {
 
+  public static final class Launcher {
+    public static final double gravityAcceleration = 9.81;
+  }
   public static final class Vision {
     public static final double kLimelightAngleDegrees = 55;
                                                       //height  //conversion const
