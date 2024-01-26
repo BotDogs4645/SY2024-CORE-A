@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 
+import com.pathplanner.lib.util.PIDConstants;
 import com.revrobotics.*;
 import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,6 +23,15 @@ import frc.lib.config.SwerveModuleConstants;
  * cleanliness.
  */
 public final class Constants {
+
+  public static final class PathPlanner {
+    public static final double driveKP = 2.5;
+    public static final double driveKI = 0.0;
+    public static final double driveKD = 0.0;
+    public static final double turnKP = 0.3;
+    public static final double turnKI = 0.0;
+    public static final double turnKD = 0.75;
+  }
 
   public static final class Swerve {
     public static final double stickDeadband = 0.1;

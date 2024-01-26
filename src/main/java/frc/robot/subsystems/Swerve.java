@@ -47,8 +47,8 @@ public class Swerve extends SubsystemBase {
     swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions());
 
     var pathConfig = new HolonomicPathFollowerConfig(
-        new PIDConstants(2.5, 0.0, 0),
-        new PIDConstants(0.3, 0.0, 0.75),
+        new PIDConstants(Constants.PathPlanner.driveKP, Constants.PathPlanner.driveKI, Constants.PathPlanner.driveKD),
+        new PIDConstants(Constants.PathPlanner.turnKP, Constants.PathPlanner.turnKI, Constants.PathPlanner.turnKD),
         Constants.Swerve.maxSpeed,
         Constants.Swerve.wheelBase,
         new ReplanningConfig());
