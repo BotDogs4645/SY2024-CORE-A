@@ -48,7 +48,7 @@ public class Swerve extends SubsystemBase {
 
     var pathConfig = new HolonomicPathFollowerConfig(
         new PIDConstants(2.5, 0.0, 0),
-        new PIDConstants(0.5, 0.0, 0.0),
+        new PIDConstants(0.3, 0.0, 0.75),
         Constants.Swerve.maxSpeed,
         Constants.Swerve.wheelBase,
         new ReplanningConfig());
