@@ -24,7 +24,11 @@ import frc.lib.config.SwerveModuleConstants;
 public final class Constants {
 
   public static final class Launcher {
+    public static final double launcherWheelRadius = 0.04826;
     public static final double gravityAcceleration = 9.81;
+    public static final double kP = 0.05;
+    public static final double kI = 0.0001;
+    public static final double kD = 0.0;
   }
   public static final class Vision {
     public static final double kLimelightAngleDegrees = 55;
