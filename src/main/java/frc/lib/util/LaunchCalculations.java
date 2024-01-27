@@ -50,7 +50,7 @@ public class LaunchCalculations {
      * @return launch angle in radians
      */
     public double getLaunchAngle() {
-        return Math.atan(getVerticalVelocity() / getHorizontalVelocity());
+        return Math.toDegrees(Math.atan(getVerticalVelocity() / getHorizontalVelocity()));
     }
 
 
