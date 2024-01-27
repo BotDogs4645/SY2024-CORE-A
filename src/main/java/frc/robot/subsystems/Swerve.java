@@ -4,6 +4,11 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -12,6 +17,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -39,6 +45,22 @@ public class Swerve extends SubsystemBase {
         };
 
     swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions());
+
+    var pathConfig = new HolonomicPathFollowerConfig(
+        new PIDConstants(Constants.PathPlanner.driveKP, Constants.PathPlanner.driveKI, Constants.PathPlanner.driveKD),
+        new PIDConstants(Constants.PathPlanner.turnKP, Constants.PathPlanner.turnKI, Constants.PathPlanner.turnKD),
+        Constants.Swerve.maxSpeed,
+        Constants.Swerve.wheelBase,
+        new ReplanningConfig());
+
+    AutoBuilder.configureHolonomic(
+        this::getPose,
+        this::resetOdometry,
+        () -> Constants.Swerve.swerveKinematics.toChassisSpeeds(getStates()),
+        speeds -> setModuleStates(Constants.Swerve.swerveKinematics.toSwerveModuleStates(speeds)),
+        pathConfig,
+        () -> DriverStation.getAlliance().filter(a -> a == DriverStation.Alliance.Red).isPresent(),
+        this);
 
     field = new Field2d();
     SmartDashboard.putData("Field", field);
