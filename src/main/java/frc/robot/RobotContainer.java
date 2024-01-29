@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -31,6 +35,8 @@ public class RobotContainer {
   private final Limelight limelight = new Limelight();
   private final Pneumatics m_pneumaticsSubsystem = new Pneumatics();
   private final CommandXboxController m_driverController = new CommandXboxController(Constants.kDriverControllerPort);
+  
+  private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
     drivetrain.setDefaultCommand(
@@ -41,6 +47,10 @@ public class RobotContainer {
             () -> -driveController.getRightX(), // rotation
             () -> driveController.leftBumper().getAsBoolean() // feild oriented yes or no
         ));
+
+
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
 
     configureBindings();
   }
@@ -53,9 +63,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return new InstantCommand(() -> {
-    });
+    return autoChooser.getSelected();
   }
 
   public Limelight getLimelight() {
