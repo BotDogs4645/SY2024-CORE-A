@@ -23,7 +23,6 @@ import frc.lib.config.SwerveModuleConstants;
  * cleanliness.
  */
 public final class Constants {
-
   public static final class PathPlanner {
     public static final double driveKP = 2.5;
     public static final double driveKI = 0.0;
@@ -32,7 +31,13 @@ public final class Constants {
     public static final double turnKI = 0.0;
     public static final double turnKD = 0.75;
   }
-
+  public static final class Launcher {
+    public static final double launcherWheelRadius = 0.04826;
+    public static final double gravityAcceleration = 9.81;
+    public static final double kP = 0.05;
+    public static final double kI = 0.0001;
+    public static final double kD = 0.0;
+  }
   public static final class Vision {
     public static final double kLimelightAngleDegrees = 55;
                                                       //height  //conversion const
