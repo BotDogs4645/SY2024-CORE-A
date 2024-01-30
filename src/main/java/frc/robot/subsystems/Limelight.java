@@ -83,10 +83,10 @@ public class Limelight extends SubsystemBase {
             new Rotation3d(1, 1, 1)
         );
 
-        // if (currentRelativePosition == null) {
-        //     System.out.printf("An apriltag is currently not within view, and therefore, we are unable to calculate the positional offset of the target located at {X: %.3f, Y: %.3f, Z: %.3f}\n.", targetPosition.getX(), targetPosition.getY(), targetPosition.getZ()); // As of 1/09/24, I am unsure as to why this line of code is throwing an error in the console ("Unhandled exception: java.util.MissingFormatWidthException: %0.3f")... - Carver       
-        //     return null;
-        // }
+        if (currentRelativePosition == null) {
+            System.out.printf("An apriltag is currently not within view, and therefore, we are unable to calculate the positional offset of the target located at {X: %.3f, Y: %.3f, Z: %.3f}\n.", targetPosition.getX(), targetPosition.getY(), targetPosition.getZ()); // As of 1/09/24, I am unsure as to why this line of code is throwing an error in the console ("Unhandled exception: java.util.MissingFormatWidthException: %0.3f")... - Carver       
+            return null;
+        }
 
         if ((currentRelativePosition.getX() == targetPosition.getX()) && (currentRelativePosition.getY() == targetPosition.getY())) {
             System.out.println("As the given position is the one in which the robot is currently located, we are unfortunately, unable to calculate the rotational offset to said location.");
@@ -109,13 +109,13 @@ public class Limelight extends SubsystemBase {
 
     Rotation2d testingStorage = determineTargetRotationalOffset(new Translation3d(1, 1, 1));
 
-    // public long fetchMatchTimeElapsed() {
-    //     Robot robotClassInstance = new Robot();
+    public long fetchMatchTimeElapsed() {
+        Robot robotClassInstance = new Robot();
 
-    //     long currentMatchTimeElapsed = System.currentTimeMillis() - robotClassInstance.initalizationTime;
+        long currentMatchTimeElapsed = System.currentTimeMillis() - robotClassInstance.initalizationTime;
 
-    //     robotClassInstance.close();
+        robotClassInstance.close();
 
-    //     return currentMatchTimeElapsed;
-    //   }
+        return currentMatchTimeElapsed;
+      }
 }

@@ -24,6 +24,7 @@ public class Robot extends TimedRobot {
   public static CTREConfigs ctreConfigs;
   private Command m_autonomousCommand;
 
+  public long initalizationTime;
   private RobotContainer m_robotContainer;
   private Limelight limelight;
   private AprilTag aprilTag;
@@ -33,6 +34,7 @@ public class Robot extends TimedRobot {
     ctreConfigs = new CTREConfigs();
     m_robotContainer = new RobotContainer();
     limelight = new Limelight();
+    initalizationTime = System.currentTimeMillis();
   }
 
   @Override
@@ -46,17 +48,10 @@ public class Robot extends TimedRobot {
     } else {
       // System.out.printf("Target position: {x: %.3f, y: %.3f, z: %.3f}\n", t.getX(), t.getY(), t.getZ());
 
-      // relativeRobotPosition = Limelight.determineRelativePosition();
-
       // double currentAprilTagHeight = Constants.APRILTAGS.get(Limelight.entry("tid").getInteger(-1)).getZ();
 
       if (AprilTag.getDirectDistance() != -1) {
-        System.out.println("Current spatial distance to target: " + AprilTag.getDirectDistance());
-        // System.out.println("Limelight Angular Data: " + LimelightHelpers.getTX(""));
-        // System.out.println("Limelight 'tx' data: " + Limelight.entry("tx").getDouble(-1));
-        // System.out.println("Limelight 'ty' data: " + Limelight.entry("ty").getDouble(-1));
-
-        // System.out.println("Current distance to primary target: " + );
+        System.out.println("Current spatial distance to primary target: " + AprilTag.getDirectDistance());
       }
     }
   }

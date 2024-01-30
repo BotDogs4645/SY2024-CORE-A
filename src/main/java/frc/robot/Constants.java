@@ -30,6 +30,21 @@ public final class Constants {
     public static final double kLimelightHeightMeters = 0.26;
   }
 
+  public static class MoveTowardTag {
+
+    // Measured in portion of maximum speed
+    public static final double MOVE_SPEED = 0.3;
+    public static final double TURN_SPEED = 0.1;
+
+    // Measured in degrees
+    public static final double MIN_ANGLE = -12;
+    public static final double MAX_ANGLE = -8;
+
+    // Measured in meters
+    public static final double SHOOT_DISTANCE = 1;
+
+}\
+
   public static final class PathPlanner {
     public static final double driveKP = 2.5;
     public static final double driveKI = 0.0;
