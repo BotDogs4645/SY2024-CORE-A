@@ -1,104 +1,121 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
+import frc.robot.Constants;
 
-import static frc.robot.Constants.*;
-
-/**
- * The Limelight subsystem.
- * 
- * Limelight documentation: https://limelightvision.io/
- * 
- * We use the Limelight for location estimation with AprilTags.
- */
 public class Limelight extends SubsystemBase {
 
-    private static final NetworkTable TABLE = NetworkTableInstance.getDefault().getTable("limelight");
+    public static final NetworkTable TABLE = NetworkTableInstance.getDefault().getTable("limelight");
 
-    /**
-     * Returns whether or not this Limelight can see a target.
-     * @return if the Limelight can see a target
-     */
+    public static NetworkTableEntry entry(String key) {
+        return TABLE.getEntry(key);
+    }
+
     public boolean hasTarget() {
-        return target() != null;
+        return targetPos() != null;
     }
 
-    /**
-     * Uses the Limelight to retrieve target values.
-     * This will be null if there is no target detected.
-     * See {@link #targetId()} for notes on using the ID stored within the pair.
-     * @return a pair that includes the target's ID and transformation relative
-     *         to the robot's center position.
-     */
-    public Pair<Integer, Transform3d> target() {
-        int id = (int) TABLE.getEntry("tid").getInteger(-1);
-        if (id == -1) return null;
+    public static Transform3d targetPos() {
+        var targetPose = entry("targetpose_robotspace").getDoubleArray(new double[0]);
+        if (targetPose.length != 6 || targetPose[2] < 1E-6) return null;
         
-        double[] pose = TABLE.getEntry("targetpose_robotspace").getDoubleArray(new double[0]);
-        if (pose.length != 6 || pose[2] < 1E-6) return null;
+        return new Transform3d(
+            new Translation3d(targetPose[0], targetPose[1], targetPose[2]),
+            new Rotation3d(targetPose[3], targetPose[4], targetPose[5])
+        );
+    };
+
+    // The method declared below exists as a way in which one is able to determine the robot's current location and orientation within the playing field shown within the FIRST Robotics 2024 competition, Crescendo.
+
+    public static Transform3d determineRelativePosition() {
+        var relativePositionalData = targetPos();
+        var aprilTagIdentifier = entry("tid").getInteger(-1);
+        if (aprilTagIdentifier == -1 || aprilTagIdentifier > 16) {
+            return null;
+        }
+        Transform3d currentAprilTagLocation = Constants.APRILTAGS.get(aprilTagIdentifier);
+
+        double[] currentRelativeLocation = {
+            currentAprilTagLocation.getX() + relativePositionalData.getX(), 
+            currentAprilTagLocation.getY() + relativePositionalData.getY(), 
+            currentAprilTagLocation.getZ() + relativePositionalData.getZ()
+        };
+
+        double[] currentRelativeRotation = {
+            currentAprilTagLocation.getRotation().getX() + relativePositionalData.getRotation().getX(),
+            currentAprilTagLocation.getRotation().getY() + relativePositionalData.getRotation().getY(),
+            currentAprilTagLocation.getRotation().getZ() + relativePositionalData.getRotation().getZ(),
+        };
+
+        Transform3d currentRelativePosition = new Transform3d (
+            new Translation3d(currentRelativeLocation[0], currentRelativeLocation[1], currentRelativeLocation[2]),
+            new Rotation3d(currentRelativeRotation[0], currentRelativeRotation[1], currentRelativeRotation[2])
+        );
+
+        System.out.printf("Current relative robot position: {X: %0.3f, Y: %0.3f, Z: %0.3f}\n", currentRelativePosition.getX(), currentRelativePosition.getY(), currentRelativePosition.getZ());
+        System.out.printf("Current relative robot orientation: {X: %0.3f, Y: %0.3f, Z: %0.3f}\n", currentRelativePosition.getRotation().getX(), currentRelativePosition.getRotation().getY(), currentRelativePosition.getRotation().getZ());
+
+        return currentRelativePosition;
+    }
+
+    // The method declared below exists as a calculation tool for the distance between two existences within 2D space.
+
+    public double determineSpatialDistance(double lengthOne, double lengthTwo) {
+        double spatialDistance = Math.sqrt((lengthOne * lengthOne) + (lengthTwo * lengthTwo));
+
+        return spatialDistance;
+    }
+
+    // The method declared below exists as a determiner of the rotational offset of the robot's current position to a given target within the playing field of Crescendo, FIRST Robotics' competition within the year of 2024.
+
+    public Rotation2d determineTargetRotationalOffset(Translation3d targetPosition) {
+        // Transform3d currentRelativePosition = determineRelativePosition();
+        Transform3d currentRelativePosition = new Transform3d (
+            new Translation3d(1, 1, 1),
+            new Rotation3d(1, 1, 1)
+        );
+
+        // if (currentRelativePosition == null) {
+        //     System.out.printf("An apriltag is currently not within view, and therefore, we are unable to calculate the positional offset of the target located at {X: %.3f, Y: %.3f, Z: %.3f}\n.", targetPosition.getX(), targetPosition.getY(), targetPosition.getZ()); // As of 1/09/24, I am unsure as to why this line of code is throwing an error in the console ("Unhandled exception: java.util.MissingFormatWidthException: %0.3f")... - Carver       
+        //     return null;
+        // }
+
+        if ((currentRelativePosition.getX() == targetPosition.getX()) && (currentRelativePosition.getY() == targetPosition.getY())) {
+            System.out.println("As the given position is the one in which the robot is currently located, we are unfortunately, unable to calculate the rotational offset to said location.");
+            return null;
+        }
+
+        double targetXAxisOffset = Math.toDegrees(Math.asin(Math.abs(currentRelativePosition.getX() - targetPosition.getX()) / Math.sqrt(Math.pow(currentRelativePosition.getX() - targetPosition.getX(), 2) + Math.pow(currentRelativePosition.getY() - targetPosition.getY(), 2))));
+        double targetZAxisOffset;
+
+        if (currentRelativePosition.getZ() == targetPosition.getZ()) {
+            targetZAxisOffset = 0;
+        } else {
+            targetZAxisOffset = Math.toDegrees(Math.asin(Math.abs(currentRelativePosition.getZ() - targetPosition.getZ()) / (targetPosition.getDistance(currentRelativePosition.getTranslation()))));
+        }
+
+        System.out.println("Target X Offset: " + targetXAxisOffset + ", Target Z Offset: " + targetZAxisOffset);
         
-        return Pair.of(id, new Transform3d(
-            new Translation3d(pose[0], pose[1], pose[2]),
-            new Rotation3d(pose[3], pose[4], pose[5])
-        ));
+        return new Rotation2d(targetXAxisOffset, targetZAxisOffset);
     }
 
-    /**
-     * Uses the Limelight to retrieve the ID of the target.
-     * If no target is spotted, this returns -1.
-     * If multiple targets, including the desired one, are visible, the
-     * Limelight will use the most confident result for position estimation.
-     * We therefore recommend that you do not use this ID and instead use the
-     * desired location along with {@link #targetPos()}.
-     * @return the ID of the target spotted, or -1 if there is not one.
-     */
-    public int targetId() {
-        var target = target();
-        return target != null ? target.getFirst() : -1;
-    }
+    Rotation2d testingStorage = determineTargetRotationalOffset(new Translation3d(1, 1, 1));
 
-    /**
-     * Uses the Limelight to retrieve the offset of the target, relative to the
-     * robot's center position.
-     * If no target is spotted, this returns null.
-     * @return the spotted target offset, or null if none
-     */
-    public Transform3d targetPos() {
-        var target = target();
-        return target != null ? target.getSecond() : null;
-    }
+    // public long fetchMatchTimeElapsed() {
+    //     Robot robotClassInstance = new Robot();
 
-    /**
-     * Estimates the position of the robot, using the Limelight's knowledge of
-     * the position of each AprilTag in the game board.
-     * If no AprilTags are spotted, this returns null.
-     * 
-     * For a map of the game board and AprilTag positions, see
-     * {@link https://firstfrc.blob.core.windows.net/frc2024/FieldAssets/2024FieldDrawings.pdf},
-     * page 4.
-     * 
-     * @return the robot's estimated position in the board.
-     */
-    public Transform3d estimatedPosition() {
-        Pair<Integer, Transform3d> target = target();
-        if (target == null) return null;
+    //     long currentMatchTimeElapsed = System.currentTimeMillis() - robotClassInstance.initalizationTime;
 
-        Transform3d originToTarget = APRILTAGS.get(target.getFirst());
-        if (originToTarget == null) return null;
+    //     robotClassInstance.close();
 
-        Transform3d targetToRobot = target.getSecond().inverse();
-
-        Transform3d originToRobot = originToTarget.plus(targetToRobot);
-
-        return originToRobot;
-    }
-
-
-    
+    //     return currentMatchTimeElapsed;
+    //   }
 }

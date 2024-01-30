@@ -24,6 +24,12 @@ import frc.lib.config.SwerveModuleConstants;
  */
 public final class Constants {
 
+  public static final class Vision {
+    public static final double kLimelightAngleDegrees = 55;
+                                                      //height  //conversion const
+    public static final double kLimelightHeightMeters = 0.26;
+  }
+
   public static final class PathPlanner {
     public static final double driveKP = 2.5;
     public static final double driveKI = 0.0;
