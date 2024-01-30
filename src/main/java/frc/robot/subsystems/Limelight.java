@@ -106,16 +106,4 @@ public class Limelight extends SubsystemBase {
         
         return new Rotation2d(targetXAxisOffset, targetZAxisOffset);
     }
-
-    Rotation2d testingStorage = determineTargetRotationalOffset(new Translation3d(1, 1, 1));
-
-    public long fetchMatchTimeElapsed() {
-        Robot robotClassInstance = new Robot();
-
-        long currentMatchTimeElapsed = System.currentTimeMillis() - robotClassInstance.initalizationTime;
-
-        robotClassInstance.close();
-
-        return currentMatchTimeElapsed;
-      }
 }
