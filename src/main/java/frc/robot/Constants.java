@@ -43,7 +43,7 @@ public final class Constants {
     // Measured in meters
     public static final double SHOOT_DISTANCE = 1;
 
-}\
+}
 
   public static final class PathPlanner {
     public static final double driveKP = 2.5;
