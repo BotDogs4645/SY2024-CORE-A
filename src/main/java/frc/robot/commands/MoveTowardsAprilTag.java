@@ -7,24 +7,24 @@
 // import edu.wpi.first.wpilibj2.command.Command;
 // import edu.wpi.first.wpilibj2.command.CommandScheduler;
 // import frc.robot.subsystems.Swerve;
-// import frc.robot.subsystems.Limelight;
+// import frc.lib.util.AprilTag;
 
 // import static frc.robot.Constants.MoveTowardTag.*;
 
 // public class MoveTowardsAprilTag extends Command {
 
 //     private Swerve swerveDrive;
-//     private Limelight limelight;
+//     private AprilTag aprilTagInstance;
 
-//     public MoveTowardsAprilTag(Swerve swerveDrive, Limelight limelight) {
+//     public MoveTowardsAprilTag(Swerve swerveDrive, AprilTag aprilTag) {
 //         this.swerveDrive = swerveDrive;
-//         this.limelight = limelight; 
-//         addRequirements(swerveDrive, limelight);
+//         this.aprilTagInstance = aprilTag; 
+//         addRequirements(swerveDrive, aprilTag);
 //     }
 
 //     @Override
 //     public void execute() {
-//         double xAngle = limelight.entry("tx").getDouble(0);
+//         double xAngle = aprilTagInstance.entry("tx").getDouble(0);
 //         if (xAngle == 0) return;
 
 //         if (xAngle < MIN_ANGLE) {
@@ -40,14 +40,14 @@
 //     public void end(boolean interrupted) {
 //         swerveDrive.stop();
 
-//         if (limelight.targetPos() == null) {
-//             CommandScheduler.getInstance().schedule(new SearchForTag(swerveDrive, limelight));
+//         if (aprilTagInstance.targetPos() == null) {
+//             CommandScheduler.getInstance().schedule(new SearchForTag(swerveDrive, aprilTagInstance));
 //         }
 //     }
 
 //     @Override
 //     public boolean isFinished() {
-//         var targetPos = limelight.targetPos();
+//         var targetPos = aprilTagInstance.targetPos();
 //         return targetPos != null && targetPos.getZ() < SHOOT_DISTANCE;
 //     }
 // }

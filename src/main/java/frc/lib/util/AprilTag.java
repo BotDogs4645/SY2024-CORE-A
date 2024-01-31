@@ -17,7 +17,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.Constants;
-import frc.robot.subsystems.Limelight;
 import frc.robot.Constants.Vision;
 import frc.robot.LimelightHelpers;
 
@@ -32,6 +31,24 @@ public class AprilTag {
 
     public static NetworkTableEntry entry(String key) {
         return TABLE.getEntry(key);
+    }
+
+    public boolean hasTarget() {
+        return targetPos() != null;
+    }
+
+    public static void aprilTagPeriodic() {
+      var t = targetPos();
+      // Transform3d relativeRobotPosition;
+      if (t == null) {
+        System.out.println("No Limelight target.");
+      } else {
+        // System.out.printf("Target position: {x: %.3f, y: %.3f, z: %.3f}\n", t.getX(), t.getY(), t.getZ());
+  
+        if (AprilTag.getDirectDistance() != -1) {
+          System.out.println("Current spatial distance to primary target: " + AprilTag.getDirectDistance());
+        }
+      }
     }
 
   // private static double tx, ty, height;
@@ -81,9 +98,6 @@ public class AprilTag {
         );
     };
 
-    public boolean hasTarget() {
-        return targetPos() != null;
-    }
 
   public static double getDirectDistance() {
     Transform3d targetVector = targetPos();
@@ -97,7 +111,7 @@ public class AprilTag {
 
     // The method declared below exists as a way in which one is able to determine the robot's current location and orientation within the playing field shown within the FIRST Robotics 2024 competition, Crescendo.
 
-  public static Transform3d determineRelativePosition() {
+  public static Transform3d determinePosition() {
     var relativePositionalData = targetPos();
     var aprilTagIdentifier = entry("tid").getInteger(-1);
     if (aprilTagIdentifier == -1 || aprilTagIdentifier > 16) {
@@ -136,7 +150,7 @@ public Rotation2d determineTargetRotationalOffset(Translation3d targetPosition) 
         );
 
         if (currentRelativePosition == null) {
-            System.out.printf("An apriltag is currently not within view, and therefore, we are unable to calculate the positional offset of the target located at {X: %.3f, Y: %.3f, Z: %.3f}\n.", targetPosition.getX(), targetPosition.getY(), targetPosition.getZ()); // As of 1/09/24, I am unsure as to why this line of code is throwing an error in the console ("Unhandled exception: java.util.MissingFormatWidthException: %0.3f")... - Carver       
+            System.out.printf("An apriltag is currently not within view, and therefore, we are unable to calculate the positional offset of the target located at {X: %.3f, Y: %.3f, Z: %.3f}\n.", targetPosition.getX(), targetPosition.getY(), targetPosition.getZ());     
             return null;
         }
 

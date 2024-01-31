@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.lib.util.AprilTag;
 import frc.robot.commands.TeleopSwerve;
-import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Swerve;
 
@@ -30,7 +30,7 @@ public class RobotContainer {
   private final CommandXboxController driveController = new CommandXboxController(0);
 
   private final Swerve drivetrain = new Swerve();
-  private final Limelight limelight = new Limelight();
+  private final AprilTag aprilTagInstance = new AprilTag();
   private final Pneumatics m_pneumaticsSubsystem = new Pneumatics();
   private final CommandXboxController m_driverController = new CommandXboxController(Constants.kDriverControllerPort);
   
@@ -64,7 +64,7 @@ public class RobotContainer {
     return autoChooser.getSelected();
   }
 
-  public Limelight getLimelight() {
-    return limelight;
+  public AprilTag getLimelight() {
+    return aprilTagInstance;
   }
 }
