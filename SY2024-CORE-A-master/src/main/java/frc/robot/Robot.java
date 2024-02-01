@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.config.CTREConfigs;
 import frc.lib.util.AprilTag;
+import frc.robot.subsystems.Intake;
 
 /**
  * The main robot class. This handles the robot container (which contains the
@@ -34,6 +35,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     AprilTag.aprilTagPeriodic();
+    Intake.intakePeriodic();
   }
 
   @Override

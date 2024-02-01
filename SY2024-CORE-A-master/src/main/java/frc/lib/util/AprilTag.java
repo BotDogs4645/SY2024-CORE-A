@@ -38,9 +38,9 @@ public class AprilTag {
     }
 
     public static void aprilTagPeriodic() {
-      var t = targetPos();
+      var targetPosition = targetPos();
       // Transform3d relativeRobotPosition;
-      if (t == null) {
+      if (targetPosition == null) {
         System.out.println("No Limelight target.");
       } else {
         // System.out.printf("Target position: {x: %.3f, y: %.3f, z: %.3f}\n", t.getX(), t.getY(), t.getZ());
