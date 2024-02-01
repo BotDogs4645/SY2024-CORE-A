@@ -5,6 +5,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
+// import edu.wpi.first.apriltag.AprilTag;
+import frc.lib.util.AprilTag;
+import edu.wpi.first.apriltag.AprilTagDetection;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -18,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.LaunchCalculations;
 
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers.LimelightResults;
 
 public class Launcher extends ProfiledPIDSubsystem {
     private CANSparkMax rightLaunchMotor, leftLaunchMotor, aimLaunchMotor;
@@ -116,22 +120,21 @@ public class Launcher extends ProfiledPIDSubsystem {
     }
 
     public void aimLauncher(int id){
-        
         if (id == 6 || id == 5){
             vertDistance = Constants.Launcher.ampHeight - Constants.Launcher.launcherHeight;
-            horizDistance = robot.getDirectDistance();
+            horizDistance = AprilTag.getDirectDistance();
         }
         else if (id == 7 || id == 4){
             vertDistance = Constants.Launcher.speakerHeight - Constants.Launcher.launcherHeight;
-            horizDistance = robot.getDirectDistance();
+            horizDistance = AprilTag.getDirectDistance();
         }
         else if (id == 11 || id == 12 || id == 13 || id == 14 || id == 15 || id == 16){
             vertDistance = Constants.Launcher.trapHeight - Constants.Launcher.launcherHeight;
-            horizDistance = limelight.getDirectDistance();
+            horizDistance = AprilTag.getDirectDistance();
         }
         else{
             vertDistance = 0;
-            horizDistance = limelight.getDirectDistance();
+            horizDistance = AprilTag.getDirectDistance();
         }
         LaunchCalculations launchcalculations = new LaunchCalculations(vertDistance, horizDistance);
         wantedAngle = launchcalculations.getLaunchAngle();
@@ -155,4 +158,5 @@ public class Launcher extends ProfiledPIDSubsystem {
     }
         
     }
+
 
