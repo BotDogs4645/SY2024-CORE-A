@@ -27,7 +27,7 @@ import frc.robot.subsystems.Swerve;
  */
 public class RobotContainer {
 
-  private final CommandXboxController driveController = new CommandXboxController(0);
+  public static final CommandXboxController driveController = new CommandXboxController(0);
 
   private final Swerve drivetrain = new Swerve();
   private final AprilTag aprilTagInstance = new AprilTag();

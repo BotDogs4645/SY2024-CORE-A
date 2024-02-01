@@ -26,13 +26,10 @@ public class Launcher extends SubsystemBase {
 
         leftPIDController = new PIDController(Constants.Launcher.kP, Constants.Launcher.kI, Constants.Launcher.kD);
         rightPIDController = new PIDController(Constants.Launcher.kP, Constants.Launcher.kI, Constants.Launcher.kD);
-
     }
 
     public void startLauncher(double desiredVelocity) {
         rightLaunchMotor.set(rightPIDController.calculate(rightMotorEncoder.getVelocity(), desiredVelocity));
-        leftLaunchMotor.set(leftPIDController.calculate(leftMotorEncoder.getVelocity(), desiredVelocity));
-        
+        leftLaunchMotor.set(leftPIDController.calculate(leftMotorEncoder.getVelocity(), desiredVelocity));   
     }
-
 }
