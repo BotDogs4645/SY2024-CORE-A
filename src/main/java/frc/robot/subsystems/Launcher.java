@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.LaunchCalculations;
+
 import frc.robot.Constants;
 
 public class Launcher extends ProfiledPIDSubsystem {
@@ -29,8 +30,9 @@ public class Launcher extends ProfiledPIDSubsystem {
     private double ffWant;
     public double wantedAngle;
     private ShuffleboardTab tab;
-    
-
+    // more stuff for launch calculations
+    double vertDistance = 0;
+    double horizDistance = 0;
 
     public Launcher() {
             super(
@@ -77,10 +79,10 @@ public class Launcher extends ProfiledPIDSubsystem {
   @Override
   public double getMeasurement() {
     // Return the process variable measurement here
-    return getArmPosition();
+    return getAimPosition();
   }
 
-  public double getArmPosition() {
+  public double getAimPosition() {
     return  aimMotorEncoder.getPosition() * (Math.PI / 180.0);
   }
 
@@ -112,4 +114,45 @@ public class Launcher extends ProfiledPIDSubsystem {
         leftLaunchMotor.set(leftPIDController.calculate(leftMotorEncoder.getVelocity(), desiredVelocity));
         
     }
-}
+
+    public void aimLauncher(int id){
+        
+        if (id == 6 || id == 5){
+            vertDistance = Constants.Launcher.ampHeight - Constants.Launcher.launcherHeight;
+            horizDistance = robot.getDirectDistance();
+        }
+        else if (id == 7 || id == 4){
+            vertDistance = Constants.Launcher.speakerHeight - Constants.Launcher.launcherHeight;
+            horizDistance = robot.getDirectDistance();
+        }
+        else if (id == 11 || id == 12 || id == 13 || id == 14 || id == 15 || id == 16){
+            vertDistance = Constants.Launcher.trapHeight - Constants.Launcher.launcherHeight;
+            horizDistance = limelight.getDirectDistance();
+        }
+        else{
+            vertDistance = 0;
+            horizDistance = limelight.getDirectDistance();
+        }
+        LaunchCalculations launchcalculations = new LaunchCalculations(vertDistance, horizDistance);
+        wantedAngle = launchcalculations.getLaunchAngle();
+        if (aimMotorEncoder.getPosition() < wantedAngle){
+            aimLaunchMotor.set(0.4);
+        }
+        else if (aimMotorEncoder.getPosition() > wantedAngle){
+            aimLaunchMotor.set(-0.4);
+            }
+            else {
+                aimLaunchMotor.set(0);
+            }
+        }
+    public void launchNote(int id) throws InterruptedException{
+        LaunchCalculations launchcalculations = new LaunchCalculations(vertDistance, horizDistance);
+        leftLaunchMotor.set(launchcalculations.getLaunchVelocity());
+        rightLaunchMotor.set(launchcalculations.getLaunchVelocity());
+        wait(2000);
+        leftLaunchMotor.set(0);
+        rightLaunchMotor.set(0);
+    }
+        
+    }
+
