@@ -114,11 +114,11 @@ public class Launcher extends ProfiledPIDSubsystem {
   }
 
 
-    public void startLauncher(double desiredVelocity) {
-        rightLaunchMotor.set(rightPIDController.calculate(rightMotorEncoder.getVelocity(), desiredVelocity));
-        leftLaunchMotor.set(leftPIDController.calculate(leftMotorEncoder.getVelocity(), desiredVelocity));
+    // public void startLauncher(double desiredVelocity) {
+    //     rightLaunchMotor.set(rightPIDController.calculate(rightMotorEncoder.getVelocity(), desiredVelocity));
+    //     leftLaunchMotor.set(leftPIDController.calculate(leftMotorEncoder.getVelocity(), desiredVelocity));
         
-    }
+    // }
 
     public void aimLauncher(int id){
         if (id == 6 || id == 5){
