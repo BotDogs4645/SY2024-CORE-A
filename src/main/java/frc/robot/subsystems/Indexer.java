@@ -8,7 +8,7 @@ public class Indexer {
 private CANSparkMax leftLaunchMotor;
 private CANSparkMax rightLaunchMotor;
 //intake motors exist
-    public void indexer () throws InterruptedException{
+    public void indexer (){
         leftLaunchMotor = new CANSparkMax(0, MotorType.kBrushless);
         rightLaunchMotor = new CANSparkMax(0, MotorType.kBrushless);
         rightLaunchMotor.setInverted(true);
@@ -19,10 +19,14 @@ private CANSparkMax rightLaunchMotor;
 
         //intake motors go brrr
 
-        wait(1000);
+        
 
-        leftLaunchMotor.set(0);
-        rightLaunchMotor.set(0);
-        //intake motors stop going brrr
+        long past = System.currentTimeMillis();
+        if (System.currentTimeMillis() - past >= 1){
+          leftLaunchMotor.set(0);
+          rightLaunchMotor.set(0);
+         //intake motors stop going brrr
+      }
     }
 }
+
