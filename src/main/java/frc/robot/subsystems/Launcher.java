@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.lib.util.LaunchCalculations;
 
 import frc.robot.Constants;
@@ -152,11 +153,11 @@ public class Launcher extends ProfiledPIDSubsystem {
         LaunchCalculations launchcalculations = new LaunchCalculations(vertDistance, horizDistance);
         leftLaunchMotor.set(launchcalculations.getLaunchVelocity());
         rightLaunchMotor.set(launchcalculations.getLaunchVelocity());
-        wait(2000);
-        leftLaunchMotor.set(0);
-        rightLaunchMotor.set(0);
-    }
-        
+        long past = System.currentTimeMillis();
+        if (System.currentTimeMillis() - past >= 1){
+          leftLaunchMotor.set(0);
+          rightLaunchMotor.set(0);
+      }
     }
 
-
+    }
