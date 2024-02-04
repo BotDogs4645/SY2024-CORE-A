@@ -34,9 +34,13 @@ public final class Constants {
   }
 
   public static final class Vision {
-    public static final double kLimelightAngleDegrees = 30;
-                                                      //height in  //conversion const
-    public static final double kLimelightHeightMeters = 10.5 * 0.0254;
+    //all units in meters
+    // sign of offsets follows std convention rel to swerve
+    public static final double LimelightAngleDegrees = 30;
+    public static final double LimelightOffsetZ = 10.5 * 0.0254;
+    public static final double LimelightOffsetX = 0.32;
+    public static final double LimelightOffsetY = 0.0;
+
   }
 
   public static final class Swerve {
@@ -171,17 +175,7 @@ public final class Constants {
   public static final int kDriverControllerPort = 0;
   public static final int pcmCanID = 15;
 
-  public static class Limelight {
 
-    // Limelight offset relative to the center of the robot.
-    // Measured in meters.
-    // These values do not do anything in themselves; you will need to add
-    // them to the Limelight's active pipeline. They're just here for
-    // reference.
-    public static final double OFFSET_RIGHT = 0.32;
-    public static final double OFFSET_UP = 0.55;
-    public static final double OFFSET_FORWARDS = 0.0;
-  }
 
   /**
    * A key-value map, mapping each AprilTag to its position on the 2024
