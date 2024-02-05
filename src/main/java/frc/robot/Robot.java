@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.config.CTREConfigs;
+import frc.lib.util.AprilTag;
 
 /**
  * The main robot class. This handles the robot container (which contains the
@@ -17,17 +18,22 @@ public class Robot extends TimedRobot {
   public static CTREConfigs ctreConfigs;
   private Command m_autonomousCommand;
 
+  public long initalizationTime;
   private RobotContainer m_robotContainer;
+  // private AprilTag aprilTagInstance;
 
   @Override
   public void robotInit() {
     ctreConfigs = new CTREConfigs();
     m_robotContainer = new RobotContainer();
+    // aprilTagInstance = new AprilTag();
+    initalizationTime = System.currentTimeMillis();
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    AprilTag.aprilTagPeriodic();
   }
 
   @Override

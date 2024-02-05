@@ -6,8 +6,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 
-import com.pathplanner.lib.util.PIDConstants;
-import com.revrobotics.*;
 import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -23,6 +21,45 @@ import frc.lib.config.SwerveModuleConstants;
  * cleanliness.
  */
 public final class Constants {
+
+  public static final class Vision {
+    public static final double kLimelightAngleDegrees = 55;
+                                                      //height  //conversion const
+    public static final double kLimelightHeightMeters = 0.26;
+  }
+
+  public static final class Launcher {
+    public static final double launcherWheelRadius = 0.04826;
+    public static final double gravityAcceleration = 9.81;
+    public static final double kP = 0.05;
+    public static final double kI = 0.0001;
+    public static final double kD = 0.0;
+  }
+
+  public static final class Intake {
+    public static final double intakeMotorVelocity = 0;
+    public static final double intakeFlywheelRadius = 0;
+    public static final double gravityAcceleration = 0;
+    public static final double kP = 0;
+    public static final double kI = 0;
+    public static final double kD = 0;
+  }
+
+  public static class MoveTowardTag {
+
+    // Measured in portion of maximum speed
+    public static final double MOVE_SPEED = 0.3;
+    public static final double TURN_SPEED = 0.1;
+
+    // Measured in degrees
+    public static final double MIN_ANGLE = -12;
+    public static final double MAX_ANGLE = -8;
+
+    // Measured in meters
+    public static final double SHOOT_DISTANCE = 1;
+
+}
+
   public static final class PathPlanner {
     public static final double driveKP = 2.5;
     public static final double driveKI = 0.0;

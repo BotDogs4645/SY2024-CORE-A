@@ -9,11 +9,12 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.lib.util.AprilTag;
 import frc.robot.commands.TeleopSwerve;
-import frc.robot.subsystems.Launcher;
-import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Swerve;
 
@@ -28,13 +29,13 @@ import frc.robot.subsystems.Swerve;
  */
 public class RobotContainer {
 
-  private final CommandXboxController driveController = new CommandXboxController(0);
+  public static final CommandXboxController driveController = new CommandXboxController(0);
 
   private final Swerve drivetrain = new Swerve();
-  private final Launcher launcher = new Launcher();
-  private final Limelight limelight = new Limelight();
+  private final AprilTag aprilTagInstance = new AprilTag();
   private final Pneumatics m_pneumaticsSubsystem = new Pneumatics();
   private final CommandXboxController m_driverController = new CommandXboxController(Constants.kDriverControllerPort);
+  private final Intake intake = new Intake();
   
   private final SendableChooser<Command> autoChooser;
 
@@ -46,7 +47,8 @@ public class RobotContainer {
             () -> -driveController.getLeftX(), // strafe
             () -> -driveController.getRightX(), // rotation
             () -> driveController.leftBumper().getAsBoolean() // feild oriented yes or no
-        ));
+        ).finallyDo(() -> intake.setIntake(false))
+    );
 
 
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -60,13 +62,18 @@ public class RobotContainer {
     driveController.a().onTrue(new InstantCommand(() -> {
       drivetrain.zeroGyro();
     }, drivetrain));
+    driveController.leftTrigger().onTrue(Commands.run(() -> intake.toggleIntake()));
   }
 
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
   }
 
-  public Limelight getLimelight() {
-    return limelight;
+  public AprilTag getLimelight() {
+    return aprilTagInstance;
+  }
+
+  public Intake getIntake() {
+      return intake;
   }
 }
