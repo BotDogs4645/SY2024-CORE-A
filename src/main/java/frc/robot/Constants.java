@@ -37,6 +37,12 @@ public final class Constants {
     public static final double kP = 0.05;
     public static final double kI = 0.0001;
     public static final double kD = 0.0;
+    public static final double ampHeight = 0.66;
+    public static final double speakerHeight = 1.984;
+    public static final double trapHeight = 1.569;
+    public static final double launcherHeight = 0.574;
+
+
   }
   public static final class Vision {
     public static final double kLimelightAngleDegrees = 55;
