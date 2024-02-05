@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj2.command.Commands;
+
 import com.revrobotics.CANSparkMax;
 
 
@@ -14,19 +17,18 @@ private CANSparkMax rightLaunchMotor;
         rightLaunchMotor.setInverted(true);
         //intake motors gain conciousness
 
-        leftLaunchMotor.set(0.4);
-        rightLaunchMotor.set(0.4);
+      }
+    
 
+    public void indexing(double speed){
+        leftLaunchMotor.set(speed);
+        rightLaunchMotor.set(speed);
         //intake motors go brrr
+    }
 
-        
-
-        long past = System.currentTimeMillis();
-        if (System.currentTimeMillis() - past >= 1){
+    public void pleaseStop(){
           leftLaunchMotor.set(0);
           rightLaunchMotor.set(0);
          //intake motors stop going brrr
-      }
     }
 }
-
