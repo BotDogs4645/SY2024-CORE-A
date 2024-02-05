@@ -149,15 +149,16 @@ public class Launcher extends ProfiledPIDSubsystem {
                 aimLaunchMotor.set(0);
             }
         }
-    public void launchNote(int id) throws InterruptedException{
+    public void lockInAim(){
+      aimLaunchMotor.set(0);
+    }
+    public void launchNote(){
         LaunchCalculations launchcalculations = new LaunchCalculations(vertDistance, horizDistance);
         leftLaunchMotor.set(launchcalculations.getLaunchVelocity());
         rightLaunchMotor.set(launchcalculations.getLaunchVelocity());
-        long past = System.currentTimeMillis();
-        if (System.currentTimeMillis() - past >= 1){
+      }
+    public void stopLauncher(){
           leftLaunchMotor.set(0);
           rightLaunchMotor.set(0);
-      }
     }
-
-    }
+  }
