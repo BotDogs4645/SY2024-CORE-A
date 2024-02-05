@@ -1,10 +1,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.RobotContainer;
-
-import javax.xml.crypto.dsig.XMLObject;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -19,8 +15,7 @@ public class Intake extends SubsystemBase {
     private PIDController firstPIDController, secondPIDController;
     private RelativeEncoder firstMotorEncoder, secondMotorEncoder;
 
-    private static boolean robotIntakeActivated;
-    private static boolean intakeSequenceActivated;
+    private boolean robotIntakeActivated = false;
 
     public Intake() {
         firstIntakeMotor = new CANSparkMax(0, MotorType.kBrushless);
@@ -34,17 +29,17 @@ public class Intake extends SubsystemBase {
         secondMotorEncoder = secondIntakeMotor.getEncoder();
     }
 
-    public static void intakePeriodic() {
-        robotIntakeActivated = RobotContainer.driveController.leftTrigger().getAsBoolean();
-        if (robotIntakeActivated == false && intakeSequenceActivated == true) {
-            intakeSequenceActivated = false;
-        } else if (robotIntakeActivated == true && intakeSequenceActivated == false) {
-            intakeSequenceActivated = true;
-        }
+    public void toggleIntake() {
+        robotIntakeActivated = !robotIntakeActivated;
+        dynamicIntakeExecution(robotIntakeActivated);
     }
 
-    public void beginExecution() {
-        if (intakeSequenceActivated == true) {
+    public void setIntake(boolean activated) {
+        robotIntakeActivated = activated;
+    }
+
+    public void dynamicIntakeExecution(boolean robotIntakeActivated) {
+        if (robotIntakeActivated) {
             firstIntakeMotor.set(firstPIDController.calculate(firstMotorEncoder.getVelocity(), Constants.Intake.intakeMotorVelocity));
             secondIntakeMotor.set(secondPIDController.calculate(secondMotorEncoder.getVelocity(), Constants.Intake.intakeMotorVelocity));
         } else {
