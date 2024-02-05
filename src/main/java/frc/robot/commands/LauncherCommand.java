@@ -8,11 +8,11 @@ import frc.robot.subsystems.Launcher;
 public class LauncherCommand extends CommandBase{
 
     private Launcher launcher;
-    private int noteId;
+    private int tagId;
 
-    public LauncherCommand (Launcher launcher, int noteId){
+    public LauncherCommand (Launcher launcher, int tagId){
         this.launcher = launcher;
-        this.noteId = noteId;
+        this.tagId = tagId;
         addRequirements(launcher);
     }
     @Override
@@ -21,7 +21,7 @@ public class LauncherCommand extends CommandBase{
             // Move arm up
             Commands.deadline(
                 Commands.waitSeconds(0.5),
-                Commands.run(() -> launcher.aimLauncher(noteId), launcher)
+                Commands.run(() -> launcher.aimLauncher(tagId), launcher)
             ),
             // Stop arm
             Commands.runOnce(() -> launcher.lockInAim(), launcher),
