@@ -51,6 +51,43 @@ public class AprilTag {
       }
     }
 
+  // private static double tx, ty, height;
+  private static double angle;
+  private static double height;
+
+  // public AprilTag(double tx, double ty, double height) {
+  //   this.tx = tx;
+  //   this.ty = ty;
+  //   this.height = height;
+  // }
+
+//   public static double[] targetToXYZVector() {
+//     double[] targetVector = new double[3];
+//     var currentTargetID = Limelight.entry("tid").getInteger(-1);
+//     if (currentTargetID != -1) {
+//      try {
+//       // height = Constants.APRILTAGS.get(currentTargetID).getZ();
+//       height = 0.3429;
+//      } catch (Exception systemException) {}
+//     } else {
+//       System.out.print("Unfortunately, no limelight is detected.");
+//       return null;
+//     }
+
+//     double z = height - Vision.kLimelightHeightMeters;
+//     double y = z / Math.tan(Math.toRadians(LimelightHelpers.getTY("") + Vision.kLimelightAngleDegrees)); // also need Math.abs()?
+//     // double y = z / Math.tan(Math.toRadians(Limelight.entry("ty").getDouble(-1) + Vision.kLimelightAngleDegrees)); // also need Math.abs()?
+
+//     double x = y * Math.tan(Math.toRadians(LimelightHelpers.getTX("")));
+//     // double x = y * Math.tan(Math.toRadians(Limelight.entry("tx").getDouble(-1)));
+
+//     targetVector[0] = x;
+//     targetVector[1] = y;
+//     targetVector[2] = z;
+
+//     return targetVector;
+//   }
+
   public static Transform3d targetPos() {
         var targetPose = entry("targetpose_robotspace").getDoubleArray(new double[0]);
         if (targetPose.length != 6 || targetPose[2] < 1E-6) return null;
@@ -135,4 +172,20 @@ public Rotation2d determineTargetRotationalOffset(Translation3d targetPosition) 
         
         return new Rotation2d(targetXAxisOffset, targetZAxisOffset);
     }
-}
+
+
+
+  // public double[] targetToXYZVector() {
+  // double[] targetVector = new double[3];
+
+  // double d = getDirectDistance();
+
+  // double x = d * Math.sin(LimelightHelpers.getTX(""));
+  // targetVector[0] = x;
+
+  // return targetVector;
+  // }
+
+  // public double getDirectDistance() {
+  // return (/*placeholder*/3);
+  // }
