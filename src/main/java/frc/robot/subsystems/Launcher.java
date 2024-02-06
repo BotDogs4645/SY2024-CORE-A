@@ -23,7 +23,6 @@ import frc.lib.util.LaunchCalculations;
 
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers.LimelightResults;
-
 public class Launcher extends ProfiledPIDSubsystem {
     private CANSparkMax rightLaunchMotor, leftLaunchMotor, aimLaunchMotor;
     private RelativeEncoder rightMotorEncoder, leftMotorEncoder, aimMotorEncoder;
@@ -114,11 +113,11 @@ public class Launcher extends ProfiledPIDSubsystem {
   }
 
 
-    // public void startLauncher(double desiredVelocity) {
-    //     rightLaunchMotor.set(rightPIDController.calculate(rightMotorEncoder.getVelocity(), desiredVelocity));
-    //     leftLaunchMotor.set(leftPIDController.calculate(leftMotorEncoder.getVelocity(), desiredVelocity));
-        
-    // }
+    public void startLauncher(double desiredVelocity) {
+    rightLaunchMotor.set(rightPIDController.calculate(rightMotorEncoder.getVelocity(), desiredVelocity));
+    leftLaunchMotor.set(leftPIDController.calculate(leftMotorEncoder.getVelocity(), desiredVelocity));
+    
+   }
 
     public void aimLauncher(int id){
         if (id == 6 || id == 5){
@@ -162,3 +161,4 @@ public class Launcher extends ProfiledPIDSubsystem {
           rightLaunchMotor.set(0);
     }
   }
+
