@@ -35,9 +35,6 @@ public class Launcher extends ProfiledPIDSubsystem {
   private double ffWant;
   public double wantedAngle;
   private ShuffleboardTab tab;
-  // more stuff for launch calculations
-  double vertDistance = 0;
-  double horizDistance = 0;
 
   public Launcher() {
     super(
@@ -80,6 +77,21 @@ public class Launcher extends ProfiledPIDSubsystem {
     aimLaunchMotor.setVoltage(output + ffWant);
   }
 
+  public void startLauncher(double desiredVelocity) {
+    rightLaunchMotor.set(rightPIDController.calculate(rightMotorEncoder.getVelocity(), desiredVelocity));
+    leftLaunchMotor.set(leftPIDController.calculate(leftMotorEncoder.getVelocity(), desiredVelocity));
+  }
+
+  public void startLauncher(LaunchCalculations launchcalculations) {
+    leftLaunchMotor.set(launchcalculations.getLaunchVelocity());
+    rightLaunchMotor.set(launchcalculations.getLaunchVelocity());
+  }
+
+  public void stopLauncher() {
+    leftLaunchMotor.set(0);
+    rightLaunchMotor.set(0);
+  }
+
   @Override
   public double getMeasurement() {
     // Return the process variable measurement here
@@ -110,13 +122,10 @@ public class Launcher extends ProfiledPIDSubsystem {
     return ffWant;
   }
 
-  public void startLauncher(double desiredVelocity) {
-    rightLaunchMotor.set(rightPIDController.calculate(rightMotorEncoder.getVelocity(), desiredVelocity));
-    leftLaunchMotor.set(leftPIDController.calculate(leftMotorEncoder.getVelocity(), desiredVelocity));
+  public LaunchCalculations getLaunchCalculations(int id) {
+    double vertDistance;
+    double horizDistance;
 
-  }
-
-  public void aimLauncher(int id) {
     if (id == 6 || id == 5) {
       vertDistance = Constants.Launcher.ampHeight - Constants.Launcher.launcherHeight;
       horizDistance = AprilTag.getDirectDistance();
@@ -130,7 +139,10 @@ public class Launcher extends ProfiledPIDSubsystem {
       vertDistance = 0;
       horizDistance = AprilTag.getDirectDistance();
     }
-    LaunchCalculations launchcalculations = new LaunchCalculations(vertDistance, horizDistance);
+    return new LaunchCalculations(vertDistance, horizDistance);
+  }
+
+  public void aimLauncher(LaunchCalculations launchcalculations) {
     wantedAngle = launchcalculations.getLaunchAngle();
     if (aimMotorEncoder.getPosition() < wantedAngle) {
       aimLaunchMotor.set(0.4);
@@ -143,16 +155,5 @@ public class Launcher extends ProfiledPIDSubsystem {
 
   public void lockInAim() {
     aimLaunchMotor.set(0);
-  }
-
-  public void launchNote() {
-    LaunchCalculations launchcalculations = new LaunchCalculations(vertDistance, horizDistance);
-    leftLaunchMotor.set(launchcalculations.getLaunchVelocity());
-    rightLaunchMotor.set(launchcalculations.getLaunchVelocity());
-  }
-
-  public void stopLauncher() {
-    leftLaunchMotor.set(0);
-    rightLaunchMotor.set(0);
   }
 }

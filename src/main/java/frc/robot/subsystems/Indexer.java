@@ -30,13 +30,13 @@ public class Indexer extends SubsystemBase{
       }
     
 
-    public void indexing(double speed){
+    public void startIndexer(double speed){
 
         firstIntakeMotor.set(0.5);
         secondIntakeMotor.set(0.5);
     }
 
-    public void pleaseStop(){
+    public void stopIndexer(){
         firstIntakeMotor.set(0);
         secondIntakeMotor.set(0);
     }

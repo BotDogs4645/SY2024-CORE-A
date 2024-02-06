@@ -189,3 +189,4 @@ public Rotation2d determineTargetRotationalOffset(Translation3d targetPosition) 
   // public double getDirectDistance() {
   // return (/*placeholder*/3);
   // }
+}

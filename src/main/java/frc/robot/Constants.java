@@ -64,6 +64,7 @@ public final class Constants {
     public static final double speakerHeight = 1.984;
     public static final double trapHeight = 1.569;
     public static final double launcherHeight = 0.574;
+    public static final double feedVelocity = 0.5; // just a placeholder value - will need to be changed
   }
   public static final class Vision {
     public static final double kLimelightAngleDegrees = 55;

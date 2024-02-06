@@ -19,14 +19,14 @@ public class IndexerCommand extends CommandBase{
             // Move arm up
             Commands.deadline(
                 Commands.waitSeconds(0.5),
-                Commands.run(() -> indexer.indexing(0.5), indexer)
+                Commands.run(() -> indexer.startIndexer(0.5), indexer)
             ),
             // Wait a bit
             Commands.waitSeconds(0.1),
             // Stop indexer
-            Commands.runOnce(() -> indexer.pleaseStop(), indexer)
+            Commands.runOnce(() -> indexer.stopIndexer(), indexer)
             ).handleInterrupt(() -> {
-            indexer.pleaseStop();
+            indexer.stopIndexer();
         }).schedule();
     }
 }
