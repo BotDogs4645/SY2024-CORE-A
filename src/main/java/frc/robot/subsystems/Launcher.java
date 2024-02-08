@@ -3,11 +3,9 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
 
 // import edu.wpi.first.apriltag.AprilTag;
 import frc.lib.util.AprilTag;
-import edu.wpi.first.apriltag.AprilTagDetection;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -25,6 +23,8 @@ import frc.robot.Constants;
 import frc.robot.LimelightHelpers.LimelightResults;
 
 public class Launcher extends ProfiledPIDSubsystem {
+
+    private AprilTag aprilTagInstance = new AprilTag();
     private CANSparkMax rightLaunchMotor, leftLaunchMotor, aimLaunchMotor;
     private RelativeEncoder rightMotorEncoder, leftMotorEncoder, aimMotorEncoder;
     private PIDController rightPIDController, leftPIDController, aimPIDController;
@@ -123,19 +123,19 @@ public class Launcher extends ProfiledPIDSubsystem {
     public void aimLauncher(int id){
         if (id == 6 || id == 5){
             vertDistance = Constants.Launcher.ampHeight - Constants.Launcher.launcherHeight;
-            horizDistance = AprilTag.getDirectDistance();
+            horizDistance = aprilTagInstance.getDirectDistance().get();
         }
         else if (id == 7 || id == 4){
             vertDistance = Constants.Launcher.speakerHeight - Constants.Launcher.launcherHeight;
-            horizDistance = AprilTag.getDirectDistance();
+            horizDistance = aprilTagInstance.getDirectDistance().get();
         }
         else if (id == 11 || id == 12 || id == 13 || id == 14 || id == 15 || id == 16){
             vertDistance = Constants.Launcher.trapHeight - Constants.Launcher.launcherHeight;
-            horizDistance = AprilTag.getDirectDistance();
+            horizDistance = aprilTagInstance.getDirectDistance().get();
         }
         else{
             vertDistance = 0;
-            horizDistance = AprilTag.getDirectDistance();
+            horizDistance = aprilTagInstance.getDirectDistance().get();
         }
         LaunchCalculations launchcalculations = new LaunchCalculations(vertDistance, horizDistance);
         wantedAngle = launchcalculations.getLaunchAngle();

@@ -18,6 +18,8 @@ public class Robot extends TimedRobot {
   public static CTREConfigs ctreConfigs;
   private Command m_autonomousCommand;
 
+  private AprilTag aprilTagInstance = new AprilTag();
+
   public long initalizationTime;
   private RobotContainer m_robotContainer;
   // private AprilTag aprilTagInstance;
@@ -33,7 +35,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    AprilTag.aprilTagPeriodic();
+    aprilTagInstance.aprilTagPeriodic();
   }
 
   @Override

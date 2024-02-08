@@ -23,12 +23,8 @@ import frc.lib.config.SwerveModuleConstants;
 public final class Constants {
 
   public static final class Intake {
-    public static final double intakeMotorVelocity = 0;
-    public static final double intakeFlywheelRadius = 0;
-    public static final double gravityAcceleration = 0;
-    public static final double kP = 0;
-    public static final double kI = 0;
-    public static final double kD = 0;
+    public static final double defaultMotorSpeed = 0;
+    public static final double autonomousIntakeDuration = 0;
   }
 
   public static class MoveTowardTag {
