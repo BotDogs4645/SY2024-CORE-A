@@ -97,7 +97,7 @@ public class Limelight extends SubsystemBase {
                                 * (Constants.APRILTAGS.get(getTagID().getAsInt()).getZ())
                         - Constants.Launcher.launcherHeight))
                 / (Constants.Launcher.gravityAcceleration);
-        return OptionalDouble.of(getDistanceToTargetPlane().getAsDouble() / timeToTravel);
+        return OptionalDouble.of(getDistanceToTarget().getAsDouble() / timeToTravel);
     }
 
     public OptionalDouble getLaunchVelocity() {
