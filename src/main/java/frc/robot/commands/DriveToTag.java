@@ -19,16 +19,16 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
 
 public class DriveToTag extends Command {
-  /** Creates a new DriveToTag. */
+  /** Creates a new DriveToTag instance. */
 
   private Swerve drivetrain;
   private Pose3d target;
 
-  private TrajectoryConfig config = 
-    new TrajectoryConfig(
-      Constants.Swerve.maxSpeed,
-      Constants.
-    );
+  // private TrajectoryConfig config = 
+  //   new TrajectoryConfig(
+  //     Constants.Swerve.maxSpeed,
+  //     Constants.
+  //   );
 
   public DriveToTag(Swerve drivetrain, Pose3d target) {
     this.drivetrain = drivetrain;
@@ -39,12 +39,12 @@ public class DriveToTag extends Command {
   @Override
   public void initialize() {
 
-    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0,0,new Rotation2d(0)),
-      List.of(),
-      target.toPose2d(),
-      config
-    );
+    // Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+    //   new Pose2d(0,0,new Rotation2d(0)),
+    //   List.of(),
+    //   target.toPose2d(),
+    //   config
+    // );
   }
 
   // Called every time the scheduler runs while the command is scheduled.

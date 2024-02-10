@@ -44,7 +44,7 @@ public class RobotContainer {
             () -> -driveController.getLeftY(), // tanslation
             () -> -driveController.getLeftX(), // strafe
             () -> -driveController.getRightX(), // rotation
-            () -> driveController.leftBumper().getAsBoolean() // feild oriented yes or no
+            () -> driveController.leftBumper().getAsBoolean() // field oriented, yes or no
         ));
 
 
@@ -61,7 +61,7 @@ public class RobotContainer {
 
     driveController.y().onTrue(new DriveToTag(
       drivetrain,
-      limelight.getTargetPose()
+      limelight.getTargetPoseRobotRelative().get()
     ));
   }
 
