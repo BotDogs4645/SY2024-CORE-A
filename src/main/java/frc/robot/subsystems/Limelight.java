@@ -23,9 +23,6 @@ import frc.robot.LimelightHelpers;
  */
 public class Limelight extends SubsystemBase {
 
-    private double x = Double.NaN;
-    private double y = Double.NaN;
-
     private OptionalDouble distanceToTarget = OptionalDouble.empty();
     private OptionalDouble ty = OptionalDouble.empty();
     private OptionalDouble tx = OptionalDouble.empty();
@@ -148,6 +145,10 @@ public class Limelight extends SubsystemBase {
             distanceToTarget = OptionalDouble.empty();
         }
         SmartDashboard.putNumber("LL Distance", getDistanceToTarget().orElse(-1));
-    }
-
+        try {
+            SmartDashboard.putNumber("LL From Pose X", getTargetPoseRobotRealative().get().getX());
+            SmartDashboard.putNumber("LL From Pose Y", getTargetPoseRobotRealative().get().getY());
+            SmartDashboard.putNumber("LL From Pose Z", getTargetPoseRobotRealative().get().getZ());
+        } catch (Exception e) {}
+    }                                                                                        
 }
