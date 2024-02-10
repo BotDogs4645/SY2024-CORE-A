@@ -74,34 +74,44 @@ public class Limelight extends SubsystemBase {
         }
     }
 
+
+    public OptionalDouble getHeightDifferenceToObjective() {
+        //will only return height difference if the target is in the list of shooter targets
+        if (hasTarget() && Constants.shooterAprilTags.contains((int) LimelightHelpers.getFiducialID(""))){
+            double heightDifference = Constants.Vision.LimelightOffsetZ -
+                    Constants.APRILTAGS.get((int) LimelightHelpers.getFiducialID("")).getZ() +
+                    Constants.APRILTAG_OBJECTIVE_OFFSETS.get((int) LimelightHelpers.getFiducialID("")).getZ();
+            return OptionalDouble.of(heightDifference);
+        } else {
+            return OptionalDouble.empty();
+        }
+    }
+    
+
     public OptionalDouble getVerticalVelocity() {
-        if (hasTarget()) {
-            double heightDifference = Constants.APRILTAGS.get(getTagID().getAsInt()).getZ()
-                    - Constants.Launcher.launcherHeight;
+        if (hasTarget() && getHeightDifferenceToObjective().isPresent()) {
             return OptionalDouble.of(Math.sqrt(
-                    2 * Constants.Launcher.gravityAcceleration * (Constants.APRILTAGS.get(getTagID().getAsInt()).getZ())
-                            - Constants.Launcher.launcherHeight));
+                    2 * Constants.Launcher.gravityAcceleration * getHeightDifferenceToObjective().getAsDouble()));
         } else {
             return OptionalDouble.empty();
         }
     }
 
     public OptionalDouble getHorizontalVelocity() {
-        if (!hasTarget()) {
+        if (!hasTarget()  && getHeightDifferenceToObjective().isPresent()) {
             return OptionalDouble.empty();
         }
 
         double timeToTravel = (-1 * getVerticalVelocity().getAsDouble() + Math.sqrt(
                 Math.pow(getVerticalVelocity().getAsDouble(), 2)
                         + 2 * Constants.Launcher.gravityAcceleration
-                                * (Constants.APRILTAGS.get(getTagID().getAsInt()).getZ())
-                        - Constants.Launcher.launcherHeight))
+                                * getHeightDifferenceToObjective().getAsDouble()))
                 / (Constants.Launcher.gravityAcceleration);
         return OptionalDouble.of(getDistanceToTarget().getAsDouble() / timeToTravel);
     }
 
     public OptionalDouble getLaunchVelocity() {
-        if (hasTarget()) {
+        if (hasTarget() && getHeightDifferenceToObjective().isPresent()){
             return OptionalDouble
                     .of(toRPM(Math.hypot(getHorizontalVelocity().getAsDouble(), getVerticalVelocity().getAsDouble())));
         }
@@ -109,7 +119,7 @@ public class Limelight extends SubsystemBase {
     }
 
     public OptionalDouble getLaunchAngle() {
-        if (hasTarget()) {
+        if (hasTarget() && getHeightDifferenceToObjective().isPresent()){
             return OptionalDouble.of(Math
                     .toDegrees(Math.atan(getVerticalVelocity().getAsDouble() / getHorizontalVelocity().getAsDouble())));
         }

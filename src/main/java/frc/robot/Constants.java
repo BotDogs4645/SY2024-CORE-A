@@ -1,5 +1,8 @@
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -195,6 +198,8 @@ public final class Constants {
    * {@link https://firstfrc.blob.core.windows.net/frc2024/FieldAssets/2024FieldDrawings.pdf},
    * page 4.
    */
+  public static final ArrayList<Integer> shooterAprilTags = new ArrayList<>(Arrays.asList(3, 4, 5, 6, 7, 8, 11, 12, 13, 14, 15, 16));
+
   public static final Map<Integer, Transform3d> APRILTAGS = Map.ofEntries(
       tag(-1, 0,0,0,0),
       tag(1, 593.68, 9.68, 53.38, 120),
@@ -213,6 +218,27 @@ public final class Constants {
       tag(14, 209.48, 161.62, 52.00, 0),
       tag(15, 182.73, 177.10, 52.00, 120),
       tag(16, 182.73, 146.19, 52.00, 240));
+
+  public static final Map<Integer, Transform3d> APRILTAG_OBJECTIVE_OFFSETS = Map.ofEntries(
+      tag(-1, 0, 0, 0, 0),
+      tag(1, 0, 0, 0, 0), // not yet measured
+      tag(2, 0, 0, 0, 0), // not yet measured
+      tag(3, 0, 22.25, 28.5, 0),
+      tag(4, 0, 0, 28.5, 0),
+      tag(5, 0, 0, -19.38, 0),
+      tag(6, 0, 0, -19.38, 0),
+      tag(7, 0, 0, 28.5, 0),
+      tag(8, 0, 22.25, 28.5, 0),
+      tag(9, 0, 0, 0, 0), // not yet measured
+      tag(10, 0, 0, 0, 0), // not yet measured
+      tag(11, 0, 0, 0, 0), // not yet measured
+      tag(12, 0, 0, 0, 0), // not yet measured
+      tag(13, 0, 0, 0, 0), // not yet measured
+      tag(14, 0, 0, 0, 0), // not yet measured
+      tag(15, 0, 0, 0, 0), // not yet measured
+      tag(16, 0, 0, 0, 0) // not yet measured
+  );
+  
 
   private static Map.Entry<Integer, Transform3d> tag(int id, double x, double y, double z, double rot) {
     final double inchesPerMeter = 39.37;
