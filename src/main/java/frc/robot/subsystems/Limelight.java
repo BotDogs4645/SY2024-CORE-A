@@ -124,9 +124,9 @@ public class Limelight extends SubsystemBase {
         return OptionalDouble.empty();
     }
     
-    public boolean isTargetInShooterRange() {
+    public boolean isTargetInSpeakerRange() {
         if (hasTarget()) {
-            return getDistanceToTarget().getAsDouble()< Constants.Launcher.maxLaunchDistance;
+            return getDistanceToTarget().getAsDouble()< Constants.Launcher.maxSpeakerLaunchDistance;
         }
         return false;
     }

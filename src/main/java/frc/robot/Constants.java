@@ -49,7 +49,7 @@ public final class Constants {
     public static final double gravityAcceleration = 9.81;
     public static final double launcherHeight = 0.574;
     public static final double launcherWheelRadius = 0.04826;
-    public static final double maxLaunchDistance = 3.0; // meters, still need to measure
+    public static final double maxSpeakerLaunchDistance = 3.0; // meters, still need to measure
   }
 
   public static final class Swerve {
