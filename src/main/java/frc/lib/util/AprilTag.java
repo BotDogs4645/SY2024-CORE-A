@@ -4,11 +4,10 @@
 
 package frc.lib.util;
 
-import java.beans.Visibility;
+import java.util.Optional;
 
-import org.opencv.core.Mat.Tuple2;
+import javax.swing.text.html.Option;
 
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -17,175 +16,142 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.Constants;
-import frc.robot.Constants.Vision;
-import frc.robot.LimelightHelpers;
 
-/** Add your docs here. */
+// The AprilTag class, harnessed in order to
+// calculate and execute various 'vision'-related
+// processes within FIRST Team 4645, the Chicago Style 
+// Bot Dogs' robot for the FIRST Robotics 2024 competition.
+
 public class AprilTag {
-
-  private class TargetVector {
-
-  }
 
     public static final NetworkTable TABLE = NetworkTableInstance.getDefault().getTable("limelight");
 
-    public static NetworkTableEntry entry(String key) {
-        return TABLE.getEntry(key);
+    // Fetches and returns the NetworkTable entry of the parameter provided in the method call.
+
+    public Optional<NetworkTableEntry> entry(String key) {
+        return Optional.of(TABLE.getEntry(key));
     }
 
-    public boolean hasTarget() {
-        return targetPos() != null;
-    }
+    // Executes periodically while quering the primary target apriltag's 
+    // current position and printing the distance to such in the console.
 
-    public static void aprilTagPeriodic() {
-      var targetPosition = targetPos();
-      // Transform3d relativeRobotPosition;
-      if (targetPosition == null) {
-        System.out.println("No Limelight target.");
-      } else {
+    public void aprilTagPeriodic() {
+      Optional<Transform3d> targetPosition = targetPos();
+
+      if (targetPosition.isPresent()) {
         // System.out.printf("Target position: {x: %.3f, y: %.3f, z: %.3f}\n", t.getX(), t.getY(), t.getZ());
-  
-        if (AprilTag.getDirectDistance() != -1) {
-          System.out.println("Current spatial distance to primary target: " + AprilTag.getDirectDistance());
+        if (getDirectDistance().isPresent()) {
+          System.out.println("Current spatial distance to primary target: " + getDirectDistance());
         }
+      } else {
+        System.out.println("No Limelight target.");
       }
     }
 
-  // private static double tx, ty, height;
-  private static double angle;
-  private static double height;
+  // Fetches, calculates, and returns the offset from the robot to the current primary apriltag target.
 
-  // public AprilTag(double tx, double ty, double height) {
-  //   this.tx = tx;
-  //   this.ty = ty;
-  //   this.height = height;
-  // }
+  public Optional<Transform3d> targetPos() {
+        Optional<double[]> targetPose = Optional.of(entry("targetpose_robotspace").get().getDoubleArray(new double[0]));
 
-//   public static double[] targetToXYZVector() {
-//     double[] targetVector = new double[3];
-//     var currentTargetID = Limelight.entry("tid").getInteger(-1);
-//     if (currentTargetID != -1) {
-//      try {
-//       // height = Constants.APRILTAGS.get(currentTargetID).getZ();
-//       height = 0.3429;
-//      } catch (Exception systemException) {}
-//     } else {
-//       System.out.print("Unfortunately, no limelight is detected.");
-//       return null;
-//     }
-
-//     double z = height - Vision.kLimelightHeightMeters;
-//     double y = z / Math.tan(Math.toRadians(LimelightHelpers.getTY("") + Vision.kLimelightAngleDegrees)); // also need Math.abs()?
-//     // double y = z / Math.tan(Math.toRadians(Limelight.entry("ty").getDouble(-1) + Vision.kLimelightAngleDegrees)); // also need Math.abs()?
-
-//     double x = y * Math.tan(Math.toRadians(LimelightHelpers.getTX("")));
-//     // double x = y * Math.tan(Math.toRadians(Limelight.entry("tx").getDouble(-1)));
-
-//     targetVector[0] = x;
-//     targetVector[1] = y;
-//     targetVector[2] = z;
-
-//     return targetVector;
-//   }
-
-  public static Transform3d targetPos() {
-        var targetPose = entry("targetpose_robotspace").getDoubleArray(new double[0]);
-        if (targetPose.length != 6 || targetPose[2] < 1E-6) return null;
-        
-        return new Transform3d(
-            new Translation3d(targetPose[0], targetPose[1], targetPose[2]),
-            new Rotation3d(targetPose[3], targetPose[4], targetPose[5])
-        );
+        if (targetPose.isPresent()) {
+          return Optional.of(new Transform3d(
+              new Translation3d(targetPose.get()[0], targetPose.get()[1], targetPose.get()[2]),
+              new Rotation3d(targetPose.get()[3], targetPose.get()[4], targetPose.get()[5])
+          ));
+        } else {
+          return Optional.empty();
+        }
     };
 
+  // Calculates the distance between the robot's current estimated 
+  // position and the one of the primary target apriltag.
 
-  public static double getDirectDistance() {
-    Transform3d targetVector = targetPos();
+  public Optional<Double> getDirectDistance() {
+    Optional<Transform3d> targetVector = targetPos();
 
-    if (targetPos() != null) {
-      return Math.sqrt(Math.pow(targetVector.getX(), 2) + Math.pow(targetVector.getY(), 2) + Math.pow(targetVector.getZ(), 2));
+    if (targetVector.isPresent()) {
+      return Optional.of(Math.sqrt(Math.pow(targetVector.get().getX(), 2) + Math.pow(targetVector.get().getY(), 2) + Math.pow(targetVector.get().getZ(), 2)));
     } else {
-      return -1;
+      return Optional.empty();
     }
   }
 
-    // The method declared below exists as a way in which one is able to determine the robot's current location and orientation within the playing field shown within the FIRST Robotics 2024 competition, Crescendo.
+  // Determines the robot's position on the playing 
+  // field, through the use of limelight's vector distance API.
 
-  public static Transform3d determinePosition() {
-    var relativePositionalData = targetPos();
-    var aprilTagIdentifier = entry("tid").getInteger(-1);
-    if (aprilTagIdentifier == -1 || aprilTagIdentifier > 16) {
-        return null;
+  public Optional<Transform3d> determinePosition() {
+    Optional<Transform3d> relativePositionalData = targetPos();
+
+    Optional<Long> aprilTagIdentifier = Optional.of(entry("tid").get().getInteger(-1));
+
+    if (aprilTagIdentifier.isEmpty() || aprilTagIdentifier.get() > 16) {
+        return Optional.empty();
     }
+    
     Transform3d currentAprilTagLocation = Constants.APRILTAGS.get(aprilTagIdentifier);
 
     double[] currentRelativeLocation = {
-        currentAprilTagLocation.getX() + relativePositionalData.getX(), 
-        currentAprilTagLocation.getY() + relativePositionalData.getY(), 
-        currentAprilTagLocation.getZ() + relativePositionalData.getZ()
+        currentAprilTagLocation.getX() + relativePositionalData.get().getX(), 
+        currentAprilTagLocation.getY() + relativePositionalData.get().getY(), 
+        currentAprilTagLocation.getZ() + relativePositionalData.get().getZ()
     };
 
     double[] currentRelativeRotation = {
-        currentAprilTagLocation.getRotation().getX() + relativePositionalData.getRotation().getX(),
-        currentAprilTagLocation.getRotation().getY() + relativePositionalData.getRotation().getY(),
-        currentAprilTagLocation.getRotation().getZ() + relativePositionalData.getRotation().getZ(),
+        currentAprilTagLocation.getRotation().getX() + relativePositionalData.get().getRotation().getX(),
+        currentAprilTagLocation.getRotation().getY() + relativePositionalData.get().getRotation().getY(),
+        currentAprilTagLocation.getRotation().getZ() + relativePositionalData.get().getRotation().getZ(),
     };
 
-    Transform3d currentRelativePosition = new Transform3d (
+    Optional<Transform3d> currentRelativePosition = Optional.of(new Transform3d (
         new Translation3d(currentRelativeLocation[0], currentRelativeLocation[1], currentRelativeLocation[2]),
         new Rotation3d(currentRelativeRotation[0], currentRelativeRotation[1], currentRelativeRotation[2])
-    );
+    ));
 
-    System.out.printf("Current relative robot position: {X: %0.3f, Y: %0.3f, Z: %0.3f}\n", currentRelativePosition.getX(), currentRelativePosition.getY(), currentRelativePosition.getZ());
-    System.out.printf("Current relative robot orientation: {X: %0.3f, Y: %0.3f, Z: %0.3f}\n", currentRelativePosition.getRotation().getX(), currentRelativePosition.getRotation().getY(), currentRelativePosition.getRotation().getZ());
+    System.out.printf("Current relative robot position: {X: %0.3f, Y: %0.3f, Z: %0.3f}\n", currentRelativePosition.get().getX(), currentRelativePosition.get().getY(), currentRelativePosition.get().getZ());
+    System.out.printf("Current relative robot orientation: {X: %0.3f, Y: %0.3f, Z: %0.3f}\n", currentRelativePosition.get().getRotation().getX(), currentRelativePosition.get().getRotation().getY(), currentRelativePosition.get().getRotation().getZ());
 
     return currentRelativePosition;
 }
 
-public Rotation2d determineTargetRotationalOffset(Translation3d targetPosition) {
-        // Transform3d currentRelativePosition = determineRelativePosition();
-        Transform3d currentRelativePosition = new Transform3d (
-            new Translation3d(1, 1, 1),
-            new Rotation3d(1, 1, 1)
-        );
+  // Calculates the relative rotational offset to the 
+  // given "targetPosition," based off of the current 
+  // orientation of the robot within 3D space.
 
-        if (currentRelativePosition == null) {
-            System.out.printf("An apriltag is currently not within view, and therefore, we are unable to calculate the positional offset of the target located at {X: %.3f, Y: %.3f, Z: %.3f}\n.", targetPosition.getX(), targetPosition.getY(), targetPosition.getZ());     
-            return null;
+public Optional<Rotation2d> determineTargetRotationalOffset(Optional<Translation3d> targetPosition) {
+        // Optional<Transform3d> currentRelativePosition = determinePosition();
+        Optional<Transform3d> currentRelativePosition = Optional.of(new Transform3d(
+          new Translation3d(0, 0, 0),
+          new Rotation3d(0, 0, 0)
+        ));
+
+        // if (currentRelativePosition.isEmpty()) {
+        //     System.out.printf("An apriltag is currently not within view, and therefore, we are unable to calculate the positional offset of the target located at {X: %.3f, Y: %.3f, Z: %.3f}\n.", targetPosition.get().getX(), targetPosition.get().getY(), targetPosition.get().getZ());     
+        //     return Optional.empty();
+        // }
+
+        if ((currentRelativePosition.get().getX() == targetPosition.get().getX()) && (currentRelativePosition.get().getY() == targetPosition.get().getY())) {
+            System.out.println("The robot is currently located at the same position as the apriltag target.");
+            return Optional.empty();
         }
 
-        if ((currentRelativePosition.getX() == targetPosition.getX()) && (currentRelativePosition.getY() == targetPosition.getY())) {
-            System.out.println("As the given position is the one in which the robot is currently located, we are unfortunately, unable to calculate the rotational offset to said location.");
-            return null;
-        }
-
-        double targetXAxisOffset = Math.toDegrees(Math.asin(Math.abs(currentRelativePosition.getX() - targetPosition.getX()) / Math.sqrt(Math.pow(currentRelativePosition.getX() - targetPosition.getX(), 2) + Math.pow(currentRelativePosition.getY() - targetPosition.getY(), 2))));
+        double targetXAxisOffset = Math.toDegrees(Math.asin(Math.abs(currentRelativePosition.get().getX() - targetPosition.get().getX()) / Math.sqrt(Math.pow(currentRelativePosition.get().getX() - targetPosition.get().getX(), 2) + Math.pow(currentRelativePosition.get().getY() - targetPosition.get().getY(), 2))));
         double targetZAxisOffset;
 
-        if (currentRelativePosition.getZ() == targetPosition.getZ()) {
+        if (currentRelativePosition.get().getZ() == targetPosition.get().getZ()) {
             targetZAxisOffset = 0;
         } else {
-            targetZAxisOffset = Math.toDegrees(Math.asin(Math.abs(currentRelativePosition.getZ() - targetPosition.getZ()) / (targetPosition.getDistance(currentRelativePosition.getTranslation()))));
+            targetZAxisOffset = Math.toDegrees(Math.asin(Math.abs(currentRelativePosition.get().getZ() - targetPosition.get().getZ()) / (targetPosition.get().getDistance(currentRelativePosition.get().getTranslation()))));
         }
+
+        if ((currentRelativePosition.get().getX() > targetPosition.get().getX() && ((-90 < currentRelativePosition.get().getRotation().getX()) && (currentRelativePosition.get().getRotation().getX() < 90))) || (currentRelativePosition.get().getY() > targetPosition.get().getY() && ((-90 < currentRelativePosition.get().getRotation().getY()) && (currentRelativePosition.get().getRotation().getY() < 90)))) {
+            targetXAxisOffset += 180;
+        }
+
 
         System.out.println("Target X Offset: " + targetXAxisOffset + ", Target Z Offset: " + targetZAxisOffset);
         
-        return new Rotation2d(targetXAxisOffset, targetZAxisOffset);
+        return Optional.of(new Rotation2d(targetXAxisOffset, targetZAxisOffset));
     }
 
-
-
-  // public double[] targetToXYZVector() {
-  // double[] targetVector = new double[3];
-
-  // double d = getDirectDistance();
-
-  // double x = d * Math.sin(LimelightHelpers.getTX(""));
-  // targetVector[0] = x;
-
-  // return targetVector;
-  // }
-
-  // public double getDirectDistance() {
-  // return (/*placeholder*/3);
-  // }
+    Optional<Rotation2d> stasisTesting = determineTargetRotationalOffset(Optional.of(new Translation3d(0, 0, 0)));
+  }
