@@ -115,10 +115,10 @@ public final class Constants {
     /* Front Left Module - Module 0 */
     public static final class Mod0 {
       public static final int driveMotorID = 7;
-      public static final boolean driveIsInverted = true;
+      public static final boolean driveIsInverted = false;
       public static final int angleMotorID = 6;
       public static final int canCoderID = 2;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(43.76953125 + 180);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(218.76953125);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset, driveIsInverted);
     }
@@ -190,6 +190,7 @@ public final class Constants {
    * page 4.
    */
   public static final Map<Integer, Transform3d> APRILTAGS = Map.ofEntries(
+      tag(-1, 0,0,0,0),
       tag(1, 593.68, 9.68, 53.38, 120),
       tag(2, 637.21, 34.79, 53.38, 120),
       tag(3, 652.73, 196.17, 57.13, 180),

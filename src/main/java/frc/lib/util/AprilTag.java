@@ -36,7 +36,7 @@ public class AprilTag {
   }
   
   public Translation2d toRobotRealativeTranslation() {
-    return new Translation2d(relX, relY)
+    return new Translation2d(relX, relY);
   }
 
 
