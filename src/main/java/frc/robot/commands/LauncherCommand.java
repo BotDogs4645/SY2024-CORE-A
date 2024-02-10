@@ -27,7 +27,7 @@ public class LauncherCommand extends CommandBase{
             Commands.deadline(
                 Commands.waitSeconds(0.5),
                 Commands.run(() -> indexer.startIndexer(), indexer),
-                Commands.run(() -> launcher.startLauncher(desiredVelocity), launcher)
+                Commands.run(() -> launcher.startLauncher(0.5), launcher)
             ),
             //Stop feeding and aim
             Commands.deadline(
