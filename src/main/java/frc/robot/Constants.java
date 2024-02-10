@@ -160,6 +160,12 @@ public final class Constants {
 
   public static final int kDriverControllerPort = 0;
   public static final int pcmCanID = 15;
+  public static class Launcher{
+    public static final double ampHeight = 0.66;
+    public static final double speakerHeight = 1.984;
+    public static final double trapHeight = 1.436;
+    public static final double launcherHeight = 0.574;
+  }
 
   public static class Limelight {
 
