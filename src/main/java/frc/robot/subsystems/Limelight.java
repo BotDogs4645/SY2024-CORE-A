@@ -20,7 +20,6 @@ import frc.robot.LimelightHelpers;
  */
 public class Limelight extends SubsystemBase {
 
-
     private double x = Double.NaN;
     private double y = Double.NaN;
 
@@ -40,7 +39,7 @@ public class Limelight extends SubsystemBase {
     }
 
     public OptionalInt getTagID() {
-        if(hasTarget) {
+        if (hasTarget) {
             return OptionalInt.of((int) LimelightHelpers.getFiducialID(""));
         } else {
             return OptionalInt.empty();
@@ -48,35 +47,94 @@ public class Limelight extends SubsystemBase {
     }
 
     public OptionalDouble getDistanceToTargetPlane() {
-        if(hasTarget) {
-            return OptionalDouble.of((Constants.Vision.LimelightOffsetZ + Constants.APRILTAGS.get(getTagID().getAsInt()).getZ()) / Math.tan(ty.getAsDouble() + Constants.Vision.LimelightAngleDegrees));
+        Optional<Pose3d> relative = getTargetPoseRobotRelative();
+        if (relative.isPresent()) {
+            return OptionalDouble.of(relative.get().getY());
         } else {
             return OptionalDouble.empty();
         }
+        // if (hasTarget) {
+        // return OptionalDouble
+        // .of((Constants.Vision.LimelightOffsetZ +
+        // Constants.APRILTAGS.get(getTagID().getAsInt()).getZ())
+        // / Math.tan(ty.getAsDouble() + Constants.Vision.LimelightAngleDegrees));
+        // } else {
+        // return OptionalDouble.empty();
+        // }
     }
 
     public OptionalDouble getDistanceToTarget() {
         return distanceToTarget;
     }
-    
-    public Optional<Pose3d> getTargetPoseRobotRealative() {
-        if(hasTarget) {
+
+    public Optional<Pose3d> getTargetPoseRobotRelative() {
+        if (hasTarget) {
             return Optional.of(LimelightHelpers.getTargetPose3d_RobotSpace(""));
         } else {
             return Optional.empty();
         }
     }
 
+    public OptionalDouble getVerticalVelocity() {
+        if (hasTarget) {
+            double heightDifference = Constants.APRILTAGS.get(getTagID().getAsInt()).getZ()
+                    - Constants.Launcher.launcherHeight;
+            return OptionalDouble.of(Math.sqrt(
+                    2 * Constants.Launcher.gravityAcceleration * (Constants.APRILTAGS.get(getTagID().getAsInt()).getZ())
+                            - Constants.Launcher.launcherHeight));
+        } else {
+            return OptionalDouble.empty();
+        }
+    }
+
+    public OptionalDouble getHorizontalVelocity() {
+        if (!hasTarget) {
+            return OptionalDouble.empty();
+        }
+
+        double timeToTravel = (-1 * getVerticalVelocity().getAsDouble() + Math.sqrt(
+                Math.pow(getVerticalVelocity().getAsDouble(), 2)
+                        + 2 * Constants.Launcher.gravityAcceleration
+                                * (Constants.APRILTAGS.get(getTagID().getAsInt()).getZ())
+                        - Constants.Launcher.launcherHeight))
+                / (Constants.Launcher.gravityAcceleration);
+        return OptionalDouble.of(getDistanceToTargetPlane().getAsDouble() / timeToTravel);
+    }
+
+    public OptionalDouble getLaunchVelocity() {
+        if (hasTarget) {
+            return OptionalDouble
+                    .of(toRPM(Math.hypot(getHorizontalVelocity().getAsDouble(), getVerticalVelocity().getAsDouble())));
+        }
+        return OptionalDouble.empty();
+    }
+
+    public OptionalDouble getLaunchAngle() {
+        if (hasTarget) {
+            return OptionalDouble.of(Math
+                    .toDegrees(Math.atan(getVerticalVelocity().getAsDouble() / getHorizontalVelocity().getAsDouble())));
+        }
+        return OptionalDouble.empty();
+    }
+
+    /**
+     * Converts a velocity to RPM (Rotations Per Minute).
+     * 
+     * @param velocity the velocity to convert
+     * @return the converted RPM value
+     */
+    public double toRPM(double velocity) {
+        return velocity * 60 / (2 * Math.PI * Constants.Launcher.launcherWheelRadius);
+    }
 
     @Override
     public void periodic() {
         hasTarget = LimelightHelpers.getTV("");
-        if(hasTarget) {
+        if (hasTarget) {
             distanceToTarget = OptionalDouble.of(Math.hypot(
-                getDistanceToTargetPlane().getAsDouble(),
-                getDistanceToTargetPlane().getAsDouble() * Math.tan(ty.getAsDouble())
-            ));
+                    getDistanceToTargetPlane().getAsDouble(),
+                    getDistanceToTargetPlane().getAsDouble() * Math.tan(ty.getAsDouble())));
         }
     }
-    
+
 }
