@@ -11,10 +11,8 @@ public class LauncherCommand extends CommandBase{
 
     private Launcher launcher;
     private int tagId;
-    private Indexer indexer;
-    private double speed;
 
-    public LauncherCommand (Launcher launcher, Indexer indexer, int tagId, double desiredVelocity, double speed){
+    public LauncherCommand (Launcher launcher, Indexer indexer, int tagId){
         this.launcher = launcher;
         this.indexer = indexer;
         this.tagId = tagId;
@@ -26,7 +24,7 @@ public class LauncherCommand extends CommandBase{
             //Feed the note
             Commands.deadline(
                 Commands.waitSeconds(0.5),
-                Commands.run(() -> indexer.startIndexer(speed), indexer),
+                Commands.run(() -> indexer.startIndexer(), indexer),
                 Commands.run(() -> launcher.startLauncher(Constants.Launcher.feedVelocity), launcher) //velocity is placeholder value (needs to be changed)
             ),
             //Stop feeding and aim

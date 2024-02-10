@@ -24,7 +24,7 @@ public class Indexer extends SubsystemBase{
       }
     
 
-    public void startIndexer(double speed){
+    public void startIndexer(){
 
         firstIntakeMotor.set(0.5);
         secondIntakeMotor.set(0.5);
