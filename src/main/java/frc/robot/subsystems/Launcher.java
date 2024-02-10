@@ -47,7 +47,7 @@ public class Launcher extends SubsystemBase {
     rightMotorEncoder = rightLaunchMotor.getEncoder();
     aimMotorEncoder = aimLaunchMotor.getEncoder();
 
-    aimPIDController = new PIDController(Constants.Launcher.kP, Constants.Launcher.kI, Constants.Launcher.kD);
+    aimPIDController = aimLaunchMotor.getPIDController();
 
     this.tab = Shuffleboard.getTab("Launcher");
     tab.addNumber("Launcher Angle (degrees)", () -> aimMotorEncoder.getPosition());
