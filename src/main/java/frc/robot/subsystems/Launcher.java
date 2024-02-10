@@ -42,7 +42,7 @@ public class Launcher extends SubsystemBase {
     this.ffWant = 0;
     leftLaunchMotor = new CANSparkMax(16, MotorType.kBrushless);
     rightLaunchMotor = new CANSparkMax(17, MotorType.kBrushless);
-    aimLaunchMotor = new CANSparkMax(0, MotorType.kBrushless);
+    aimLaunchMotor = new TalonFX(18);
     rightLaunchMotor.setInverted(true);
 
     leftMotorEncoder = leftLaunchMotor.getEncoder();
