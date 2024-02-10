@@ -64,15 +64,15 @@ public class Launcher extends SubsystemBase {
     aimLaunchMotor.setVoltage(output + ffWant);
   }
 
-  public void startLauncher(double desiredVelocity) {
+  public void startLauncher(desiredVelocity) {
     rightLaunchMotor.set(rightPIDController.calculate(rightMotorEncoder.getVelocity(), desiredVelocity));
     leftLaunchMotor.set(leftPIDController.calculate(leftMotorEncoder.getVelocity(), desiredVelocity));
   }
 
-  public void startLauncher(LaunchCalculations launchcalculations) {
-    leftLaunchMotor.set(launchcalculations.getLaunchVelocity());
-    rightLaunchMotor.set(launchcalculations.getLaunchVelocity());
-  }
+  // public void startLauncher(LaunchCalculations launchcalculations) {
+  //   leftLaunchMotor.set(launchcalculations.getLaunchVelocity());
+  //   rightLaunchMotor.set(launchcalculations.getLaunchVelocity());
+  // }
 
   public void stopLauncher() {
     leftLaunchMotor.set(0);
