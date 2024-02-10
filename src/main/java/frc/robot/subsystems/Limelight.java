@@ -74,10 +74,11 @@ public class Limelight extends SubsystemBase {
 
     public OptionalDouble getHeightDifferenceToObjective() {
         //will only return height difference if the target is in the list of shooter targets
-        if (hasTarget() && Constants.shooterAprilTags.contains((int) LimelightHelpers.getFiducialID(""))){
+        if (hasTarget() && isShooterTarget()){
+            int id = (int) LimelightHelpers.getFiducialID("");
             double heightDifference = Constants.Vision.LimelightOffsetZ -
-                    Constants.APRILTAGS.get((int) LimelightHelpers.getFiducialID("")).getZ() +
-                    Constants.APRILTAG_OBJECTIVE_OFFSETS.get((int) LimelightHelpers.getFiducialID("")).getZ();
+                    Constants.APRILTAGS.get(id).getZ() +
+                    Constants.SHOOTER_APRILTAG_OFFSETS.get(id).getZ();
             return OptionalDouble.of(heightDifference);
         } else {
             return OptionalDouble.empty();
@@ -121,6 +122,20 @@ public class Limelight extends SubsystemBase {
                     .toDegrees(Math.atan(getVerticalVelocity().getAsDouble() / getHorizontalVelocity().getAsDouble())));
         }
         return OptionalDouble.empty();
+    }
+    
+    public boolean isTargetInShooterRange() {
+        if (hasTarget()) {
+            return getDistanceToTarget().getAsDouble()< Constants.Launcher.maxLaunchDistance;
+        }
+        return false;
+    }
+
+    public boolean isShooterTarget() {
+        if (hasTarget()) {
+            return Constants.SHOOTER_APRILTAG_OFFSETS.containsKey((int) LimelightHelpers.getFiducialID(""));
+        }
+        return false;
     }
 
     /**

@@ -49,7 +49,7 @@ public final class Constants {
     public static final double gravityAcceleration = 9.81;
     public static final double launcherHeight = 0.574;
     public static final double launcherWheelRadius = 0.04826;
-
+    public static final double maxLaunchDistance = 3.0; // meters, still need to measure
   }
 
   public static final class Swerve {
@@ -198,7 +198,6 @@ public final class Constants {
    * {@link https://firstfrc.blob.core.windows.net/frc2024/FieldAssets/2024FieldDrawings.pdf},
    * page 4.
    */
-  public static final ArrayList<Integer> shooterAprilTags = new ArrayList<>(Arrays.asList(3, 4, 5, 6, 7, 8, 11, 12, 13, 14, 15, 16));
 
   public static final Map<Integer, Transform3d> APRILTAGS = Map.ofEntries(
       tag(-1, 0,0,0,0),
@@ -219,18 +218,14 @@ public final class Constants {
       tag(15, 182.73, 177.10, 52.00, 120),
       tag(16, 182.73, 146.19, 52.00, 240));
 
-  public static final Map<Integer, Transform3d> APRILTAG_OBJECTIVE_OFFSETS = Map.ofEntries(
+  public static final Map<Integer, Transform3d> SHOOTER_APRILTAG_OFFSETS = Map.ofEntries(
       tag(-1, 0, 0, 0, 0),
-      tag(1, 0, 0, 0, 0), // not yet measured
-      tag(2, 0, 0, 0, 0), // not yet measured
       tag(3, 0, 22.25, 28.5, 0),
       tag(4, 0, 0, 28.5, 0),
       tag(5, 0, 0, -19.38, 0),
       tag(6, 0, 0, -19.38, 0),
       tag(7, 0, 0, 28.5, 0),
       tag(8, 0, 22.25, 28.5, 0),
-      tag(9, 0, 0, 0, 0), // not yet measured
-      tag(10, 0, 0, 0, 0), // not yet measured
       tag(11, 0, 0, 0, 0), // not yet measured
       tag(12, 0, 0, 0, 0), // not yet measured
       tag(13, 0, 0, 0, 0), // not yet measured
