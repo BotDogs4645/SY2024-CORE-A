@@ -118,11 +118,7 @@ public class AprilTag {
   // orientation of the robot within 3D space.
 
 public Optional<Rotation2d> determineTargetRotationalOffset(Optional<Translation3d> targetPosition) {
-        // Optional<Transform3d> currentRelativePosition = determinePosition();
-        Optional<Transform3d> currentRelativePosition = Optional.of(new Transform3d(
-          new Translation3d(0, 0, 0),
-          new Rotation3d(0, 0, 0)
-        ));
+        Optional<Transform3d> currentRelativePosition = determinePosition();
 
         // if (currentRelativePosition.isEmpty()) {
         //     System.out.printf("An apriltag is currently not within view, and therefore, we are unable to calculate the positional offset of the target located at {X: %.3f, Y: %.3f, Z: %.3f}\n.", targetPosition.get().getX(), targetPosition.get().getY(), targetPosition.get().getZ());     
@@ -152,6 +148,4 @@ public Optional<Rotation2d> determineTargetRotationalOffset(Optional<Translation
         
         return Optional.of(new Rotation2d(targetXAxisOffset, targetZAxisOffset));
     }
-
-    Optional<Rotation2d> stasisTesting = determineTargetRotationalOffset(Optional.of(new Translation3d(0, 0, 0)));
-  }
+}
