@@ -42,6 +42,12 @@ public final class Constants {
     public static final double LimelightOffsetY = 0.0;
 
   }
+  public static class Launcher {
+    public static final double gravityAcceleration = 9.81;
+    public static final double launcherHeight = 0.574;
+    public static final double launcherWheelRadius = 0.04826;
+
+  }
 
   public static final class Swerve {
     public static final double stickDeadband = 0.1;

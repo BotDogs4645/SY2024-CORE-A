@@ -23,7 +23,6 @@ import frc.robot.LimelightHelpers;
  */
 public class Limelight extends SubsystemBase {
 
-
     private double x = Double.NaN;
     private double y = Double.NaN;
 
@@ -54,11 +53,9 @@ public class Limelight extends SubsystemBase {
     }
 
     public OptionalDouble getDistanceToTarget() {
-
         if (!ty.isPresent() && !hasTarget()) {
             return OptionalDouble.empty();
         }
-
         double d = (
             (Constants.Vision.LimelightOffsetZ - Constants.APRILTAGS.get(
                 (int) LimelightHelpers.getFiducialID("")).getZ()
@@ -68,7 +65,7 @@ public class Limelight extends SubsystemBase {
         return OptionalDouble.of(d);
     }
 
-    
+  
     public Optional<Pose3d> getTargetPoseRobotRealative() {
         try {
             return Optional.of(LimelightHelpers.getTargetPose3d_RobotSpace(""));             
@@ -77,6 +74,57 @@ public class Limelight extends SubsystemBase {
         }
     }
 
+    public OptionalDouble getVerticalVelocity() {
+        if (hasTarget) {
+            double heightDifference = Constants.APRILTAGS.get(getTagID().getAsInt()).getZ()
+                    - Constants.Launcher.launcherHeight;
+            return OptionalDouble.of(Math.sqrt(
+                    2 * Constants.Launcher.gravityAcceleration * (Constants.APRILTAGS.get(getTagID().getAsInt()).getZ())
+                            - Constants.Launcher.launcherHeight));
+        } else {
+            return OptionalDouble.empty();
+        }
+    }
+
+    public OptionalDouble getHorizontalVelocity() {
+        if (!hasTarget) {
+            return OptionalDouble.empty();
+        }
+
+        double timeToTravel = (-1 * getVerticalVelocity().getAsDouble() + Math.sqrt(
+                Math.pow(getVerticalVelocity().getAsDouble(), 2)
+                        + 2 * Constants.Launcher.gravityAcceleration
+                                * (Constants.APRILTAGS.get(getTagID().getAsInt()).getZ())
+                        - Constants.Launcher.launcherHeight))
+                / (Constants.Launcher.gravityAcceleration);
+        return OptionalDouble.of(getDistanceToTargetPlane().getAsDouble() / timeToTravel);
+    }
+
+    public OptionalDouble getLaunchVelocity() {
+        if (hasTarget) {
+            return OptionalDouble
+                    .of(toRPM(Math.hypot(getHorizontalVelocity().getAsDouble(), getVerticalVelocity().getAsDouble())));
+        }
+        return OptionalDouble.empty();
+    }
+
+    public OptionalDouble getLaunchAngle() {
+        if (hasTarget) {
+            return OptionalDouble.of(Math
+                    .toDegrees(Math.atan(getVerticalVelocity().getAsDouble() / getHorizontalVelocity().getAsDouble())));
+        }
+        return OptionalDouble.empty();
+    }
+
+    /**
+     * Converts a velocity to RPM (Rotations Per Minute).
+     * 
+     * @param velocity the velocity to convert
+     * @return the converted RPM value
+     */
+    public double toRPM(double velocity) {
+        return velocity * 60 / (2 * Math.PI * Constants.Launcher.launcherWheelRadius);
+    }
 
     @Override
     public void periodic() {
@@ -91,5 +139,5 @@ public class Limelight extends SubsystemBase {
         }
         SmartDashboard.putNumber("LL Distance", getDistanceToTarget().orElse(-1));
     }
-    
+
 }
