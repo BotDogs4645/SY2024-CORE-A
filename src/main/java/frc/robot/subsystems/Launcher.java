@@ -17,14 +17,19 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.LaunchCalculations;
-
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix.sensors.WPI_CANCoder;
+import com.ctre.phoenix6.hardware.TalonFX;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers.LimelightResults;
 
 public class Launcher extends SubsystemBase {
-  private CANSparkMax rightLaunchMotor, leftLaunchMotor, aimLaunchMotor;
-  private SparkRelativeEncoder rightMotorEncoder, leftMotorEncoder, aimMotorEncoder;
-  private SparkPIDController aimPIDController;
+  private CANSparkMax rightLaunchMotor, leftLaunchMotor;
+  private TalonFX aimLaunchMotor;
+  private SparkRelativeEncoder rightMotorEncoder, leftMotorEncoder;
+  private CANcoder cancoder;
+
   // all the rotational PID stuff
   private ArmFeedforward feedforward;
   private double pidWant;
@@ -35,21 +40,21 @@ public class Launcher extends SubsystemBase {
   public Launcher() {
     this.feedforward = new ArmFeedforward(0.48005, 0.54473, 1.3389, 0.19963);
     this.ffWant = 0;
-    leftLaunchMotor = new CANSparkMax(0, MotorType.kBrushless);
-    rightLaunchMotor = new CANSparkMax(0, MotorType.kBrushless);
+    leftLaunchMotor = new CANSparkMax(16, MotorType.kBrushless);
+    rightLaunchMotor = new CANSparkMax(17, MotorType.kBrushless);
     aimLaunchMotor = new CANSparkMax(0, MotorType.kBrushless);
     rightLaunchMotor.setInverted(true);
 
     leftMotorEncoder = leftLaunchMotor.getEncoder();
     rightMotorEncoder = rightLaunchMotor.getEncoder();
-    aimMotorEncoder = aimLaunchMotor.getEncoder();
+    aimMotorCancoder = aimLaunchMotor.getEncoder();
 
     aimPIDController = aimLaunchMotor.getPIDController();
 
     this.tab = Shuffleboard.getTab("Launcher");
-    tab.addNumber("Launcher Angle (degrees)", () -> aimMotorEncoder.getPosition());
-    tab.addNumber("PID Want", () -> aimMotorEncoder.getPIDVoltage());
-    tab.addNumber("FF want", () -> aimMotorEncoder.getFFVoltage());
+    tab.addNumber("Launcher Angle (degrees)", () -> cancoder.getPosition());
+    tab.addNumber("PID Want", () -> aimMotorCancoder.getPIDVoltage());
+    tab.addNumber("FF want", () -> aimMotorCancoder.getFFVoltage());
 
     tab.add(this);
   }
@@ -83,7 +88,7 @@ public class Launcher extends SubsystemBase {
   }
 
   public double getAimPosition() {
-    return aimMotorEncoder.getPosition() * (Math.PI / 180.0);
+    return aimMotorCancoder.getPosition() * (Math.PI / 180.0);
   }
 
   public double getError() {
@@ -128,9 +133,9 @@ public class Launcher extends SubsystemBase {
 
   public void aimLauncher(LaunchCalculations launchcalculations) {
     wantedAngle = launchcalculations.getLaunchAngle();
-    if (aimMotorEncoder.getPosition() < wantedAngle) {
+    if (aimMotorCancoder.getPosition() < wantedAngle) {
       aimLaunchMotor.set(0.4);
-    } else if (aimMotorEncoder.getPosition() > wantedAngle) {
+    } else if (aimMotorCancoder.getPosition() > wantedAngle) {
       aimLaunchMotor.set(-0.4);
     } else {
       aimLaunchMotor.set(0);
