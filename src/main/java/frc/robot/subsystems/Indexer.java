@@ -14,18 +14,12 @@ import com.revrobotics.RelativeEncoder;
 
 public class Indexer extends SubsystemBase{
     private CANSparkMax firstIntakeMotor, secondIntakeMotor;
-    private PIDController firstPIDController, secondPIDController;
-    private RelativeEncoder firstMotorEncoder, secondMotorEncoder;
+
     public void indexer (){
         firstIntakeMotor = new CANSparkMax(0, MotorType.kBrushless);
         secondIntakeMotor = new CANSparkMax(0, MotorType.kBrushless);
         secondIntakeMotor.setInverted(true);
 
-        firstPIDController = new PIDController(Constants.Intake.kP, Constants.Intake.kI, Constants.Intake.kD);
-        secondPIDController = new PIDController(Constants.Intake.kP, Constants.Intake.kI, Constants.Intake.kD);
-
-        firstMotorEncoder = firstIntakeMotor.getEncoder();
-        secondMotorEncoder = secondIntakeMotor.getEncoder();
 
       }
     
