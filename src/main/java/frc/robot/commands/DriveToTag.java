@@ -27,8 +27,9 @@ public class DriveToTag extends Command {
   private TrajectoryConfig config = 
     new TrajectoryConfig(
       Constants.Swerve.maxSpeed,
-      Constants.
-    );
+      Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared
+    )
+    .setKinematics(Constants.Swerve.swerveKinematics);
 
   public DriveToTag(Swerve drivetrain, Pose3d target) {
     this.drivetrain = drivetrain;

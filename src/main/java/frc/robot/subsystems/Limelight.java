@@ -5,7 +5,10 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.AprilTag;
 import frc.robot.Constants;
@@ -26,9 +29,12 @@ public class Limelight extends SubsystemBase {
     private OptionalDouble distanceToTarget = OptionalDouble.empty();
     private OptionalDouble ty = OptionalDouble.empty();
     private OptionalDouble tx = OptionalDouble.empty();
-    private boolean hasTarget;
 
     private AprilTag target = new AprilTag();
+
+    public boolean hasTarget() {
+        return (LimelightHelpers.getTA("") > 0.1) ? true : false;
+    }
 
     public OptionalDouble getLateralAngleToTarget() {
         return tx;
@@ -39,38 +45,31 @@ public class Limelight extends SubsystemBase {
     }
 
     public OptionalInt getTagID() {
-        if (hasTarget) {
+        try {
             return OptionalInt.of((int) LimelightHelpers.getFiducialID(""));
-        } else {
+        } catch (Exception e) {
             return OptionalInt.empty();
         }
     }
 
-    public OptionalDouble getDistanceToTargetPlane() {
-        Optional<Pose3d> relative = getTargetPoseRobotRelative();
-        if (relative.isPresent()) {
-            return OptionalDouble.of(relative.get().getY());
-        } else {
+    public OptionalDouble getDistanceToTarget() {
+        if (!ty.isPresent() && !hasTarget()) {
             return OptionalDouble.empty();
         }
-        // if (hasTarget) {
-        // return OptionalDouble
-        // .of((Constants.Vision.LimelightOffsetZ +
-        // Constants.APRILTAGS.get(getTagID().getAsInt()).getZ())
-        // / Math.tan(ty.getAsDouble() + Constants.Vision.LimelightAngleDegrees));
-        // } else {
-        // return OptionalDouble.empty();
-        // }
+        double d = (
+            (Constants.Vision.LimelightOffsetZ - Constants.APRILTAGS.get(
+                (int) LimelightHelpers.getFiducialID("")).getZ()
+            ) / Math.tan(Constants.Vision.LimelightAngleDegrees + ty.getAsDouble())
+        ); 
+
+        return OptionalDouble.of(d);
     }
 
-    public OptionalDouble getDistanceToTarget() {
-        return distanceToTarget;
-    }
-
-    public Optional<Pose3d> getTargetPoseRobotRelative() {
-        if (hasTarget) {
-            return Optional.of(LimelightHelpers.getTargetPose3d_RobotSpace(""));
-        } else {
+  
+    public Optional<Pose3d> getTargetPoseRobotRealative() {
+        try {
+            return Optional.of(LimelightHelpers.getTargetPose3d_RobotSpace(""));             
+        } catch (Exception e) {
             return Optional.empty();
         }
     }
@@ -129,12 +128,16 @@ public class Limelight extends SubsystemBase {
 
     @Override
     public void periodic() {
-        hasTarget = LimelightHelpers.getTV("");
-        if (hasTarget) {
-            distanceToTarget = OptionalDouble.of(Math.hypot(
-                    getDistanceToTargetPlane().getAsDouble(),
-                    getDistanceToTargetPlane().getAsDouble() * Math.tan(ty.getAsDouble())));
+        if(hasTarget()) {
+            tx = OptionalDouble.of(LimelightHelpers.getTX(""));
+            ty = OptionalDouble.of(LimelightHelpers.getTY(""));
+            distanceToTarget = getDistanceToTarget();
+        } else {
+            tx = OptionalDouble.empty();
+            ty = OptionalDouble.empty();
+            distanceToTarget = OptionalDouble.empty();
         }
+        SmartDashboard.putNumber("LL Distance", getDistanceToTarget().orElse(-1));
     }
 
 }
