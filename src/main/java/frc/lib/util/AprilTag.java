@@ -4,7 +4,10 @@
 
 package frc.lib.util;
 
+import java.io.OptionalDataException;
+import java.lang.annotation.Target;
 import java.util.Optional;
+import java.util.OptionalDouble;
 
 import javax.swing.text.html.Option;
 
@@ -41,7 +44,8 @@ public class AprilTag {
       if (targetPosition.isPresent()) {
         // System.out.printf("Target position: {x: %.3f, y: %.3f, z: %.3f}\n", t.getX(), t.getY(), t.getZ());
         if (getDirectDistance().isPresent()) {
-          System.out.println("Current spatial distance to primary target: " + getDirectDistance());
+        //   System.out.println("Current spatial distance to primary target: " + getDirectDistance().get());
+            determineTargetRotationalOffset(Optional.of(targetPos().get().getTranslation()));
         }
       } else {
         System.out.println("No Limelight target.");
@@ -51,7 +55,9 @@ public class AprilTag {
   // Fetches, calculates, and returns the offset from the robot to the current primary apriltag target.
 
   public Optional<Transform3d> targetPos() {
-        Optional<double[]> targetPose = Optional.of(entry("targetpose_robotspace").get().getDoubleArray(new double[0]));
+        // Optional<double[]> targetPose = Optional.of(entry("targetpose_robotspace").get().getDoubleArray(new double[0]));
+        Optional<double[]> targetPose = Optional.of(new double[] {5, 10, 0, 0, 0, 0});
+        
 
         if (targetPose.isPresent()) {
           return Optional.of(new Transform3d(
@@ -74,6 +80,36 @@ public class AprilTag {
     } else {
       return Optional.empty();
     }
+  }
+
+  // Returns the 
+
+  public Optional<Integer> determineRotationalSector(double currentXOrientation) {
+
+    if (Optional.of(currentXOrientation).isEmpty()) {
+        return Optional.empty();
+    }
+
+    Optional<Integer> rotationalSector = Optional.empty();
+    double secondaryXOrientation = currentXOrientation;
+    
+    if (currentXOrientation == 0) {
+        secondaryXOrientation = 360;
+    } else if (currentXOrientation == 360) {
+        secondaryXOrientation = 0;
+    }
+
+    if ((currentXOrientation > 270 || secondaryXOrientation > 270) && 90 > currentXOrientation) {
+        rotationalSector = Optional.of(0);
+    } else if ((currentXOrientation > 0 || secondaryXOrientation > 0) && currentXOrientation < 180) {
+        rotationalSector = Optional.of(1);
+    } else if (currentXOrientation > 90 && currentXOrientation < 270) {
+        rotationalSector = Optional.of(2);
+    } else if (currentXOrientation > 180 && currentXOrientation < 360) {
+        rotationalSector = Optional.of(3);
+    }
+
+    return rotationalSector;
   }
 
   // Determines the robot's position on the playing 
@@ -102,7 +138,11 @@ public class AprilTag {
         currentAprilTagLocation.getRotation().getZ() + relativePositionalData.get().getRotation().getZ(),
     };
 
-    Optional<Transform3d> currentRelativePosition = Optional.of(new Transform3d (
+    if (currentRelativeRotation[0] == 360) {
+        currentRelativeRotation[0] = 0;
+    }
+
+    Optional<Transform3d> currentRelativePosition = Optional.of(new Transform3d(
         new Translation3d(currentRelativeLocation[0], currentRelativeLocation[1], currentRelativeLocation[2]),
         new Rotation3d(currentRelativeRotation[0], currentRelativeRotation[1], currentRelativeRotation[2])
     ));
@@ -118,7 +158,20 @@ public class AprilTag {
   // orientation of the robot within 3D space.
 
 public Optional<Rotation2d> determineTargetRotationalOffset(Optional<Translation3d> targetPosition) {
-        Optional<Transform3d> currentRelativePosition = determinePosition();
+        // Optional<Transform3d> currentRelativePosition = determinePosition();
+        Optional<Transform3d> currentRelativePosition = Optional.of(new Transform3d(
+            new Translation3d(0, 0, 0),
+            new Rotation3d(0, 0, 0)
+        ));
+
+        if (currentRelativePosition.isEmpty()) {
+            return Optional.empty();
+        }
+
+        double currentXOrientation = currentRelativePosition.get().getRotation().getX();
+        double targetXAxisOffset;
+        double targetZAxisOffset;
+        int rotationalSector = determineRotationalSector(currentXOrientation).get();
 
         // if (currentRelativePosition.isEmpty()) {
         //     System.out.printf("An apriltag is currently not within view, and therefore, we are unable to calculate the positional offset of the target located at {X: %.3f, Y: %.3f, Z: %.3f}\n.", targetPosition.get().getX(), targetPosition.get().getY(), targetPosition.get().getZ());     
@@ -129,9 +182,8 @@ public Optional<Rotation2d> determineTargetRotationalOffset(Optional<Translation
             System.out.println("The robot is currently located at the same position as the apriltag target.");
             return Optional.empty();
         }
-
-        double targetXAxisOffset = Math.toDegrees(Math.asin(Math.abs(currentRelativePosition.get().getX() - targetPosition.get().getX()) / Math.sqrt(Math.pow(currentRelativePosition.get().getX() - targetPosition.get().getX(), 2) + Math.pow(currentRelativePosition.get().getY() - targetPosition.get().getY(), 2))));
-        double targetZAxisOffset;
+        
+        targetXAxisOffset = Math.toDegrees(Math.asin(Math.abs(currentRelativePosition.get().getX() - targetPosition.get().getX()) / Math.sqrt(Math.pow(currentRelativePosition.get().getX() - targetPosition.get().getX(), 2) + Math.pow(currentRelativePosition.get().getY() - targetPosition.get().getY(), 2)))) + Constants.Vision.rotationalSectorOffsets.get(rotationalSector);
 
         if (currentRelativePosition.get().getZ() == targetPosition.get().getZ()) {
             targetZAxisOffset = 0;
@@ -139,12 +191,9 @@ public Optional<Rotation2d> determineTargetRotationalOffset(Optional<Translation
             targetZAxisOffset = Math.toDegrees(Math.asin(Math.abs(currentRelativePosition.get().getZ() - targetPosition.get().getZ()) / (targetPosition.get().getDistance(currentRelativePosition.get().getTranslation()))));
         }
 
-        if ((currentRelativePosition.get().getX() > targetPosition.get().getX() && ((-90 < currentRelativePosition.get().getRotation().getX()) && (currentRelativePosition.get().getRotation().getX() < 90))) || (currentRelativePosition.get().getY() > targetPosition.get().getY() && ((-90 < currentRelativePosition.get().getRotation().getY()) && (currentRelativePosition.get().getRotation().getY() < 90)))) {
-            targetXAxisOffset += 180;
-        }
 
-
-        System.out.println("Target X Offset: " + targetXAxisOffset + ", Target Z Offset: " + targetZAxisOffset);
+        System.out.println("Original Target X Offset: " + (targetXAxisOffset - Constants.Vision.rotationalSectorOffsets.get(rotationalSector)));
+        // System.out.println("Target X Offset: " + targetXAxisOffset + ", Target Z Offset: " + targetZAxisOffset);
         
         return Optional.of(new Rotation2d(targetXAxisOffset, targetZAxisOffset));
     }

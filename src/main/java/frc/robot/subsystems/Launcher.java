@@ -52,9 +52,9 @@ public class Launcher extends ProfiledPIDSubsystem {
     this.feedforward = new ArmFeedforward(0.48005, 0.54473, 1.3389, 0.19963);
     this.ffWant = 0;
     super.getController().setTolerance(1.5, .5);
-        leftLaunchMotor = new CANSparkMax(0, MotorType.kBrushless);
-        rightLaunchMotor = new CANSparkMax(0, MotorType.kBrushless);
-        aimLaunchMotor = new CANSparkMax(0, MotorType.kBrushless);
+        leftLaunchMotor = new CANSparkMax(14, MotorType.kBrushless);
+        rightLaunchMotor = new CANSparkMax(15, MotorType.kBrushless);
+        aimLaunchMotor = new CANSparkMax(16, MotorType.kBrushless);
         rightLaunchMotor.setInverted(true);
 
         leftMotorEncoder = leftLaunchMotor.getEncoder();

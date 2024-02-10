@@ -14,8 +14,8 @@ public class Intake extends SubsystemBase {
     public boolean intakeEnabled;
 
     public Intake() {
-        firstIntakeMotor = new CANSparkMax(0, MotorType.kBrushless);
-        secondIntakeMotor = new CANSparkMax(0, MotorType.kBrushless);
+        firstIntakeMotor = new CANSparkMax(17, MotorType.kBrushless);
+        secondIntakeMotor = new CANSparkMax(18, MotorType.kBrushless);
         secondIntakeMotor.setInverted(true);
 
         intakeEnabled = false;

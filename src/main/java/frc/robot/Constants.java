@@ -66,6 +66,20 @@ public final class Constants {
     public static final double kLimelightAngleDegrees = 55;
                                                       //height  //conversion const
     public static final double kLimelightHeightMeters = 16 * 0.0254;
+
+    // Creates a map of the a
+
+    public static final Map<Integer, Integer> rotationalSectorOffsets = Map.ofEntries(
+      sector(0, 270),
+      sector(1, 0),
+      sector(2, 90),
+      sector(3, 180)
+    );
+
+    private static Map.Entry<Integer, Integer> sector(int sectorID, int sectorOffset) {
+
+      return Map.entry(sectorID, sectorOffset);
+    }
   }
 
   public static final class Swerve {
