@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.lib.util.LaunchCalculations;
 
 import frc.robot.Constants;
@@ -28,7 +27,6 @@ public class Launcher extends SubsystemBase {
   private SparkRelativeEncoder rightMotorEncoder, leftMotorEncoder, aimMotorEncoder;
   private SparkPIDController aimPIDController;
   // all the rotational PID stuff
-
   private ArmFeedforward feedforward;
   private double pidWant;
   private double ffWant;
