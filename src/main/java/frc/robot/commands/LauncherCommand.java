@@ -10,6 +10,7 @@ import frc.robot.subsystems.Indexer;
 public class LauncherCommand extends CommandBase{
 
     private Launcher launcher;
+    private Indexer indexer;
     private int tagId;
     private double desiredVelocity;
 
@@ -26,7 +27,7 @@ public class LauncherCommand extends CommandBase{
             //Feed the note
             Commands.deadline(
                 Commands.waitSeconds(0.5),
-                Commands.run(() -> indexer.startIndexer(), indexer),
+                Commands.run(() -> indexer.startIndexer(0.5), indexer),
                 Commands.run(() -> launcher.startLauncher(0.5), launcher)
             ),
             //Stop feeding and aim

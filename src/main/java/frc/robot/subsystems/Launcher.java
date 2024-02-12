@@ -4,40 +4,51 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.SparkRelativeEncoder;
 
 // import edu.wpi.first.apriltag.AprilTag;
 import frc.lib.util.AprilTag;
 import edu.wpi.first.apriltag.AprilTagDetection;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.LaunchCalculations;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix.sensors.WPI_CANCoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers.LimelightResults;
 
-public class Launcher extends SubsystemBase {
+public class Launcher extends SubsystemBase{
   private CANSparkMax rightLaunchMotor, leftLaunchMotor;
   private TalonFX aimLaunchMotor;
-  private SparkRelativeEncoder rightMotorEncoder, leftMotorEncoder;
+  private RelativeEncoder rightMotorEncoder, leftMotorEncoder;
   private CANcoder cancoder;
-
+  private SparkPIDController leftPIDController;
+  private SparkPIDController rightPIDController;
   // all the rotational PID stuff
   private ArmFeedforward feedforward;
   private double pidWant;
   private double ffWant;
   public double wantedAngle;
   private ShuffleboardTab tab;
+  
+ public Launcher() {
 
-  public Launcher() {
     this.feedforward = new ArmFeedforward(0.48005, 0.54473, 1.3389, 0.19963);
     this.ffWant = 0;
     leftLaunchMotor = new CANSparkMax(16, MotorType.kBrushless);
@@ -47,12 +58,22 @@ public class Launcher extends SubsystemBase {
 
     leftMotorEncoder = leftLaunchMotor.getEncoder();
     rightMotorEncoder = rightLaunchMotor.getEncoder();
-    aimMotorCancoder = new CANcoder(19);
+    leftPIDController = leftLaunchMotor.getPIDController();
+    rightPIDController = rightLaunchMotor.getPIDController();
+    cancoder = new CANcoder(19);
+    aimLaunchMotor.setNeutralMode(NeutralModeValue.Brake);
 
-    this.tab = Shuffleboard.getTab("Launcher");
-    tab.addNumber("Launcher Angle (degrees)", () -> cancoder.getPosition());
-    tab.addNumber("PID Want", () -> aimMotorCancoder.getPIDVoltage());
-    tab.addNumber("FF want", () -> aimMotorCancoder.getFFVoltage());
+
+
+    this.tab = Shuffleboard.getTab("Arm");
+    tab.addNumber("Aim Absolute Angle (degrees)", () -> (cancoder.getAbsolutePosition()).getValue());
+    tab.addNumber("Aim velo (degrees / second)", () ->  (cancoder.getVelocity()).getValue());
+    tab.addNumber("Aim amp", () -> (aimLaunchMotor.getStatorCurrent()).getValue());
+    tab.addNumber("Aim volts", () -> (aimLaunchMotor.getMotorVoltage()).getValue());
+
+    tab.addNumber("PID Want", () -> getPIDVoltage());
+    tab.addNumber("FF want", () -> getFFVoltage());
+
 
     tab.add(this);
   }
@@ -63,15 +84,14 @@ public class Launcher extends SubsystemBase {
 
     aimLaunchMotor.setVoltage(output + ffWant);
   }
-
-  public void startLauncher(desiredVelocity) {
+  public void startLauncher(double desiredVelocity) {
     rightLaunchMotor.set(rightPIDController.calculate(rightMotorEncoder.getVelocity(), desiredVelocity));
     leftLaunchMotor.set(leftPIDController.calculate(leftMotorEncoder.getVelocity(), desiredVelocity));
   }
 
   // public void startLauncher(LaunchCalculations launchcalculations) {
-  //   leftLaunchMotor.set(launchcalculations.getLaunchVelocity());
-  //   rightLaunchMotor.set(launchcalculations.getLaunchVelocity());
+  // leftLaunchMotor.set(launchcalculations.getLaunchVelocity());
+  // rightLaunchMotor.set(launchcalculations.getLaunchVelocity());
   // }
 
   public void stopLauncher() {
@@ -86,15 +106,7 @@ public class Launcher extends SubsystemBase {
   }
 
   public double getAimPosition() {
-    return aimMotorCancoder.getPosition() * (Math.PI / 180.0);
-  }
-
-  public double getError() {
-    return super.getController().getPositionError();
-  }
-
-  public boolean atSetpoint() {
-    return super.getController().atSetpoint();
+    return (cancoder.getPosition()).getValue() * (Math.PI / 180.0);
   }
 
   public double getPIDVoltage() {
@@ -131,9 +143,9 @@ public class Launcher extends SubsystemBase {
 
   public void aimLauncher(LaunchCalculations launchcalculations) {
     wantedAngle = launchcalculations.getLaunchAngle();
-    if (aimMotorCancoder.getPosition() < wantedAngle) {
+    if ((cancoder.getPosition()).getValue() < wantedAngle) {
       aimLaunchMotor.set(0.4);
-    } else if (aimMotorCancoder.getPosition() > wantedAngle) {
+    } else if ((cancoder.getPosition().getValue()) > wantedAngle) {
       aimLaunchMotor.set(-0.4);
     } else {
       aimLaunchMotor.set(0);
