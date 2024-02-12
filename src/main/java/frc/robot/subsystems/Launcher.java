@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.PIDController;
 import com.revrobotics.SparkRelativeEncoder;
 
 // import edu.wpi.first.apriltag.AprilTag;
@@ -36,10 +37,7 @@ import frc.robot.LimelightHelpers.LimelightResults;
 public class Launcher extends SubsystemBase{
   private CANSparkMax rightLaunchMotor, leftLaunchMotor;
   private TalonFX aimLaunchMotor;
-  private RelativeEncoder rightMotorEncoder, leftMotorEncoder;
   private CANcoder cancoder;
-  private SparkPIDController leftPIDController;
-  private SparkPIDController rightPIDController;
   // all the rotational PID stuff
   private ArmFeedforward feedforward;
   private double pidWant;
@@ -85,8 +83,8 @@ public class Launcher extends SubsystemBase{
     aimLaunchMotor.setVoltage(output + ffWant);
   }
   public void startLauncher(double desiredVelocity) {
-    rightLaunchMotor.set(rightPIDController.calculate(rightMotorEncoder.getVelocity(), desiredVelocity));
-    leftLaunchMotor.set(leftPIDController.calculate(leftMotorEncoder.getVelocity(), desiredVelocity));
+    rightLaunchMotor.set(desiredVelocity);
+    leftLaunchMotor.set(desiredVelocity);
   }
 
   // public void startLauncher(LaunchCalculations launchcalculations) {
