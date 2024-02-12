@@ -77,9 +77,9 @@ public class Launcher extends SubsystemBase{
 
     aimLaunchMotor.setVoltage(output + ffWant);
   }
-  public void startLauncher(double desiredVelocity) {
-    rightLaunchMotor.set(desiredVelocity);
-    leftLaunchMotor.set(desiredVelocity);
+  public void startLauncher(double speed) {
+    rightLaunchMotor.set(speed);
+    leftLaunchMotor.set(speed);
   }
 
   // public void startLauncher(LaunchCalculations launchcalculations) {
