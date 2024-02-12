@@ -53,11 +53,6 @@ public class Launcher extends SubsystemBase{
     rightLaunchMotor = new CANSparkMax(17, MotorType.kBrushless);
     aimLaunchMotor = new TalonFX(18);
     rightLaunchMotor.setInverted(true);
-
-    leftMotorEncoder = leftLaunchMotor.getEncoder();
-    rightMotorEncoder = rightLaunchMotor.getEncoder();
-    leftPIDController = leftLaunchMotor.getPIDController();
-    rightPIDController = rightLaunchMotor.getPIDController();
     cancoder = new CANcoder(19);
     aimLaunchMotor.setNeutralMode(NeutralModeValue.Brake);
 
