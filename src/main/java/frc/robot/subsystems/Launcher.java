@@ -4,7 +4,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.PIDController;
 import com.revrobotics.SparkRelativeEncoder;
 
 // import edu.wpi.first.apriltag.AprilTag;
@@ -71,7 +70,6 @@ public class Launcher extends SubsystemBase{
     tab.add(this);
   }
 
-  @Override
   public void useOutput(double output, TrapezoidProfile.State setpoint) {
     ffWant = feedforward.calculate(setpoint.position, setpoint.velocity);
 
@@ -92,7 +90,6 @@ public class Launcher extends SubsystemBase{
     rightLaunchMotor.set(0);
   }
 
-  @Override
   public double getMeasurement() {
     // Return the process variable measurement here
     return getAimPosition();
