@@ -36,7 +36,7 @@ public class LauncherCommand extends CommandBase{
                 Commands.run(() -> indexer.stopIndexer(), indexer),
                 Commands.run(() -> launcher.stopLauncher(), launcher),
                 Commands.waitSeconds(1),
-                Commands.run(() -> launcher.aimLauncher(launcher.getLaunchCalculations(tagId)), launcher)
+                Commands.run(() -> launcher.aimLauncher(), launcher)
             ),
             // Stop arm
             Commands.runOnce(() -> launcher.lockInAim(), launcher),
@@ -47,7 +47,7 @@ public class LauncherCommand extends CommandBase{
             // Shoot notes
             Commands.deadline(
                 Commands.waitSeconds(1),
-                Commands.run(() -> launcher.startLauncher(launcher.getLaunchCalculations(tagId)), launcher)
+                Commands.run(() -> launcher.startLauncher(launcher.getLaunchVelocity()), launcher)
             ),
 
             // Stop launcher

@@ -166,7 +166,6 @@ public final class Constants {
     public static final double trapHeight = 1.436;
     public static final double launcherHeight = 0.574;
   }
-
   public static class Limelight {
 
     // Limelight offset relative to the center of the robot.

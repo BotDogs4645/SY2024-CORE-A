@@ -34,56 +34,26 @@ import frc.robot.Constants;
 import frc.robot.LimelightHelpers.LimelightResults;
 
 public class Launcher extends SubsystemBase{
-  private CANSparkMax rightLaunchMotor, leftLaunchMotor;
-  private TalonFX aimLaunchMotor;
+  private TalonFX rightLaunchMotor, leftLaunchMotor;
+  private CANSparkMax aimLaunchMotor;
   private CANcoder cancoder;
-  // all the rotational PID stuff
-  private ArmFeedforward feedforward;
-  private double pidWant;
-  private double ffWant;
-  public double wantedAngle;
-  private ShuffleboardTab tab;
-  
+  private SparkPIDController controller;
+  private double wantedAngle;
+
  public Launcher() {
+    leftLaunchMotor = new TalonFX(0);
+    rightLaunchMotor = new TalonFX(0);
+    aimLaunchMotor = new CANSparkMax(0, MotorType.kBrushless);
+    controller = aimLaunchMotor.getPIDController();
 
-    this.feedforward = new ArmFeedforward(0.48005, 0.54473, 1.3389, 0.19963);
-    this.ffWant = 0;
-    leftLaunchMotor = new CANSparkMax(16, MotorType.kBrushless);
-    rightLaunchMotor = new CANSparkMax(17, MotorType.kBrushless);
-    aimLaunchMotor = new TalonFX(18);
+  
     rightLaunchMotor.setInverted(true);
-    cancoder = new CANcoder(19);
-    aimLaunchMotor.setNeutralMode(NeutralModeValue.Brake);
-
-
-
-    this.tab = Shuffleboard.getTab("Arm");
-    tab.addNumber("Aim Absolute Angle (degrees)", () -> (cancoder.getAbsolutePosition()).getValue());
-    tab.addNumber("Aim velo (degrees / second)", () ->  (cancoder.getVelocity()).getValue());
-    tab.addNumber("Aim amp", () -> (aimLaunchMotor.getStatorCurrent()).getValue());
-    tab.addNumber("Aim volts", () -> (aimLaunchMotor.getMotorVoltage()).getValue());
-
-    tab.addNumber("PID Want", () -> getPIDVoltage());
-    tab.addNumber("FF want", () -> getFFVoltage());
-
-
-    tab.add(this);
-  }
-
-  public void useOutput(double output, TrapezoidProfile.State setpoint) {
-    ffWant = feedforward.calculate(setpoint.position, setpoint.velocity);
-
-    aimLaunchMotor.setVoltage(output + ffWant);
+    cancoder = new CANcoder(0);
   }
   public void startLauncher(double speed) {
     rightLaunchMotor.set(speed);
     leftLaunchMotor.set(speed);
   }
-
-  // public void startLauncher(LaunchCalculations launchcalculations) {
-  // leftLaunchMotor.set(launchcalculations.getLaunchVelocity());
-  // rightLaunchMotor.set(launchcalculations.getLaunchVelocity());
-  // }
 
   public void stopLauncher() {
     leftLaunchMotor.set(0);
@@ -96,53 +66,22 @@ public class Launcher extends SubsystemBase{
   }
 
   public double getAimPosition() {
-    return (cancoder.getPosition()).getValue() * (Math.PI / 180.0);
-  }
-
-  public double getPIDVoltage() {
-    return pidWant;
+    return cancoder.getPosition().getValue() * (Math.PI / 180.0);
   }
 
   public void setWantedAngle(double wantedAngle) {
     this.wantedAngle = wantedAngle;
   }
-
-  public double getFFVoltage() {
-    return ffWant;
-  }
-
-  public LaunchCalculations getLaunchCalculations(int id) {
-    double vertDistance;
-    double horizDistance;
-
-    if (id == 6 || id == 5) {
-      vertDistance = Constants.Launcher.ampHeight - Constants.Launcher.launcherHeight;
-      horizDistance = AprilTag.getDirectDistance();
-    } else if (id == 7 || id == 4) {
-      vertDistance = Constants.Launcher.speakerHeight - Constants.Launcher.launcherHeight;
-      horizDistance = AprilTag.getDirectDistance();
-    } else if (id == 11 || id == 12 || id == 13 || id == 14 || id == 15 || id == 16) {
-      vertDistance = Constants.Launcher.trapHeight - Constants.Launcher.launcherHeight;
-      horizDistance = AprilTag.getDirectDistance();
-    } else {
-      vertDistance = 0;
-      horizDistance = AprilTag.getDirectDistance();
-    }
-    return new LaunchCalculations(vertDistance, horizDistance);
-  }
-
-  public void aimLauncher(LaunchCalculations launchcalculations) {
-    wantedAngle = launchcalculations.getLaunchAngle();
-    if ((cancoder.getPosition()).getValue() < wantedAngle) {
-      aimLaunchMotor.set(0.4);
-    } else if ((cancoder.getPosition().getValue()) > wantedAngle) {
-      aimLaunchMotor.set(-0.4);
-    } else {
-      aimLaunchMotor.set(0);
-    }
+  public void aimLauncher() {
+    wantedAngle = limelight.getLaunchAngle();
+    aimLaunchMotor.set(controller.getPositionPIDWrappingMinInput());
   }
 
   public void lockInAim() {
     aimLaunchMotor.set(0);
   }
 }
+//Take out all Trapazontal stuff(y)
+//use the built in spark PID
+//we are still using a cancoder(y)
+// new vision API(y)
