@@ -1,21 +1,23 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.ctre.phoenix6.hardware.TalonFX;
 
 import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
 
-    private CANSparkMax firstIntakeMotor, secondIntakeMotor;
+    private TalonFX firstIntakeMotor, secondIntakeMotor;
 
     public boolean intakeEnabled;
 
     public Intake() {
-        firstIntakeMotor = new CANSparkMax(17, MotorType.kBrushless);
-        secondIntakeMotor = new CANSparkMax(18, MotorType.kBrushless);
+        firstIntakeMotor = new TalonFX(17);
+        secondIntakeMotor = new TalonFX(18);
         secondIntakeMotor.setInverted(true);
 
         intakeEnabled = false;
@@ -30,7 +32,7 @@ public class Intake extends SubsystemBase {
         secondIntakeMotor.set(intakeSpeed);
     }
 
-    // Activates the intake through the activation of each motor at the speed defined in in the 'Constants.Intake' class.
+    // Initates the intake through the activation of each motor at the speed defined in in the 'Constants.Intake' class.
     
     public void activateIntake() {
         intakeEnabled = true;
@@ -39,7 +41,7 @@ public class Intake extends SubsystemBase {
         secondIntakeMotor.set(Constants.Intake.defaultMotorSpeed);
     }
 
-    // Deactivates the intake through the deactivation of each of the associated motors.
+    // Halts the intake through the deactivation of each of the associated motors.
 
     public void deactivateIntake() {
         intakeEnabled = false;

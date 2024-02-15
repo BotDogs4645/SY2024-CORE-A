@@ -123,19 +123,19 @@ public class Launcher extends ProfiledPIDSubsystem {
     public void aimLauncher(int id){
         if (id == 6 || id == 5){
             vertDistance = Constants.Launcher.ampHeight - Constants.Launcher.launcherHeight;
-            horizDistance = aprilTagInstance.getDirectDistance().get();
+            horizDistance = aprilTagInstance.getDirectDistance(aprilTagInstance.targetPos()).get();
         }
         else if (id == 7 || id == 4){
             vertDistance = Constants.Launcher.speakerHeight - Constants.Launcher.launcherHeight;
-            horizDistance = aprilTagInstance.getDirectDistance().get();
+            horizDistance = aprilTagInstance.getDirectDistance(aprilTagInstance.targetPos()).get();
         }
         else if (id == 11 || id == 12 || id == 13 || id == 14 || id == 15 || id == 16){
             vertDistance = Constants.Launcher.trapHeight - Constants.Launcher.launcherHeight;
-            horizDistance = aprilTagInstance.getDirectDistance().get();
+            horizDistance = aprilTagInstance.getDirectDistance(aprilTagInstance.targetPos()).get();
         }
         else{
             vertDistance = 0;
-            horizDistance = aprilTagInstance.getDirectDistance().get();
+            horizDistance = aprilTagInstance.getDirectDistance(aprilTagInstance.targetPos()).get();
         }
         LaunchCalculations launchcalculations = new LaunchCalculations(vertDistance, horizDistance);
         wantedAngle = launchcalculations.getLaunchAngle();
