@@ -39,7 +39,7 @@ public class AdvanceToTarget extends Command {
 
     @Override
     public void execute() {
-        if (targetPosition.isPresent() && aprilTagInstance.validTargetInput(Optional.of(targetPosition.get().getTranslation()))) {
+        if (!isFinished() && targetPosition.isPresent() && aprilTagInstance.validTargetInput(Optional.of(targetPosition.get().getTranslation()))) {
             double xAngle = aprilTagInstance.determineTargetRotationalOffset(Optional.of(targetPosition.get().getTranslation())).get()[0];
 
             double translationVal;
@@ -49,15 +49,15 @@ public class AdvanceToTarget extends Command {
 
             if (xAngle < Constants.AdvanceToTarget.minAngle) {
                 translationVal = 0;
-                strafeVal = Constants.AdvanceToTarget.swerveStrafeValue;
+                strafeVal = 0;
                 rotationVal = Constants.AdvanceToTarget.swerveRotationalValue;
             } else if (xAngle > Constants.AdvanceToTarget.maxAngle) {
                 translationVal = 0;
-                strafeVal = Constants.AdvanceToTarget.swerveStrafeValue;
+                strafeVal = 0;
                 rotationVal = -Constants.AdvanceToTarget.swerveRotationalValue;
             } else {
                 translationVal = Constants.AdvanceToTarget.swerveTranslationValue;
-                strafeVal = Constants.AdvanceToTarget.swerveStrafeValue;
+                strafeVal = 0;
                 rotationVal = 0;
             }
 
@@ -76,14 +76,16 @@ public class AdvanceToTarget extends Command {
                 rotationVal * Constants.Swerve.maxAngularVelocity,
                 !robotActivated.getAsBoolean(),
                 true);
+        } else {
+            targetPosition = Optional.empty();
         }
     }
 
     // @Override
     // public void end(boolean interrupted) {
-        
+
     //     if (aprilTagInstance.targetPos() == null) {
-    //         CommandScheduler.getInstance().schedule(new SearchForTag(swerveDrive, aprilTagInstance));
+    //         CommandScheduler.getInstance().schedule(new AdvanceToTarget(swerveDrive, aprilTagInstance));
     //     }
     // }
 

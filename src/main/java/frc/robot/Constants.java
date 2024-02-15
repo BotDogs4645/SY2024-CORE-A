@@ -29,10 +29,10 @@ public final class Constants {
 
   public static class AdvanceToTarget {
 
-    // Measured in portion of maximum speed
-    public static final double swerveTranslationValue = 0.3;
-    public static final double swerveStrafeValue = 0.0;
-    public static final double swerveRotationalValue = 0.3;
+    // Measured on a directional-based scale ranging from -1 to 1
+    public static final double swerveTranslationValue = 0.1;
+    // public static final double swerveStrafeValue = 0.0;
+    public static final double swerveRotationalValue = 0.1;
 
     // Measured in degrees
     public static final double minAngle = -12;
@@ -40,7 +40,6 @@ public final class Constants {
 
     // Measured in meters
     public static final double maximumLaunchDistance = 1;
-
 }
 
   public static final class PathPlanner {

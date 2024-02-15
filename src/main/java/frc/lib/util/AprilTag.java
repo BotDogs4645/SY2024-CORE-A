@@ -4,20 +4,8 @@
 
 package frc.lib.util;
 
-import java.io.OptionalDataException;
-import java.lang.annotation.Target;
 import java.util.Optional;
-import java.util.OptionalDouble;
 
-import javax.swing.TransferHandler.TransferSupport;
-import javax.swing.text.html.Option;
-import javax.xml.crypto.dsig.Transform;
-
-import org.opencv.core.Mat;
-
-import com.fasterxml.jackson.core.sym.NameN;
-
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
