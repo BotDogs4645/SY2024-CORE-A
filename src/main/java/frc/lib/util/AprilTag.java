@@ -13,6 +13,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
+import frc.robot.commands.AdvanceToTarget;
 
 // The AprilTag class, harnessed in order to
 // calculate and execute various 'vision'-related
@@ -22,6 +24,13 @@ import frc.robot.Constants;
 public class AprilTag {
 
     public static final NetworkTable TABLE = NetworkTableInstance.getDefault().getTable("limelight");
+
+    public final AdvanceToTarget advanceToTargetInstance;
+
+    public AprilTag(AdvanceToTarget advanceToTargetInstance) {
+      this.advanceToTargetInstance = advanceToTargetInstance;
+    }
+
 
     // Fetches and returns the NetworkTable entry of the parameter provided in the method call.
 
@@ -40,6 +49,7 @@ public class AprilTag {
         if (getDirectDistance(targetPosition).isPresent()) {
         //   System.out.println("Current spatial distance to primary target: " + getDirectDistance(targetPosition).get());
             determineTargetRotationalOffset(Optional.of(targetPos().get().getTranslation()));
+            advanceToTargetInstance.specifyTarget(targetPosition.get());
         }
       } else {
         System.out.println("No Limelight target.");

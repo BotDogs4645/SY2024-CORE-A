@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -14,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.util.AprilTag;
+import frc.robot.commands.AdvanceToTarget;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Pneumatics;
@@ -36,7 +39,8 @@ public class RobotContainer {
   private final Swerve drivetrain = new Swerve();
   private final Pneumatics m_pneumaticsSubsystem = new Pneumatics();
 
-  private final AprilTag aprilTagInstance = new AprilTag();
+  private final AdvanceToTarget advanceToTargetInstance = new AdvanceToTarget(drivetrain, true);
+  private final AprilTag aprilTagInstance = new AprilTag(advanceToTargetInstance);
 
   private final Intake intake = new Intake();
   // private final IntakeCommand intake = new IntakeCommand(intakeInstance);
