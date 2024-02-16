@@ -45,6 +45,9 @@ public class Launcher extends SubsystemBase{
     rightLaunchMotor = new TalonFX(0);
     aimLaunchMotor = new CANSparkMax(0, MotorType.kBrushless);
     controller = aimLaunchMotor.getPIDController();
+    controller.setPositionPIDWrappingEnabled(false);
+    controller.setPositionPIDWrappingMinInput(0);
+    controller.setPositionPIDWrappingMaxInput(90);
 
   
     rightLaunchMotor.setInverted(true);
@@ -74,14 +77,11 @@ public class Launcher extends SubsystemBase{
   }
   public void aimLauncher() {
     wantedAngle = limelight.getLaunchAngle();
-    aimLaunchMotor.set(controller.getPositionPIDWrappingMinInput());
+    controller.setReference(wantedAngle, CANSparkMax.ControlType.kPosition);
+   
   }
 
   public void lockInAim() {
     aimLaunchMotor.set(0);
   }
 }
-//Take out all Trapazontal stuff(y)
-//use the built in spark PID
-//we are still using a cancoder(y)
-// new vision API(y)
