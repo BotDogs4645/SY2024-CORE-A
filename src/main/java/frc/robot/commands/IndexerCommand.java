@@ -16,13 +16,13 @@ public class IndexerCommand extends CommandBase{
     @Override
     public void initialize() {
         Commands.sequence(
-            // Move arm up
+            // Start up indexer
             Commands.deadline(
                 Commands.waitSeconds(0.5),
                 Commands.run(() -> indexer.startIndexer(0.5), indexer)
             ),
             // Wait a bit
-            Commands.waitSeconds(0.1),
+            Commands.waitSeconds(0.1),//Test time it takes for note to leave intake
             // Stop indexer
             Commands.runOnce(() -> indexer.stopIndexer(), indexer)
             ).handleInterrupt(() -> {

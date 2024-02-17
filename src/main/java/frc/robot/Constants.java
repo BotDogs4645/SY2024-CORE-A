@@ -161,6 +161,7 @@ public final class Constants {
   public static final int kDriverControllerPort = 0;
   public static final int pcmCanID = 15;
   public static class Launcher{
+    //Unsure if we will need this but keep in case the Launch Angle calculations launch the note towards the AprilTag and not the hole
     public static final double ampHeight = 0.66;
     public static final double speakerHeight = 1.984;
     public static final double trapHeight = 1.436;

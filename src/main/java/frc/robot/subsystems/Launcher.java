@@ -57,6 +57,7 @@ public class Launcher extends SubsystemBase{
   public void stopLauncher() {
     leftLaunchMotor.set(0);
     rightLaunchMotor.set(0);
+    aimLaunchMotor.set(0);
   }
 
   public double getMeasurement() {
@@ -65,6 +66,7 @@ public class Launcher extends SubsystemBase{
   }
 
   public double getAimPosition() {
+    // Math to get the degrees of the aimLaunchMotor
     return cancoder.getPosition().getValue() * (Math.PI / 180.0);
   }
 
@@ -72,6 +74,7 @@ public class Launcher extends SubsystemBase{
     this.wantedAngle = wantedAngle;
   }
   public void aimLauncher() {
+    //sets the setpoint angle to the angle calculated by the getLaunchAngle method
     wantedAngle = limelight.getLaunchAngle();
     controller.setReference(wantedAngle, CANSparkMax.ControlType.kPosition);
    

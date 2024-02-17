@@ -32,7 +32,7 @@ public class LauncherCommand extends CommandBase{
             ),
             //Stop feeding and aim
             Commands.deadline(
-                Commands.waitSeconds(0.5),
+                Commands.waitSeconds(0.5),//Test to find the amount of time for note to leave intake but not shoot out of launcher
                 Commands.run(() -> indexer.stopIndexer(), indexer),
                 Commands.run(() -> launcher.stopLauncher(), launcher),
                 Commands.waitSeconds(1),
