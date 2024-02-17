@@ -76,8 +76,4 @@ public class Launcher extends SubsystemBase{
     controller.setReference(wantedAngle, CANSparkMax.ControlType.kPosition);
    
   }
-
-  public void lockInAim() {
-    aimLaunchMotor.set(0);
-  }
 }

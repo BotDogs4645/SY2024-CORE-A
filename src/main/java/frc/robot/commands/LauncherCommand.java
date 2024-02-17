@@ -38,8 +38,6 @@ public class LauncherCommand extends CommandBase{
                 Commands.waitSeconds(1),
                 Commands.run(() -> launcher.aimLauncher(), launcher)
             ),
-            // Stop arm
-            Commands.runOnce(() -> launcher.lockInAim(), launcher),
 
             // Wait a bit
             Commands.waitSeconds(0.1),
@@ -53,7 +51,6 @@ public class LauncherCommand extends CommandBase{
             // Stop launcher
             Commands.runOnce(() -> launcher.stopLauncher(), launcher)
         ).handleInterrupt(() -> {
-            launcher.lockInAim();
             launcher.stopLauncher();
         }).schedule();
     }
