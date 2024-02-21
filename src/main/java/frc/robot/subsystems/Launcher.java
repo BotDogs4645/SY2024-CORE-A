@@ -30,33 +30,33 @@ import frc.robot.Constants;
 import frc.robot.LimelightHelpers.LimelightResults;
 
 public class Launcher extends SubsystemBase{
-  private TalonFX rightLaunchMotor, leftLaunchMotor;
+  private TalonFX bottomLaunchMotor, topLaunchMotor;
   private CANSparkMax aimLaunchMotor;
   private CANcoder cancoder;
   private SparkPIDController controller;
   private double wantedAngle;
 
  public Launcher() {
-    leftLaunchMotor = new TalonFX(0);
-    rightLaunchMotor = new TalonFX(0);
-    aimLaunchMotor = new CANSparkMax(0, MotorType.kBrushless);
+    topLaunchMotor = new TalonFX(13);
+    bottomLaunchMotor = new TalonFX(14);
+    aimLaunchMotor = new CANSparkMax(18, MotorType.kBrushless);
     controller = aimLaunchMotor.getPIDController();
     controller.setPositionPIDWrappingEnabled(false);
     controller.setPositionPIDWrappingMinInput(0);
     controller.setPositionPIDWrappingMaxInput(90);
 
   
-    rightLaunchMotor.setInverted(true);
+    bottomLaunchMotor.setInverted(true);
     cancoder = new CANcoder(0);
   }
   public void startLauncher(double speed) {
-    rightLaunchMotor.set(speed);
-    leftLaunchMotor.set(speed);
+    bottomLaunchMotor.set(speed);
+    topLaunchMotor.set(speed);
   }
 
   public void stopLauncher() {
-    leftLaunchMotor.set(0);
-    rightLaunchMotor.set(0);
+    topLaunchMotor.set(0);
+    bottomLaunchMotor.set(0);
     aimLaunchMotor.set(0);
   }
 
