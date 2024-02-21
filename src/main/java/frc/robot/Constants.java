@@ -6,6 +6,9 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.util.PIDConstants;
 import com.revrobotics.*;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -100,6 +103,14 @@ public final class Constants {
 
     /* Angle Encoder Invert */
     public static final boolean canCoderInvert = false;
+
+    public static final CANcoderConfiguration canCoderConfig;
+
+    static {
+      canCoderConfig = new CANcoderConfiguration();
+      canCoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
+      canCoderConfig.MagnetSensor.SensorDirection = Constants.Swerve.canCoderInvert ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive;
+    }
 
     /* Module Specific Constants */
     /* Front Left Module - Module 0 */

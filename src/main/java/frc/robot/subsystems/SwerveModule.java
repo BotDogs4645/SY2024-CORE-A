@@ -15,7 +15,6 @@ import frc.lib.config.SwerveModuleConstants;
 import frc.lib.math.OnboardModuleState;
 import frc.lib.util.CANSparkMaxUtil;
 import frc.robot.Constants;
-import frc.robot.Robot;
 
 public class SwerveModule {
   public int moduleNumber;
@@ -75,7 +74,7 @@ public class SwerveModule {
 
   private void configAngleEncoder() {
     angleEncoder.getConfigurator().apply(new CANcoderConfiguration());
-    angleEncoder.getConfigurator().apply(Robot.ctreConfigs.swerveCanCoderConfig);
+    angleEncoder.getConfigurator().apply(Constants.Swerve.canCoderConfig);
   }
 
   private void configAngleMotor() {
