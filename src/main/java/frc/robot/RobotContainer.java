@@ -6,11 +6,14 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.DriveToTag;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Pneumatics;
@@ -27,12 +30,10 @@ import frc.robot.subsystems.Swerve;
  */
 public class RobotContainer {
 
-  private final CommandXboxController driveController = new CommandXboxController(0);
+  private final CommandXboxController driveController = new CommandXboxController(Constants.kDriverControllerPort);
 
   private final Swerve drivetrain = new Swerve();
   private final Limelight limelight = new Limelight();
-  private final Pneumatics m_pneumaticsSubsystem = new Pneumatics();
-  private final CommandXboxController m_driverController = new CommandXboxController(Constants.kDriverControllerPort);
   
   private final SendableChooser<Command> autoChooser;
 
@@ -54,10 +55,14 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    m_driverController.b().onTrue(m_pneumaticsSubsystem.toggleClimber());
     driveController.a().onTrue(new InstantCommand(() -> {
       drivetrain.zeroGyro();
     }, drivetrain));
+
+    // driveController.y().onTrue(new DriveToTag(
+    //   drivetrain,
+    //   limelight.getTargetPose()
+    // ));
   }
 
   public Command getAutonomousCommand() {
