@@ -49,6 +49,14 @@ public final class Constants {
 
   }
 
+  public static final class Pneumatics {
+    public static final int pcmCanID = 15;
+    public static final int climberForward = 7;
+    public static final int climberReverse = 6;
+    public static final int ampGuideForward = 4;
+    public static final int ampGuideReverse = 5;
+  }
+
   public static final class Swerve {
     public static final double stickDeadband = 0.1;
 
@@ -96,6 +104,10 @@ public final class Constants {
     public static final double driveKS = 0.667;
     public static final double driveKV = 2.44;
     public static final double driveKA = 0.27;
+
+    /* Trajectory Controller PID Values */
+    public static final double xKP = 0.0;
+    public static final double yKp = 0.0;
 
     /* Drive Motor Conversion Factors */
     public static final double driveConversionPositionFactor = (wheelDiameter * Math.PI) / driveGearRatio;
