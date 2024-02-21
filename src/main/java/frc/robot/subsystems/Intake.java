@@ -1,37 +1,52 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.ctre.phoenix6.hardware.TalonFX;
+
+import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
-    private CANSparkMax firstIntakeMotor, secondIntakeMotor;
 
-    private boolean robotIntakeActivated = false;
+    private TalonFX firstIntakeMotor, secondIntakeMotor;
+
+    public boolean intakeEnabled;
 
     public Intake() {
-        firstIntakeMotor = new CANSparkMax(0, MotorType.kBrushless);
-        secondIntakeMotor = new CANSparkMax(0, MotorType.kBrushless);
+        firstIntakeMotor = new TalonFX(17);
+        secondIntakeMotor = new TalonFX(18);
         secondIntakeMotor.setInverted(true);
+
+        intakeEnabled = false;
     }
 
-    public void toggleIntake() {
-        robotIntakeActivated = !robotIntakeActivated;
-        dynamicIntakeExecution(robotIntakeActivated);
+    // Allows the program to set a specific speed at which the intake will run.
+
+    public void setSpecificIntakeSpeed(double intakeSpeed) {
+        intakeEnabled = true;
+        
+        firstIntakeMotor.set(intakeSpeed);
+        secondIntakeMotor.set(intakeSpeed);
     }
 
-    public void setIntake(boolean activated) {
-        robotIntakeActivated = activated;
+    // Initates the intake through the activation of each motor at the speed defined in in the 'Constants.Intake' class.
+    
+    public void activateIntake() {
+        intakeEnabled = true;
+
+        firstIntakeMotor.set(Constants.Intake.defaultMotorSpeed);
+        secondIntakeMotor.set(Constants.Intake.defaultMotorSpeed);
     }
 
-    public void dynamicIntakeExecution(boolean robotIntakeActivated) {
-        if (robotIntakeActivated) {
-            firstIntakeMotor.set(0.5);
-            secondIntakeMotor.set(0.5);
-        } else {
-            firstIntakeMotor.set(0);
-            secondIntakeMotor.set(0);
-        }
+    // Halts the intake through the deactivation of each of the associated motors.
+
+    public void deactivateIntake() {
+        intakeEnabled = false;
+
+        firstIntakeMotor.set(0);
+        secondIntakeMotor.set(0);
     }
 }

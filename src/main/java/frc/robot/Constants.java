@@ -6,8 +6,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 
-import com.pathplanner.lib.util.PIDConstants;
-import com.revrobotics.*;
 import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -24,6 +22,26 @@ import frc.lib.config.SwerveModuleConstants;
  */
 public final class Constants {
 
+  public static final class Intake {
+    public static final double defaultMotorSpeed = 0;
+    public static final double autonomousIntakeDuration = 0;
+  }
+
+  public static class AdvanceToTarget {
+
+    // Measured on a directional-based scale ranging from -1 to 1
+    public static final double swerveTranslationValue = 0.1;
+    // public static final double swerveStrafeValue = 0.0;
+    public static final double swerveRotationalValue = 0.1;
+
+    // Measured in degrees
+    public static final double minAngle = -12;
+    public static final double maxAngle = -8;
+
+    // Measured in meters
+    public static final double maximumLaunchDistance = 1;
+}
+
   public static final class PathPlanner {
     public static final double driveKP = 2.5;
     public static final double driveKI = 0.0;
@@ -31,6 +49,23 @@ public final class Constants {
     public static final double turnKP = 0.3;
     public static final double turnKI = 0.0;
     public static final double turnKD = 0.75;
+  }
+  public static final class Launcher {
+    public static final double launcherWheelRadius = 0.04826;
+    public static final double gravityAcceleration = 9.81;
+    public static final double kP = 0.05;
+    public static final double kI = 0.0001;
+    public static final double kD = 0.0;
+    public static final double ampHeight = 0.66;
+    public static final double speakerHeight = 1.984;
+    public static final double trapHeight = 1.569;
+    public static final double launcherHeight = 0.574;
+    public static final double feedVelocity = 0.5; // just a placeholder value - will need to be changed
+  }
+  public static final class Vision {
+    public static final double kLimelightAngleDegrees = 55;
+                                                      //height  //conversion const
+    public static final double kLimelightHeightMeters = 16 * 0.0254;
   }
 
   public static final class Vision {
@@ -62,6 +97,8 @@ public final class Constants {
 
     public static final int pigeonID = 14;
     public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
+
+
 
     /* Drivetrain Constants */
     public static final double trackWidth = Units.inchesToMeters(27.75);
