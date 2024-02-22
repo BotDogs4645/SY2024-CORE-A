@@ -55,6 +55,10 @@ public final class Constants {
     public static final double trapHeight = 1.436;
   }
 
+  public static class Intake {
+    public static final double intakeSpeed = 0.5;
+  }
+
   public static final class Pneumatics {
     public static final int pcmCanID = 15;
     public static final int climberForward = 6;

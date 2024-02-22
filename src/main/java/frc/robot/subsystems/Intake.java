@@ -1,19 +1,15 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import frc.robot.Constants;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 
 public class Intake extends SubsystemBase {
-    private CANSparkMax firstIntakeMotor, secondIntakeMotor;
-
+    private PWMSparkMax IntakeMotor;
     private boolean robotIntakeActivated = false;
 
     public Intake() {
-        firstIntakeMotor = new CANSparkMax(0, MotorType.kBrushless);
-        secondIntakeMotor = new CANSparkMax(0, MotorType.kBrushless);
-        secondIntakeMotor.setInverted(true);
+        IntakeMotor = new PWMSparkMax(0);
     }
 
     public void toggleIntake() {
@@ -23,15 +19,14 @@ public class Intake extends SubsystemBase {
 
     public void setIntake(boolean activated) {
         robotIntakeActivated = activated;
+        dynamicIntakeExecution(robotIntakeActivated);
     }
 
     public void dynamicIntakeExecution(boolean robotIntakeActivated) {
         if (robotIntakeActivated) {
-            firstIntakeMotor.set(0.5);
-            secondIntakeMotor.set(0.5);
+            IntakeMotor.set(Constants.Intake.intakeSpeed);
         } else {
-            firstIntakeMotor.set(0);
-            secondIntakeMotor.set(0);
+            IntakeMotor.set(0);
         }
     }
 }
