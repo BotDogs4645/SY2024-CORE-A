@@ -77,6 +77,5 @@ public class Launcher extends SubsystemBase{
     //sets the setpoint angle to the angle calculated by the getLaunchAngle method
     wantedAngle = limelight.getLaunchAngle();
     controller.setReference(wantedAngle, CANSparkMax.ControlType.kPosition);
-   
   }
 }

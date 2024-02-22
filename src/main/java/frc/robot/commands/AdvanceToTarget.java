@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import java.util.Optional;
 
 import frc.robot.Constants;
+import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Swerve;
 import frc.lib.util.AprilTag;
 import frc.lib.util.ObstacleDetection;
@@ -27,8 +28,9 @@ public class AdvanceToTarget extends Command {
     private SlewRateLimiter strafeLimiter = new SlewRateLimiter(3.0);
     private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3.0);
 
-    public AdvanceToTarget(Swerve swerveDrive, boolean robotActivated) {
+    public AdvanceToTarget(Swerve swerveDrive, AprilTag aprilTagInstance, boolean robotActivated) {
         this.swerveDrive = swerveDrive;
+        this.aprilTagInstance = aprilTagInstance;
         this.robotActivated = robotActivated;
         addRequirements(swerveDrive);
     }
