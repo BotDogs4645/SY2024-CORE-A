@@ -19,9 +19,11 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveToTag;
 import frc.lib.util.AprilTag;
+import frc.lib.util.LaunchCalculations;
 import frc.robot.commands.AdvanceToTarget;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Swerve;
 
@@ -41,13 +43,12 @@ public class RobotContainer {
   private final Swerve drivetrain = new Swerve();
   private final Pneumatics m_pneumaticsSubsystem = new Pneumatics();
 
-  private final AdvanceToTarget advanceToTargetInstance = new AdvanceToTarget(drivetrain, true);
-  private final AprilTag aprilTagInstance = new AprilTag(advanceToTargetInstance);
+  private final Limelight limelightInstance = new Limelight();
+  private final AprilTag aprilTagInstance = new AprilTag(limelightInstance);
+  private final AdvanceToTarget advanceToTargetInstance = new AdvanceToTarget(drivetrain, aprilTagInstance, true);
 
   private final Intake intake = new Intake();
   // private final IntakeCommand intake = new IntakeCommand(intakeInstance);
-
-  private final Limelight limelight = new Limelight();
   
   private final SendableChooser<Command> autoChooser;
 
@@ -79,10 +80,6 @@ public class RobotContainer {
             intake.activateIntake();
           }
         }));
-
-    // Command autoIntakeCommand = Commands.deadline(
-    //     Commands.waitSeconds(Constants.Intake.autonomousIntakeDuration),
-    //     Commands.startEnd(() -> intake.activateIntake(), () -> intake.deactivateIntake(), intake));
 
     SequentialCommandGroup autoIntakeCommand = new SequentialCommandGroup (
       Commands.runOnce(() -> intake.activateIntake(), intake),

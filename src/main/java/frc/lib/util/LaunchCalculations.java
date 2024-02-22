@@ -1,9 +1,12 @@
 package frc.lib.util;
 
+import frc.lib.util.AprilTag;
 import frc.robot.Constants;
+import java.util.Optional;
+
 
 public class LaunchCalculations {
-    private double verticalDistance, horizontalDistance;
+    private AprilTag aprilTagInstance;
 
     /**
      * Returns a LaunchCalculations object that can be used to calculate the
@@ -13,28 +16,49 @@ public class LaunchCalculations {
      * @param verticalDistance  the vertical distance between the launcher and the target
      * @param horizontalDistance the forward distance between the launcher and the target
      */
-    public LaunchCalculations(double verticalDistance, double horizontalDistance) {
-        this.verticalDistance = verticalDistance;
-        this.horizontalDistance = horizontalDistance;
+    public LaunchCalculations(AprilTag aprilTagInstance) {
+        this.aprilTagInstance = aprilTagInstance;
+    }
+
+    public Optional<Double> getVerticalDistance() {
+        return Optional.of(aprilTagInstance.targetPos().get().getZ());
+    }
+
+    public Optional<Double> getHorizontalDistance() {
+        return aprilTagInstance.getDirectDistance(Optional.of(aprilTagInstance.determinePosition().get().plus(aprilTagInstance.targetPos().get())));
     }
 
     /**
      * Calculates the vertical velocity vector component required to reach the target.
      * @return vertical velocity component in m/s
      */
-    public double getVerticalVelocity() {
-        return Math.sqrt(2 * Constants.Launcher.gravityAcceleration * verticalDistance);
+    public Optional<Double> getVerticalVelocity() {
+        Optional<Double> verticalDistance = getVerticalDistance();
+        
+        if (verticalDistance.isPresent()) {
+            return Optional.of(Math.sqrt(2 * Constants.Launcher.gravityAcceleration * verticalDistance.get()));
+        } else {
+            return Optional.empty();
+        }
     }
 
     /**
      * Calculates the horizontal velocity vector component required to reach the target.
      * @return horizontal velocity component in m/s
      */
-    public double getHorizontalVelocity() {
-        double timeToTravel = (-1 * getHorizontalVelocity() + Math.sqrt(
-                Math.pow(getHorizontalVelocity(), 2) + 2 * Constants.Launcher.gravityAcceleration * verticalDistance))
+    public Optional<Double> getHorizontalVelocity() {
+        Optional<Double> verticalDistance = getVerticalDistance();
+        Optional<Double> horizontalDistance = getHorizontalDistance();
+
+        if (verticalDistance.isPresent() && horizontalDistance.isPresent()) {
+            double timeToTravel = (-1 * getHorizontalVelocity().get() + Math.sqrt(
+                Math.pow(getHorizontalVelocity().get(), 2) + 2 * Constants.Launcher.gravityAcceleration * verticalDistance.get()))
                 / (Constants.Launcher.gravityAcceleration);
-        return horizontalDistance / timeToTravel;
+
+            return Optional.of(horizontalDistance.get() / timeToTravel);
+        } else {
+            return Optional.empty();
+        }
     }
 
     /**
@@ -42,7 +66,7 @@ public class LaunchCalculations {
      * @return launch velocity in RPM
      */
     public double getLaunchVelocity() {
-        return toRPM(Math.sqrt(Math.pow(getVerticalVelocity(), 2) + Math.pow(getHorizontalVelocity(), 2)));
+        return toRPM(Math.sqrt(Math.pow(getVerticalVelocity().get(), 2) + Math.pow(getHorizontalVelocity().get(), 2)));
     }
 
     /**
@@ -50,7 +74,7 @@ public class LaunchCalculations {
      * @return launch angle in radians
      */
     public double getLaunchAngle() {
-        return Math.toDegrees(Math.atan(getVerticalVelocity() / getHorizontalVelocity()));
+        return Math.toDegrees(Math.atan(getVerticalVelocity().get() / getHorizontalVelocity().get()));
     }
 
 

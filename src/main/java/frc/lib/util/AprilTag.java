@@ -25,11 +25,9 @@ public class AprilTag {
   public static final NetworkTable TABLE = NetworkTableInstance.getDefault().getTable("limelight");
 
   public final Limelight limelightInstance;
-  public final AdvanceToTarget advanceToTargetInstance;
 
-  public AprilTag(Limelight limelightInstance, AdvanceToTarget advanceToTargetInstance) {
+  public AprilTag(Limelight limelightInstance) {
     this.limelightInstance = limelightInstance;
-    this.advanceToTargetInstance = advanceToTargetInstance;
   }
 
   public Optional<Transform3d> targetPos() {
@@ -39,17 +37,16 @@ public class AprilTag {
   // Executes periodically while quering the primary target apriltag's 
   // current position and printing the distance to such in the console.
   public void aprilTagPeriodic() {
-    Optional<Transform3d> targetPosition = limelightInstance.targetPos();
-
-    if (targetPosition.isPresent()) {
-      // System.out.printf("Target position: {x: %.3f, y: %.3f, z: %.3f}\n", t.getX(), t.getY(), t.getZ());
-      if (getDirectDistance(targetPosition).isPresent()) {
-      //   System.out.println("Current spatial distance to primary target: " + getDirectDistance(targetPosition).get());
-          determineTargetRotationalOffset(Optional.of(limelightInstance.targetPos().get().getTranslation()));
-          advanceToTargetInstance.specifyTarget(targetPosition.get());
-      }
-    } else {
+    if (determinePosition().isEmpty() || targetPos().isEmpty()) {
       System.out.println("No Limelight target.");
+    }
+
+    Transform3d targetPosition = determinePosition().get().plus(targetPos().get());
+
+    // System.out.printf("Target position: {x: %.3f, y: %.3f, z: %.3f}\n", t.getX(), t.getY(), t.getZ());
+    if (getDirectDistance(Optional.of(targetPosition)).isPresent()) {
+        determineTargetRotationalOffset(Optional.of(targetPos().get().getTranslation()));
+        // advanceToTargetInstance.specifyTarget(targetPosition.get());
     }
   }
 
@@ -83,7 +80,7 @@ public class AprilTag {
   }
 
   // Determines the robot's position on the playing 
-  // field, through the use of limelight's vector distance API.
+  // field, through the use of Limelight's vector distance API.
   public Optional<Transform3d> determinePosition() {
     Optional<Transform3d> relativePositionalData = limelightInstance.targetPos();
 
