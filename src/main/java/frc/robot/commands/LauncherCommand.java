@@ -45,7 +45,9 @@ public class LauncherCommand extends CommandBase{
             // Shoot notes
             Commands.deadline(
                 Commands.waitSeconds(1),
-                Commands.run(() -> launcher.startLauncher(launcher.getLaunchVelocity()), launcher)
+                // TODO: Was causing build errors. Re-implement this section.
+                // Commands.run(() -> launcher.startLauncher(launcher.getLaunchVelocity()), launcher)
+                Commands.none()
             ),
 
             // Stop launcher

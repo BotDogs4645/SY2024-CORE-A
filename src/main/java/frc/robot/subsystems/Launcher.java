@@ -75,7 +75,8 @@ public class Launcher extends SubsystemBase{
   }
   public void aimLauncher() {
     //sets the setpoint angle to the angle calculated by the getLaunchAngle method
-    wantedAngle = limelight.getLaunchAngle();
+    // TODO: Was causing build errors. Re-implement this section.
+    // wantedAngle = limelight.getLaunchAngle();
     controller.setReference(wantedAngle, CANSparkMax.ControlType.kPosition);
    
   }
