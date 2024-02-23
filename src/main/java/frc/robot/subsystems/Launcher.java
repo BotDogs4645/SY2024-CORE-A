@@ -1,33 +1,13 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.SparkRelativeEncoder;
-
-import edu.wpi.first.apriltag.AprilTagDetection;
-import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.LimelightHelpers.LimelightResults;
 
 public class Launcher extends SubsystemBase{
   private TalonFX bottomLaunchMotor, topLaunchMotor;
@@ -37,9 +17,9 @@ public class Launcher extends SubsystemBase{
   private double wantedAngle;
 
  public Launcher() {
-    topLaunchMotor = new TalonFX(13);
-    bottomLaunchMotor = new TalonFX(14);
-    aimLaunchMotor = new CANSparkMax(18, MotorType.kBrushless);
+    topLaunchMotor = new TalonFX(Constants.Launcher.topMotorID);
+    bottomLaunchMotor = new TalonFX(Constants.Launcher.bottomMotorID);
+    aimLaunchMotor = new CANSparkMax(Constants.Launcher.angleMotorID, MotorType.kBrushless);
     controller = aimLaunchMotor.getPIDController();
     controller.setPositionPIDWrappingEnabled(false);
     controller.setPositionPIDWrappingMinInput(0);
