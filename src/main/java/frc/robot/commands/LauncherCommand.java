@@ -4,12 +4,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Launcher;
+import frc.robot.subsystems.Limelight;
 import frc.robot.Constants;
 import frc.robot.subsystems.Indexer;
 
-public class LauncherCommand extends Command {
+public class LauncherCommand extends CommandBase{
 
     private Launcher launcher;
+    private Limelight limelight;
     private Indexer indexer;
     private int tagId;
     private double desiredVelocity;
@@ -45,9 +47,7 @@ public class LauncherCommand extends Command {
             // Shoot notes
             Commands.deadline(
                 Commands.waitSeconds(1),
-                // TODO: Was causing build errors. Re-implement this section.
-                // Commands.run(() -> launcher.startLauncher(launcher.getLaunchVelocity()), launcher)
-                Commands.none()
+                Commands.run(() -> launcher.startLauncher(limelight.getLaunchVelocity().getAsDouble()), launcher)
             ),
 
             // Stop launcher

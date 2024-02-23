@@ -6,7 +6,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -16,8 +15,9 @@ public class Launcher extends SubsystemBase{
   private CANcoder cancoder;
   private SparkPIDController controller;
   private double wantedAngle;
+  private Limelight limelight;
 
- public Launcher() {
+ public Launcher(Limelight limelight) {
     topLaunchMotor = new TalonFX(Constants.Launcher.topMotorID);
     bottomLaunchMotor = new TalonFX(Constants.Launcher.bottomMotorID);
     aimLaunchMotor = new CANSparkMax(Constants.Launcher.angleMotorID, MotorType.kBrushless);
@@ -25,6 +25,7 @@ public class Launcher extends SubsystemBase{
     controller.setPositionPIDWrappingEnabled(false);
     controller.setPositionPIDWrappingMinInput(0);
     controller.setPositionPIDWrappingMaxInput(90);
+    
 
   
     bottomLaunchMotor.setInverted(true);
@@ -56,8 +57,7 @@ public class Launcher extends SubsystemBase{
   }
   public void aimLauncher() {
     //sets the setpoint angle to the angle calculated by the getLaunchAngle method
-    Limelight limelight = new Limelight;
-    wantedAngle = limelight.getLaunchAngle();
+    wantedAngle = limelight.getLaunchAngle().getAsDouble();
     controller.setReference(wantedAngle, CANSparkMax.ControlType.kPosition);
    
   }
