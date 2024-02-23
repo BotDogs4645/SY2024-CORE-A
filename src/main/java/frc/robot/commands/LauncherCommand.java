@@ -7,7 +7,7 @@ import frc.robot.subsystems.Launcher;
 import frc.robot.Constants;
 import frc.robot.subsystems.Indexer;
 
-public class LauncherCommand extends CommandBase{
+public class LauncherCommand extends Command {
 
     private Launcher launcher;
     private Indexer indexer;
