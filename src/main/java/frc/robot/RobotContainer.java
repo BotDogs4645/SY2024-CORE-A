@@ -34,6 +34,7 @@ public class RobotContainer {
 
   private final Swerve drivetrain = new Swerve();
   private final Limelight limelight = new Limelight();
+  private final Pneumatics pneumatics = new Pneumatics();
   
   private final SendableChooser<Command> autoChooser;
 
@@ -59,10 +60,13 @@ public class RobotContainer {
       drivetrain.zeroGyro();
     }, drivetrain));
 
-    // driveController.y().onTrue(new DriveToTag(
-    //   drivetrain,
-    //   limelight.getTargetPose()
-    // ));
+
+    // driveController.y().onTrue(
+    //   new InstantCommand(() -> {
+    //     pneumatics.extendClimber();
+    //   }, pneumatics)
+    // );
+
   }
 
   public Command getAutonomousCommand() {
