@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Indexer;
 
-public class IndexerCommand extends CommandBase{
+public class IndexerCommand extends Command {
 
     private Indexer indexer;
 

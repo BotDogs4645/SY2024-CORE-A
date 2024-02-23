@@ -10,6 +10,7 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -32,7 +33,7 @@ public class Swerve extends SubsystemBase {
   private Field2d field;
 
   public Swerve() {
-    gyro = new Pigeon2(Constants.Swerve.pigeonID);
+    gyro = new Pigeon2(Constants.Swerve.pigeonID, "*");
     gyro.getConfigurator().apply(new Pigeon2Configuration());
     zeroGyro();
 
@@ -66,13 +67,23 @@ public class Swerve extends SubsystemBase {
     SmartDashboard.putData("Field", field);
   }
 
+  public void driveToTag(Pose3d target) {
+    SwerveModuleState[] states =
+        Constants.Swerve.swerveKinematics.toSwerveModuleStates(
+          new ChassisSpeeds(target.getX(), target.getY(), target.getRotation().getAngle()));
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.Swerve.maxSpeed);
+
+    for(SwerveModule mod : mSwerveMods) {
+      mod.setDesiredState(states[mod.moduleNumber], false);
+    }
+  }
+
   public void drive(
       Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
     SwerveModuleState[] swerveModuleStates =
         Constants.Swerve.swerveKinematics.toSwerveModuleStates(
             fieldRelative
-                ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                    translation.getX(), translation.getY(), rotation, getYaw())
+                ? ChassisSpeeds.fromFieldRelativeSpeeds(translation.getX(), translation.getY(), rotation, getYaw())
                 : new ChassisSpeeds(translation.getX(), translation.getY(), rotation));
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
 
@@ -123,6 +134,10 @@ public class Swerve extends SubsystemBase {
     return (Constants.Swerve.invertGyro)
         ? Rotation2d.fromDegrees(360 - gyro.getYaw().getValue())
         : Rotation2d.fromDegrees(gyro.getYaw().getValue());
+  }
+
+  public Pigeon2 getGyro() {
+    return gyro;
   }
 
   @Override
