@@ -49,7 +49,7 @@ public class AdvanceToTarget extends Command {
 
     @Override
     public void execute() {
-        if (!isFinished() && targetPosition.isPresent() && aprilTagInstance.validTargetInput(Optional.of(targetPosition.get().getTranslation()))) {
+        if (targetPosition.isPresent() && aprilTagInstance.validTargetInput(Optional.of(targetPosition.get().getTranslation()))) {
             double xAngle = aprilTagInstance.determineTargetRotationalOffset(Optional.of(targetPosition.get().getTranslation())).get()[0];
 
             double translationVal;
@@ -94,15 +94,15 @@ public class AdvanceToTarget extends Command {
     // @Override
     // public void end(boolean interrupted) {
 
-    //     if (aprilTagInstance.targetPos() == null) {
+    //     if (aprilTagInstance.targetPos().isEmpty()) {
     //         CommandScheduler.getInstance().schedule(new AdvanceToTarget(swerveDrive, aprilTagInstance));
     //     }
     // }
 
     @Override
     public boolean isFinished() {
-        var targetPos = aprilTagInstance.targetPos();
+        Optional<Transform3d> targetPos = aprilTagInstance.targetPos();
         
-        return targetPos != null && aprilTagInstance.getDirectDistance(targetPosition).get() < Constants.AdvanceToTarget.maximumLaunchDistance;
+        return targetPos.isPresent() && aprilTagInstance.getDirectDistance(targetPosition).get() < Constants.AdvanceToTarget.maximumLaunchDistance;
     }
 }

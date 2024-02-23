@@ -1,24 +1,18 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Launcher;
-import frc.robot.Constants;
 import frc.robot.subsystems.Indexer;
 
-public class LauncherCommand extends CommandBase{
+public class LauncherCommand extends Command{
 
     private Launcher launcher;
     private Indexer indexer;
-    private int tagId;
-    private double desiredVelocity;
 
-    public LauncherCommand (Launcher launcher, Indexer indexer, int tagId, double desiredVelocity){
+    public LauncherCommand (Launcher launcher, Indexer indexer){
         this.launcher = launcher;
         this.indexer = indexer;
-        this.tagId = tagId;
-        this.desiredVelocity = desiredVelocity;
         addRequirements(launcher, indexer);
     }
     @Override

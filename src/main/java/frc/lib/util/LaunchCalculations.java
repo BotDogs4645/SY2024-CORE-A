@@ -1,6 +1,5 @@
 package frc.lib.util;
 
-import frc.lib.util.AprilTag;
 import frc.robot.Constants;
 import java.util.Optional;
 
@@ -13,8 +12,8 @@ public class LaunchCalculations {
      * necessary launch velocity and angle for a note to reach a target, given the
      * vertical and horizontal distance to the target.
      *
-     * @param verticalDistance  the vertical distance between the launcher and the target
-     * @param horizontalDistance the forward distance between the launcher and the target
+     * @param verticalDistance - the vertical distance between the launcher and the target
+     * @param horizontalDistance - the forward distance between the launcher and the target
      */
     public LaunchCalculations(AprilTag aprilTagInstance) {
         this.aprilTagInstance = aprilTagInstance;
@@ -29,7 +28,9 @@ public class LaunchCalculations {
     }
 
     /**
-     * Calculates the vertical velocity vector component required to reach the target.
+     * Calculates the vertical velocity vector component 
+     * required to reach the target.
+     * 
      * @return vertical velocity component in m/s
      */
     public Optional<Double> getVerticalVelocity() {
@@ -43,7 +44,9 @@ public class LaunchCalculations {
     }
 
     /**
-     * Calculates the horizontal velocity vector component required to reach the target.
+     * Calculates the horizontal velocity vector component 
+     * required to reach the target.
+     * 
      * @return horizontal velocity component in m/s
      */
     public Optional<Double> getHorizontalVelocity() {
@@ -62,7 +65,9 @@ public class LaunchCalculations {
     }
 
     /**
-     * Calculates the launch velocity required to reach the target, in RPM, when launching at the calculated angle from getLaunchAngle().
+     * Calculates the launch velocity required to reach the target, in RPM, 
+     * when launching at the calculated angle from getLaunchAngle().
+     * 
      * @return launch velocity in RPM
      */
     public double getLaunchVelocity() {
@@ -71,6 +76,7 @@ public class LaunchCalculations {
 
     /**
      * Calculates the launch angle required to reach the target, in radians.
+     * 
      * @return launch angle in radians
      */
     public double getLaunchAngle() {
@@ -79,8 +85,11 @@ public class LaunchCalculations {
 
 
     /**
-     * Converts a velocity in m/s to RPM using the launcher wheel radius from Constants.Launcher.launcherWheelRadius.
+     * Converts a velocity in m/s to RPM using the launcher wheel 
+     * radius from Constants.Launcher.launcherWheelRadius.
+     * 
      * @param velocity velocity in m/s
+     * 
      * @return velocity in RPM
      */
     public double toRPM(double velocity) {

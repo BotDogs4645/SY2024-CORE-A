@@ -9,16 +9,29 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
+/**
+ * The Limelight subsystem.
+ * 
+ * Limelight documentation: https://limelightvision.io/
+ * 
+ * We use the Limelight for location estimation with AprilTags.
+ */
 public class Limelight {
 
     public static final NetworkTable TABLE = NetworkTableInstance.getDefault().getTable("limelight");
 
-    // Fetches and returns the NetworkTable entry of the parameter provided in the method call.
+    /**
+    * Fetches and @returns the NetworkTable entry of 
+    * the parameter provided in the method call.
+    */
     public Optional<NetworkTableEntry> entry(String key) {
         return Optional.of(TABLE.getEntry(key));
     }
 
-    // Fetches, calculates, and returns the offset from the robot to the current primary apriltag target.
+    /** 
+    * Uses the Limelight to fetch, calculate, and @return the offset 
+    * from the robot to the current primary apriltag target.
+    */
     public Optional<Transform3d> targetPos() {
     Optional<double[]> targetPose = Optional.of(entry("targetpose_robotspace").get().getDoubleArray(new double[0]));
     
@@ -32,4 +45,22 @@ public class Limelight {
         return Optional.empty();
     }
     };
+
+    /**
+     * Uses the Limelight to retrieve the ID of the target.
+     * If no target is spotted, this returns -1.
+     * If multiple targets, including the desired one, are visible, the
+     * Limelight will use the most confident result for position estimation.
+     * We therefore recommend that you do not use this ID and instead use the
+     * desired location along with {@link #targetPos()}.
+     * 
+     * @return the ID of the target spotted, or 'Optional.empty()' 
+     * if there is not one.
+     */
+    public Optional<Integer> targetId() {
+        int aprilTagID = (int) TABLE.getEntry("tid").getInteger(-1);
+        if (aprilTagID == -1) return Optional.empty();
+
+        return Optional.of(aprilTagID);
+    }
 }

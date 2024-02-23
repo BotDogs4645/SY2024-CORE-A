@@ -6,19 +6,18 @@ package frc.lib.util;
 
 import java.util.Optional;
 
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.Constants;
-import frc.robot.commands.AdvanceToTarget;
 import frc.robot.subsystems.Limelight;
 
-// The AprilTag class, harnessed in order to
-// calculate and execute various 'vision'-related
-// processes within FIRST Team 4645, the Chicago Style 
-// Bot Dogs' robot for the FIRST Robotics 2024 competition.
+/**
+* The AprilTag class, harnessed in order to calculate and execute various 
+* 'vision'-related processes within FIRST Team 4645, the Chicago Style 
+* Bot Dogs' robot for the FIRST Robotics 2024 competition, Crescendo.
+*/
 
 public class AprilTag {
 
@@ -34,8 +33,10 @@ public class AprilTag {
     return limelightInstance.targetPos();
   }
 
-  // Executes periodically while quering the primary target apriltag's 
-  // current position and printing the distance to such in the console.
+  /**
+   * Executes periodically while querying the primary apriltag target's current 
+   * position, printing the distance to such to the console.
+   */
   public void aprilTagPeriodic() {
     if (determinePosition().isEmpty() || targetPos().isEmpty()) {
       System.out.println("No Limelight target.");
@@ -43,23 +44,42 @@ public class AprilTag {
 
     Transform3d targetPosition = determinePosition().get().plus(targetPos().get());
 
-    // System.out.printf("Target position: {x: %.3f, y: %.3f, z: %.3f}\n", t.getX(), t.getY(), t.getZ());
-    if (getDirectDistance(Optional.of(targetPosition)).isPresent()) {
-        determineTargetRotationalOffset(Optional.of(targetPos().get().getTranslation()));
-        // advanceToTargetInstance.specifyTarget(targetPosition.get());
-    }
+    System.out.printf("Target position: {x: %.3f, y: %.3f, z: %.3f}\n", targetPosition.getX(), targetPosition.getY(), targetPosition.getZ());
   }
 
-  // Calculates the distance between the robot's current estimated 
-  // position and the one of the primary target apriltag.
-  public Optional<Double> getDirectDistance(Optional<Transform3d> targetVector) {
-
-    if (targetVector.isPresent()) {
-      return Optional.of(Math.sqrt(Math.pow(targetVector.get().getX(), 2) + Math.pow(targetVector.get().getY(), 2) + Math.pow(targetVector.get().getZ(), 2)));
+  /**
+   * Calculates the distance between the robot's current estimated position
+   * and that of the target specified in the method's parameters.
+   * 
+   * @param targetPosition - The position of the target in question, formatted 
+   * through the use of Java's 'Transform3d' class.
+   * 
+   * @returns the distance from the robot to the target specified in the 
+   * method's parameters.
+   */
+  public Optional<Double> getDirectDistance(Optional<Transform3d> targetPosition) {
+    if (targetPosition.isPresent()) {
+      return Optional.of(Math.sqrt(Math.pow(targetPosition.get().getX(), 2) + Math.pow(targetPosition.get().getY(), 2) + Math.pow(targetPosition.get().getZ(), 2)));
     } else {
       return Optional.empty();
     }
   }
+
+  /**
+   * Calculates the distance, on a 2D plane, between two locations, as 
+   * specified in the method's parameters.
+   * 
+   * @param originPosition - The position of the "primary" location, although 
+   * the order of such and the "secondary" one does not affect, in any way,
+   * the functionality of 
+   * the method itself.
+   * @param targetPosition - The position of the "secondary" location, although 
+   * the order of such and the "primary" one does not affect, in any way, the 
+   * functionality of the method itself.
+   * 
+   * @returns the distance which exists between the two locations specified 
+   * within the method's parameters on a 2D plane.
+   */
 
   public Optional<Double> getPlanarDistance(Optional<double[]> originPosition, Optional<double[]> targetPosition) {
     if (originPosition.isPresent() && targetPosition.isPresent()) {
@@ -68,6 +88,16 @@ public class AprilTag {
       return Optional.empty();
     }
   }
+
+  /**
+   * Determines whether the position of the target specified in the method's 
+   * parameters is "suitable" for use in trajectory/path generation.
+   * 
+   * @param targetPosition - The position of the target in question.
+   * 
+   * @returns whether the position of the target specified in the method's 
+   * parameters is "suitable" for use in trajectory/path generation.
+   */
 
   public boolean validTargetInput(Optional<Translation3d> targetPosition) {
     Optional<Transform3d> currentRobotPosition = determinePosition();
@@ -79,49 +109,41 @@ public class AprilTag {
     }
   }
 
-  // Determines the robot's position on the playing 
-  // field, through the use of Limelight's vector distance API.
-  public Optional<Transform3d> determinePosition() {
-    Optional<Transform3d> relativePositionalData = limelightInstance.targetPos();
+      /**
+     * Estimates the position of the robot, using the Limelight's knowledge of
+     * the position of each AprilTag in the game board.
+     * If no AprilTags are deteted, this returns 'Optional.empty()'.
+     * 
+     * For a map of the game board and AprilTag positions, see
+     * {@link https://firstfrc.blob.core.windows.net/frc2024/FieldAssets/2024FieldDrawings.pdf},
+     * page 4.
+     * 
+     * @return the robot's estimated position in the board.
+     */
+    public Optional<Transform3d> determinePosition() {
+      Optional<Transform3d> targetOffset = targetPos();
+      if (targetOffset.isEmpty()) return Optional.empty();
 
-    Optional<Long> aprilTagIdentifier = Optional.of(limelightInstance.entry("tid").get().getInteger(-1));
+      Optional<Transform3d> originToTarget = Optional.of(Constants.Limelight.APRILTAGS.get(limelightInstance.targetId().get()));
+      if (originToTarget.isEmpty()) return Optional.empty();
 
-    if (aprilTagIdentifier.isEmpty() || aprilTagIdentifier.get() > 16) {
-        return Optional.empty();
-    }
-    
-    Transform3d currentAprilTagLocation = Constants.Limelight.APRILTAGS.get(aprilTagIdentifier);
+      Transform3d targetToRobot = targetOffset.get().inverse();
 
-    double[] currentRelativeLocation = {
-        currentAprilTagLocation.getX() + relativePositionalData.get().getX(), 
-        currentAprilTagLocation.getY() + relativePositionalData.get().getY(), 
-        currentAprilTagLocation.getZ() + relativePositionalData.get().getZ()
-    };
+      Transform3d originToRobot = originToTarget.get().plus(targetToRobot);
 
-    double[] currentRelativeRotation = {
-        currentAprilTagLocation.getRotation().getX() + relativePositionalData.get().getRotation().getX(),
-        currentAprilTagLocation.getRotation().getY() + relativePositionalData.get().getRotation().getY(),
-        currentAprilTagLocation.getRotation().getZ() + relativePositionalData.get().getRotation().getZ(),
-    };
-
-    if (currentRelativeRotation[0] == 360) {
-        currentRelativeRotation[0] = 0;
-    }
-
-    Optional<Transform3d> currentRelativePosition = Optional.of(new Transform3d(
-        new Translation3d(currentRelativeLocation[0], currentRelativeLocation[1], currentRelativeLocation[2]),
-        new Rotation3d(currentRelativeRotation[0], currentRelativeRotation[1], currentRelativeRotation[2])
-    ));
-
-    System.out.printf("Current relative robot position: {X: %0.3f, Y: %0.3f, Z: %0.3f}\n", currentRelativePosition.get().getX(), currentRelativePosition.get().getY(), currentRelativePosition.get().getZ());
-    System.out.printf("Current relative robot orientation: {X: %0.3f, Y: %0.3f, Z: %0.3f}\n", currentRelativePosition.get().getRotation().getX(), currentRelativePosition.get().getRotation().getY(), currentRelativePosition.get().getRotation().getZ());
-
-    return currentRelativePosition;
+      return Optional.of(originToRobot);
   }
 
-  // Calculates the relative rotational offset to the 
-  // given "targetPosition," based off of the current 
-  // orientation of the robot within 3D space.
+  /** 
+  * Calculates and @returns the relative rotational offset to the given 
+  * "targetPosition," based off of Limelight's estimation on where the robot is 
+  * currently positioned, as well as the location of the specified target.
+  *
+  * For a map of the game board and AprilTag positions, see
+  * {@link https://firstfrc.blob.core.windows.net/frc2024/FieldAssets/2024FieldDrawings.pdf},
+  * page 4.
+  * 
+  */
   public Optional<double[]> determineTargetRotationalOffset(Optional<Translation3d> targetPosition) {
         Optional<Transform3d> currentRelativePosition = determinePosition();
 
@@ -138,8 +160,6 @@ public class AprilTag {
         if (Double.isNaN(xAngularOffset) || Double.isNaN(yAngularOffset)) {
           return Optional.empty();
         }
-
-        System.out.println("Target X Offset: " + xAngularOffset + ", Target Y Offset " + yAngularOffset);
 
         return Optional.of(new double[] {xAngularOffset, yAngularOffset});
     }

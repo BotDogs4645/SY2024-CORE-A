@@ -4,12 +4,8 @@
 
 package frc.robot;
 
-import java.util.function.BooleanSupplier;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,9 +13,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.DriveToTag;
 import frc.lib.util.AprilTag;
-import frc.lib.util.LaunchCalculations;
 import frc.robot.commands.AdvanceToTarget;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Intake;
@@ -97,7 +91,7 @@ public class RobotContainer {
     return autoChooser.getSelected();
   }
 
-  public AprilTag getLimelight() {
+  public AprilTag getAprilTag() {
     return aprilTagInstance;
   }
 
