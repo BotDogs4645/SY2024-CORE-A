@@ -25,7 +25,7 @@ public class Launcher extends SubsystemBase{
     controller.setPositionPIDWrappingEnabled(false);
     controller.setPositionPIDWrappingMinInput(0);
     controller.setPositionPIDWrappingMaxInput(90);
-    
+    this.limelight = limelight;
 
   
     bottomLaunchMotor.setInverted(true);
