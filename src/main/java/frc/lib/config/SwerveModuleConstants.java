@@ -11,11 +11,9 @@ public class SwerveModuleConstants {
 
   /**
    * Swerve Module Constants to be used when creating swerve modules.
-   *
-   * @param driveMotorID
-   * @param angleMotorID
-   * @param canCoderID
-   * @param angleOffset
+   * 
+   * @param angleOffset the offset that is subtracted (not added) from angle
+   *                    measurements in the relevant Swerve module
    */
   public SwerveModuleConstants(
       int driveMotorID, int angleMotorID, int canCoderID, Rotation2d angleOffset, boolean driveIsInverted) {
