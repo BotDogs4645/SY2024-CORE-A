@@ -14,46 +14,37 @@ public class OnboardModuleState {
    * @param desiredState The desired state.
    * @param currentAngle The current module angle.
    */
-  public static SwerveModuleState optimize(
-      SwerveModuleState desiredState, Rotation2d currentAngle) {
-    double targetAngle =
-        placeInAppropriate0To360Scope(currentAngle.getDegrees(), desiredState.angle.getDegrees());
+  public static SwerveModuleState optimize(SwerveModuleState desiredState, Rotation2d currentAngle) {
+    double targetAngle = placeInAppropriate0To360Scope(currentAngle.getDegrees(), desiredState.angle.getDegrees());
     double targetSpeed = desiredState.speedMetersPerSecond;
     double delta = targetAngle - currentAngle.getDegrees();
+
+    // Rotating the wheel by 180 degrees and reversing the direction results in
+    // essentially no net change to the rotation and direction of the wheel spin
+    // This is used here to reduce wheel rotation.
     if (Math.abs(delta) > 90) {
-      targetSpeed = -targetSpeed;
-      targetAngle = delta > 90 ? (targetAngle -= 180) : (targetAngle += 180);
+      targetSpeed *= -1;
+      targetAngle += delta > 0 ? -180 : 180;
     }
     return new SwerveModuleState(targetSpeed, Rotation2d.fromDegrees(targetAngle));
   }
 
   /**
+   * Returns an angle congruent to {@code newAngle} that is as close as possible
+   * to {@code scopeReference}.
+   * <br>
+   * For example, given a reference of 360 and an angle of 1, this function will
+   * return 361, as 361 is the closest angle to the reference that is congruent
+   * to the reference.
    * @param scopeReference Current Angle
    * @param newAngle Target Angle
    * @return Closest angle within scope
    */
   private static double placeInAppropriate0To360Scope(double scopeReference, double newAngle) {
-    double lowerBound;
-    double upperBound;
-    double lowerOffset = scopeReference % 360;
-    if (lowerOffset >= 0) {
-      lowerBound = scopeReference - lowerOffset;
-      upperBound = scopeReference + (360 - lowerOffset);
-    } else {
-      upperBound = scopeReference - lowerOffset;
-      lowerBound = scopeReference - (360 + lowerOffset);
-    }
-    while (newAngle < lowerBound) {
-      newAngle += 360;
-    }
-    while (newAngle > upperBound) {
-      newAngle -= 360;
-    }
-    if (newAngle - scopeReference > 180) {
-      newAngle -= 360;
-    } else if (newAngle - scopeReference < -180) {
-      newAngle += 360;
-    }
-    return newAngle;
+    // Figure out how many revolutions from the angle to the reference
+    double diffRevs = Math.round((scopeReference - newAngle) / 360) * 360;
+
+    // Add that many revolutions
+    return diffRevs + newAngle;
   }
 }
