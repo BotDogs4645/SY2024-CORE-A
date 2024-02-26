@@ -1,8 +1,5 @@
 package frc.robot;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -65,11 +62,6 @@ public final class Constants {
     public static final double launcherHeight = 0.574;
     public static final double feedVelocity = 0.5; // just a placeholder value - will need to be changed
   }
-  public static final class Vision {
-    public static final double kLimelightAngleDegrees = 55;
-                                                      //height  //conversion const
-    public static final double kLimelightHeightMeters = 16 * 0.0254;
-  }
 
   public static final class Vision {
     //all units in meters
@@ -79,20 +71,6 @@ public final class Constants {
     public static final double LimelightOffsetX = 0.32;
     public static final double LimelightOffsetY = 0.0;
 
-  }
-  public static class Launcher {
-    public static final double gravityAcceleration = 9.81;
-    public static final double launcherHeight = 0.574;
-    public static final double launcherWheelRadius = 0.04826;
-    public static final double maxSpeakerLaunchDistance = 3.0; // meters, still need to measure
-  }
-
-  public static final class Pneumatics {
-    public static final int pcmCanID = 15;
-    public static final int climberForward = 7;
-    public static final int climberReverse = 6;
-    public static final int ampGuideForward = 4;
-    public static final int ampGuideReverse = 5;
   }
 
   public static final class Pneumatics {
@@ -241,13 +219,6 @@ public final class Constants {
   public static final int kDriverControllerPort = 0;
   public static final int pcmCanID = 15;
 
-  public static class Launcher{
-    //Unsure if we will need this but keep in case the Launch Angle calculations launch the note towards the AprilTag and not the hole
-    public static final double ampHeight = 0.66;
-    public static final double speakerHeight = 1.984;
-    public static final double trapHeight = 1.436;
-    public static final double launcherHeight = 0.574;
-  }
   public static class Limelight {
 
 
@@ -264,7 +235,6 @@ public final class Constants {
    * {@link https://firstfrc.blob.core.windows.net/frc2024/FieldAssets/2024FieldDrawings.pdf},
    * page 4.
    */
-
   public static final Map<Integer, Transform3d> APRILTAGS = Map.ofEntries(
       tag(-1, 0,0,0,0),
       tag(1, 593.68, 9.68, 53.38, 120),
