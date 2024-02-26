@@ -21,7 +21,7 @@ public class Limelight {
     public static final NetworkTable TABLE = NetworkTableInstance.getDefault().getTable("limelight");
 
     /**
-    * Fetches and @returns the NetworkTable entry of 
+    * Fetches and @return(s) the NetworkTable entry of 
     * the parameter provided in the method call.
     */
     public Optional<NetworkTableEntry> entry(String key) {
@@ -48,7 +48,7 @@ public class Limelight {
 
     /**
      * Uses the Limelight to retrieve the ID of the target.
-     * If no target is spotted, this returns -1.
+     * If no target is spotted, this returns "Optional.empty()."
      * If multiple targets, including the desired one, are visible, the
      * Limelight will use the most confident result for position estimation.
      * We therefore recommend that you do not use this ID and instead use the

@@ -12,7 +12,7 @@ public class ObstacleDetection
      * @param currentPosition - The robot's current estimated position.
      * @param lineSlope - The slope of the robot's linear trajectory.
      * 
-     * @returns whether the robot "should" 
+     * @return(s) whether the robot "should" 
      * continue along its current path.
      */
     public static boolean continueAlongPath(Translation3d currentPosition, double lineSlope) {
@@ -38,7 +38,7 @@ public class ObstacleDetection
      * @param circleCenterData - The data pertaining to 
      * the "target's" position, as well as radius.
      * 
-     * @returns whether the given trajectory 
+     * @return(s) whether the given trajectory 
      * will intersect with the provided 
      * circle on a 2D plane.
      */
@@ -63,7 +63,7 @@ public class ObstacleDetection
      * @param lineSlope - The slope of the line
      * from which the data is interpreted.
      * 
-     * @returns the formatted version 
+     * @return(s) the formatted version 
      * of the provided line data.
      */
     public static double[] formatLineData(double xReference, double yReference, double lineSlope) {

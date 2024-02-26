@@ -31,7 +31,7 @@ public class LaunchCalculations {
      * Calculates the vertical velocity vector component 
      * required to reach the target.
      * 
-     * @return vertical velocity component in m/s
+     * @return(s) vertical velocity component in m/s
      */
     public Optional<Double> getVerticalVelocity() {
         Optional<Double> verticalDistance = getVerticalDistance();
@@ -47,7 +47,7 @@ public class LaunchCalculations {
      * Calculates the horizontal velocity vector component 
      * required to reach the target.
      * 
-     * @return horizontal velocity component in m/s
+     * @return(s) horizontal velocity component in m/s
      */
     public Optional<Double> getHorizontalVelocity() {
         Optional<Double> verticalDistance = getVerticalDistance();
@@ -68,7 +68,7 @@ public class LaunchCalculations {
      * Calculates the launch velocity required to reach the target, in RPM, 
      * when launching at the calculated angle from getLaunchAngle().
      * 
-     * @return launch velocity in RPM
+     * @return(s) launch velocity in RPM
      */
     public double getLaunchVelocity() {
         return toRPM(Math.sqrt(Math.pow(getVerticalVelocity().get(), 2) + Math.pow(getHorizontalVelocity().get(), 2)));
@@ -77,7 +77,7 @@ public class LaunchCalculations {
     /**
      * Calculates the launch angle required to reach the target, in radians.
      * 
-     * @return launch angle in radians
+     * @return(s) launch angle in radians
      */
     public double getLaunchAngle() {
         return Math.toDegrees(Math.atan(getVerticalVelocity().get() / getHorizontalVelocity().get()));
@@ -90,7 +90,7 @@ public class LaunchCalculations {
      * 
      * @param velocity velocity in m/s
      * 
-     * @return velocity in RPM
+     * @return(s) velocity in RPM
      */
     public double toRPM(double velocity) {
         return velocity * 60 / (2 * Math.PI * Constants.Launcher.launcherWheelRadius);

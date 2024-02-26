@@ -18,7 +18,6 @@ import frc.robot.subsystems.Limelight;
 * 'vision'-related processes within FIRST Team 4645, the Chicago Style 
 * Bot Dogs' robot for the FIRST Robotics 2024 competition, Crescendo.
 */
-
 public class AprilTag {
 
   public static final NetworkTable TABLE = NetworkTableInstance.getDefault().getTable("limelight");
@@ -54,12 +53,12 @@ public class AprilTag {
    * @param targetPosition - The position of the target in question, formatted 
    * through the use of Java's 'Transform3d' class.
    * 
-   * @returns the distance from the robot to the target specified in the 
+   * @return(s) the distance from the robot to the target specified in the 
    * method's parameters.
    */
   public Optional<Double> getDirectDistance(Optional<Transform3d> targetPosition) {
-    if (targetPosition.isPresent()) {
-      return Optional.of(Math.sqrt(Math.pow(targetPosition.get().getX(), 2) + Math.pow(targetPosition.get().getY(), 2) + Math.pow(targetPosition.get().getZ(), 2)));
+    if (determinePosition().isPresent() && targetPosition.isPresent()) {
+      return Optional.of(targetPos().get().getTranslation().getNorm());
     } else {
       return Optional.empty();
     }
@@ -77,10 +76,9 @@ public class AprilTag {
    * the order of such and the "primary" one does not affect, in any way, the 
    * functionality of the method itself.
    * 
-   * @returns the distance which exists between the two locations specified 
+   * @return(s) the distance which exists between the two locations specified 
    * within the method's parameters on a 2D plane.
    */
-
   public Optional<Double> getPlanarDistance(Optional<double[]> originPosition, Optional<double[]> targetPosition) {
     if (originPosition.isPresent() && targetPosition.isPresent()) {
       return Optional.of(Math.sqrt(Math.pow(targetPosition.get()[1] - originPosition.get()[1], 2) + Math.pow(targetPosition.get()[0] - originPosition.get()[0], 2)));
@@ -95,10 +93,9 @@ public class AprilTag {
    * 
    * @param targetPosition - The position of the target in question.
    * 
-   * @returns whether the position of the target specified in the method's 
+   * @return(s) whether the position of the target specified in the method's 
    * parameters is "suitable" for use in trajectory/path generation.
    */
-
   public boolean validTargetInput(Optional<Translation3d> targetPosition) {
     Optional<Transform3d> currentRobotPosition = determinePosition();
 
@@ -118,7 +115,7 @@ public class AprilTag {
      * {@link https://firstfrc.blob.core.windows.net/frc2024/FieldAssets/2024FieldDrawings.pdf},
      * page 4.
      * 
-     * @return the robot's estimated position in the board.
+     * @return(s) the robot's estimated position in the board.
      */
     public Optional<Transform3d> determinePosition() {
       Optional<Transform3d> targetOffset = targetPos();
@@ -135,14 +132,13 @@ public class AprilTag {
   }
 
   /** 
-  * Calculates and @returns the relative rotational offset to the given 
+  * Calculates and @return(s) the relative rotational offset to the given 
   * "targetPosition," based off of Limelight's estimation on where the robot is 
   * currently positioned, as well as the location of the specified target.
   *
   * For a map of the game board and AprilTag positions, see
   * {@link https://firstfrc.blob.core.windows.net/frc2024/FieldAssets/2024FieldDrawings.pdf},
   * page 4.
-  * 
   */
   public Optional<double[]> determineTargetRotationalOffset(Optional<Translation3d> targetPosition) {
         Optional<Transform3d> currentRelativePosition = determinePosition();

@@ -78,7 +78,7 @@ public class Launcher extends SubsystemBase{
    * reach its intended target and act in a specific, pre-calculated manner, as
    * is required for such.
    * 
-   * @returns the velocity at which the 'note' must be launched, if it is to
+   * @return(s) the velocity at which the 'note' must be launched, if it is to
    * reach its intended target and act in a specific, pre-calculated manner, as 
    * is required for such.
    */
