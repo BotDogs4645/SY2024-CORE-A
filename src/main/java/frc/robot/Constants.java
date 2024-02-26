@@ -32,6 +32,12 @@ public final class Constants {
     public static final double turnKD = 0.75;
   }
 
+  public static final class Intake {
+    public static final int intakeMotorPWMPort = 0;
+    public static final int feederMotorPWMPort = 1;
+    public static final int noteDetectionSwitchDIOPort = 0;
+  }
+
   public static final class Vision {
     //all units in meters
     // sign of offsets follows std convention rel to swerve

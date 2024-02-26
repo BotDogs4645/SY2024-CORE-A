@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveToTag;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.IntakeIndexer;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Swerve;
@@ -35,6 +36,7 @@ public class RobotContainer {
   private final Swerve drivetrain = new Swerve();
   private final Limelight limelight = new Limelight();
   private final Pneumatics pneumatics = new Pneumatics();
+  private final IntakeIndexer intakeIndexer = new IntakeIndexer();
   
   private final SendableChooser<Command> autoChooser;
 
@@ -61,11 +63,25 @@ public class RobotContainer {
     }, drivetrain));
 
 
-    // driveController.y().onTrue(
-    //   new InstantCommand(() -> {
-    //     pneumatics.extendClimber();
-    //   }, pneumatics)
-    // );
+    driveController.y().onTrue(
+      new InstantCommand(() -> {
+        pneumatics.toggleClimber();
+      }, pneumatics)
+    );
+    
+    driveController.x().onTrue(
+      new InstantCommand(() -> {
+        pneumatics.toggleAmpGuide();
+
+      }, pneumatics)
+    );
+
+    driveController.leftBumper().onTrue(
+      new InstantCommand(() -> {
+        intakeIndexer.toggleIntake();
+        intakeIndexer.toggleFeeder();
+      }, intakeIndexer)
+    );
 
   }
 
