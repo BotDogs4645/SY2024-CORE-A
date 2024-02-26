@@ -21,33 +21,22 @@ public class LauncherCommand extends Command {
     public void initialize() {
         Commands.sequence(
             //Feed the note
-            Commands.deadline(
-                Commands.waitSeconds(0.5),
-                Commands.run(() -> indexer.startIndexer(0.5), indexer),
-                Commands.run(() -> launcher.startLauncher(0.5), launcher)
-            ),
-            //Stop feeding and aim
-            Commands.deadline(
-                Commands.waitSeconds(0.5),//Test to find the amount of time for note to leave intake but not shoot out of launcher
-                Commands.run(() -> indexer.stopIndexer(), indexer),
-                Commands.run(() -> launcher.stopLauncher(), launcher),
-                Commands.waitSeconds(1),
-                Commands.run(() -> launcher.aimLauncher(), launcher)
-            ),
+            Commands.runOnce(() -> indexer.startIndexer(0.5), indexer),
+            Commands.runOnce(() -> launcher.startLauncher(0.5), launcher),
+            Commands.waitSeconds(0.5), //Test to find the amount of time for note to leave intake but not shoot out of launcher
 
-            // Wait a bit
-            Commands.waitSeconds(0.1),
+            //Stop feeding and aim
+            Commands.runOnce(() -> indexer.stopIndexer(), indexer),
+            Commands.runOnce(() -> launcher.stopLauncher(), launcher),
+            Commands.waitSeconds(0.5),
+
+            // Aim launcher
+            Commands.runOnce(() -> launcher.aimLauncher(), launcher),
+            Commands.waitSeconds(1),
 
             // Shoot notes
-            Commands.deadline(
-                Commands.waitSeconds(1),
-                Commands.run(() -> launcher.startLauncher(limelight.getLaunchVelocity().getAsDouble()), launcher)
-            ),
-
-            // Stop launcher
-            Commands.runOnce(() -> launcher.stopLauncher(), launcher)
-        ).handleInterrupt(() -> {
-            launcher.stopLauncher();
-        }).schedule();
+            Commands.runOnce(() -> launcher.startLauncher(limelight.getLaunchVelocity().getAsDouble()), launcher),
+            Commands.waitSeconds(1)
+        ).finallyDo(() -> launcher.stopLauncher()).schedule();
     }
 }

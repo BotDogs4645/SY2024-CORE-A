@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -17,16 +18,9 @@ public class IndexerCommand extends Command {
     public void initialize() {
         Commands.sequence(
             // Start up indexer
-            Commands.deadline(
-                Commands.waitSeconds(0.5),
-                Commands.run(() -> indexer.startIndexer(0.5), indexer)
-            ),
-            // Wait a bit
-            Commands.waitSeconds(0.1),//Test time it takes for note to leave intake
-            // Stop indexer
-            Commands.runOnce(() -> indexer.stopIndexer(), indexer)
-            ).handleInterrupt(() -> {
-            indexer.stopIndexer();
-        }).schedule();
+            Commands.runOnce(() -> indexer.startIndexer(0.5), indexer),
+            // Wait a bit - note must leave intake
+            Commands.waitSeconds(0.5)
+        ).finallyDo(() -> indexer.stopIndexer()).schedule();
     }
 }
