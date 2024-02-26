@@ -1,15 +1,21 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.Pair;
+import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
+
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-//test change
 
 import static frc.robot.Constants.*;
+
+import frc.lib.util.AprilTag;
+import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
 
 /**
  * The Limelight subsystem.
@@ -20,86 +26,122 @@ import static frc.robot.Constants.*;
  */
 public class Limelight extends SubsystemBase {
 
-    private static final NetworkTable TABLE = NetworkTableInstance.getDefault().getTable("limelight");
+    private OptionalDouble distanceToTarget = OptionalDouble.empty();
+    private OptionalDouble ty = OptionalDouble.empty();
+    private OptionalDouble tx = OptionalDouble.empty();
 
-    /**
-     * Returns whether or not this Limelight can see a target.
-     * @return if the Limelight can see a target
-     */
+    private AprilTag target = new AprilTag();
+
     public boolean hasTarget() {
-        return target() != null;
+        return (LimelightHelpers.getTA("") > 0.1) ? true : false;
+    }
+
+    public OptionalDouble getLateralAngleToTarget() {
+        return tx;
+    }
+
+    public OptionalDouble getVerticalAngleToTarget() {
+        return ty;
+    }
+
+    public OptionalInt getTagID() {
+        try {
+            return OptionalInt.of((int) LimelightHelpers.getFiducialID(""));
+        } catch (Exception e) {
+            return OptionalInt.empty();
+        }
+    }
+
+    public OptionalDouble getDistanceToTarget() {
+        if (!ty.isPresent() && !hasTarget()) {
+            return OptionalDouble.empty();
+        }
+        double d = (
+            (Constants.Vision.LimelightOffsetZ - Constants.Limelight.APRILTAGS.get(
+                (int) LimelightHelpers.getFiducialID("")).getZ()
+            ) / Math.tan(Constants.Vision.LimelightAngleDegrees + ty.getAsDouble())
+        ); 
+
+        return OptionalDouble.of(d);
+    }
+
+  
+    public Optional<Pose3d> getTargetPoseRobotRealative() {
+        try {
+            return Optional.of(LimelightHelpers.getTargetPose3d_RobotSpace(""));             
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    public OptionalDouble getVerticalVelocity() {
+        if (hasTarget()) {
+            double heightDifference = Constants.Limelight.APRILTAGS.get(getTagID().getAsInt()).getZ()
+                    - Constants.Launcher.launcherHeight;
+            return OptionalDouble.of(Math.sqrt(
+                    2 * Constants.Launcher.gravityAcceleration * (Constants.Limelight.APRILTAGS.get(getTagID().getAsInt()).getZ())
+                            - Constants.Launcher.launcherHeight));
+        } else {
+            return OptionalDouble.empty();
+        }
+    }
+
+    public OptionalDouble getHorizontalVelocity() {
+        if (!hasTarget()) {
+            return OptionalDouble.empty();
+        }
+
+        double timeToTravel = (-1 * getVerticalVelocity().getAsDouble() + Math.sqrt(
+                Math.pow(getVerticalVelocity().getAsDouble(), 2)
+                        + 2 * Constants.Launcher.gravityAcceleration
+                                * (Constants.Limelight.APRILTAGS.get(getTagID().getAsInt()).getZ())
+                        - Constants.Launcher.launcherHeight))
+                / (Constants.Launcher.gravityAcceleration);
+        return OptionalDouble.of(getDistanceToTarget().getAsDouble() / timeToTravel);
+    }
+
+    public OptionalDouble getLaunchVelocity() {
+        if (hasTarget()) {
+            return OptionalDouble
+                    .of(toRPM(Math.hypot(getHorizontalVelocity().getAsDouble(), getVerticalVelocity().getAsDouble())));
+        }
+        return OptionalDouble.empty();
+    }
+
+    public OptionalDouble getLaunchAngle() {
+        if (hasTarget()) {
+            return OptionalDouble.of(Math
+                    .toDegrees(Math.atan(getVerticalVelocity().getAsDouble() / getHorizontalVelocity().getAsDouble())));
+        }
+        return OptionalDouble.empty();
     }
 
     /**
-     * Uses the Limelight to retrieve target values.
-     * This will be null if there is no target detected.
-     * See {@link #targetId()} for notes on using the ID stored within the pair.
-     * @return a pair that includes the target's ID and transformation relative
-     *         to the robot's center position.
-     */
-    public Pair<Integer, Transform3d> target() {
-        int id = (int) TABLE.getEntry("tid").getInteger(-1);
-        if (id == -1) return null;
-        
-        double[] pose = TABLE.getEntry("targetpose_robotspace").getDoubleArray(new double[0]);
-        if (pose.length != 6 || pose[2] < 1E-6) return null;
-        
-        return Pair.of(id, new Transform3d(
-            new Translation3d(pose[0], pose[1], pose[2]),
-            new Rotation3d(pose[3], pose[4], pose[5])
-        ));
-    }
-
-    /**
-     * Uses the Limelight to retrieve the ID of the target.
-     * If no target is spotted, this returns -1.
-     * If multiple targets, including the desired one, are visible, the
-     * Limelight will use the most confident result for position estimation.
-     * We therefore recommend that you do not use this ID and instead use the
-     * desired location along with {@link #targetPos()}.
-     * @return the ID of the target spotted, or -1 if there is not one.
-     */
-    public int targetId() {
-        var target = target();
-        return target != null ? target.getFirst() : -1;
-    }
-
-    /**
-     * Uses the Limelight to retrieve the offset of the target, relative to the
-     * robot's center position.
-     * If no target is spotted, this returns null.
-     * @return the spotted target offset, or null if none
-     */
-    public Transform3d targetPos() {
-        var target = target();
-        return target != null ? target.getSecond() : null;
-    }
-
-    /**
-     * Estimates the position of the robot, using the Limelight's knowledge of
-     * the position of each AprilTag in the game board.
-     * If no AprilTags are spotted, this returns null.
+     * Converts a velocity to RPM (Rotations Per Minute).
      * 
-     * For a map of the game board and AprilTag positions, see
-     * {@link https://firstfrc.blob.core.windows.net/frc2024/FieldAssets/2024FieldDrawings.pdf},
-     * page 4.
-     * 
-     * @return the robot's estimated position in the board.
+     * @param velocity the velocity to convert
+     * @return the converted RPM value
      */
-    public Transform3d estimatedPosition() {
-        Pair<Integer, Transform3d> target = target();
-        if (target == null) return null;
-
-        Transform3d originToTarget = APRILTAGS.get(target.getFirst());
-        if (originToTarget == null) return null;
-
-        Transform3d targetToRobot = target.getSecond().inverse();
-
-        Transform3d originToRobot = originToTarget.plus(targetToRobot);
-
-        return originToRobot;
+    public double toRPM(double velocity) {
+        return velocity * 60 / (2 * Math.PI * Constants.Launcher.launcherWheelRadius);
     }
 
-
-    
+    @Override
+    public void periodic() {
+        if(hasTarget()) {
+            tx = OptionalDouble.of(LimelightHelpers.getTX(""));
+            ty = OptionalDouble.of(LimelightHelpers.getTY(""));
+            distanceToTarget = getDistanceToTarget();
+        } else {
+            tx = OptionalDouble.empty();
+            ty = OptionalDouble.empty();
+            distanceToTarget = OptionalDouble.empty();
+        }
+        SmartDashboard.putNumber("LL Distance", getDistanceToTarget().orElse(-1));
+        try {
+            SmartDashboard.putNumber("LL From Pose X", getTargetPoseRobotRealative().get().getX());
+            SmartDashboard.putNumber("LL From Pose Y", getTargetPoseRobotRealative().get().getY());
+            SmartDashboard.putNumber("LL From Pose Z", getTargetPoseRobotRealative().get().getZ());
+        } catch (Exception e) {}
+    }                                                                                        
 }
