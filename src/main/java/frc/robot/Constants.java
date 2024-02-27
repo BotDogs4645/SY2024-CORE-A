@@ -95,6 +95,14 @@ public final class Constants {
     public static final int ampGuideReverse = 5;
   }
 
+  public static final class Pneumatics {
+    public static final int pcmCanID = 15;
+    public static final int climberForward = 7;
+    public static final int climberReverse = 6;
+    public static final int ampGuideForward = 4;
+    public static final int ampGuideReverse = 5;
+  }
+
   public static final class Swerve {
     public static final double stickDeadband = 0.1;
 
@@ -276,28 +284,7 @@ public final class Constants {
       tag(15, 182.73, 177.10, 52.00, 120),
       tag(16, 182.73, 146.19, 52.00, 240));
 
-<<<<<<< HEAD
-  public static final Map<Integer, Transform3d> SHOOTER_APRILTAG_OFFSETS = Map.ofEntries(
-      tag(-1, 0, 0, 0, 0),
-      tag(3, 0, 22.25, 28.5, 0),
-      tag(4, 0, 0, 28.5, 0),
-      tag(5, 0, 0, -19.38, 0),
-      tag(6, 0, 0, -19.38, 0),
-      tag(7, 0, 0, 28.5, 0),
-      tag(8, 0, 22.25, 28.5, 0),
-      tag(11, 0, 0, 0, 0), // not yet measured
-      tag(12, 0, 0, 0, 0), // not yet measured
-      tag(13, 0, 0, 0, 0), // not yet measured
-      tag(14, 0, 0, 0, 0), // not yet measured
-      tag(15, 0, 0, 0, 0), // not yet measured
-      tag(16, 0, 0, 0, 0) // not yet measured
-  );
-  
-
-  private static Map.Entry<Integer, Transform3d> tag(int id, double x, double y, double z, double rot) {
-=======
     private static Map.Entry<Integer, Transform3d> tag(int id, double x, double y, double z, double rot) {
->>>>>>> d235d2757a2e78519fd9bb20ce10b148f9bd486a
     final double inchesPerMeter = 39.37;
 
     return Map.entry(id, new Transform3d(
