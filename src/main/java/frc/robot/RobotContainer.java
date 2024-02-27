@@ -5,7 +5,9 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.sun.org.apache.bcel.internal.classfile.Field;
 
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -34,7 +36,9 @@ public class RobotContainer {
 
   public static final CommandXboxController driveController = new CommandXboxController(Constants.kDriverControllerPort);
 
-  private final Swerve drivetrain = new Swerve();
+  private final Field2d playingField = new Field2d();
+
+  private final Swerve drivetrain = new Swerve(playingField);
   private final Pneumatics m_pneumaticsSubsystem = new Pneumatics();
 
   private final Limelight limelightInstance = new Limelight();
@@ -42,6 +46,7 @@ public class RobotContainer {
   private final AdvanceToTarget advanceToTargetInstance = new AdvanceToTarget(drivetrain, aprilTagInstance, true);
 
   private final Intake intake = new Intake();
+
   // private final IntakeCommand intake = new IntakeCommand(intakeInstance);
   
   private final SendableChooser<Command> autoChooser;
@@ -58,6 +63,9 @@ public class RobotContainer {
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
+
+    // playingField = new Field2d();
+    SmartDashboard.putData("Field", playingField);
 
     configureBindings();
   }
@@ -97,5 +105,13 @@ public class RobotContainer {
 
   public Intake getIntake() {
     return intake;
+  }
+
+  public Swerve getDrivetrain() {
+      return drivetrain;
+  }
+
+  public Field2d getField() {
+    return playingField;
   }
 }

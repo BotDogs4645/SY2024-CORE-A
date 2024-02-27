@@ -7,6 +7,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
+import com.sun.org.apache.bcel.internal.classfile.Field;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -31,7 +32,7 @@ public class Swerve extends SubsystemBase {
 
   private Field2d field;
 
-  public Swerve() {
+  public Swerve(Field2d field) {
     gyro = new Pigeon2(Constants.Swerve.pigeonID);
     gyro.getConfigurator().apply(new Pigeon2Configuration());
     zeroGyro();
@@ -62,8 +63,7 @@ public class Swerve extends SubsystemBase {
         () -> DriverStation.getAlliance().filter(a -> a == DriverStation.Alliance.Red).isPresent(),
         this);
 
-    field = new Field2d();
-    SmartDashboard.putData("Field", field);
+        this.field = field;
   }
 
   public void driveToTag(Pose3d target) {

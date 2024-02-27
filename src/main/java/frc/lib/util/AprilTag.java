@@ -6,7 +6,9 @@ package frc.lib.util;
 
 import java.util.Optional;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -79,12 +81,8 @@ public class AprilTag {
    * @return(s) the distance which exists between the two locations specified 
    * within the method's parameters on a 2D plane.
    */
-  public Optional<Double> getPlanarDistance(Optional<double[]> originPosition, Optional<double[]> targetPosition) {
-    if (originPosition.isPresent() && targetPosition.isPresent()) {
-      return Optional.of(Math.sqrt(Math.pow(targetPosition.get()[1] - originPosition.get()[1], 2) + Math.pow(targetPosition.get()[0] - originPosition.get()[0], 2)));
-    } else {
-      return Optional.empty();
-    }
+  public Optional<Double> getPlanarDistance(Translation2d originPosition, Translation2d targetPosition) {
+      return Optional.of(Math.sqrt(Math.pow(targetPosition.getY() - originPosition.getY(), 2) + Math.pow(targetPosition.getX() - originPosition.getX(), 2)));
   }
 
   /**
@@ -151,7 +149,7 @@ public class AprilTag {
         double yAxisOffset = currentRelativePosition.get().getY() - targetPosition.get().getY();
         double xAngularOffset = (Math.atan2(yAxisOffset, xAxisOffset) * (180 / Math.PI)) - currentRelativePosition.get().getRotation().getX();
       
-        double yAngularOffset = Math.asin((targetPosition.get().getZ() - currentRelativePosition.get().getZ()) / getPlanarDistance(Optional.of(new double[] {currentRelativePosition.get().getX(), currentRelativePosition.get().getY()}), Optional.of(new double[] {targetPosition.get().getX(), targetPosition.get().getY()})).get());
+        double yAngularOffset = Math.asin((targetPosition.get().getZ() - currentRelativePosition.get().getZ()) / getPlanarDistance(new Translation2d(currentRelativePosition.get().getX(), currentRelativePosition.get().getY()), new Translation2d(targetPosition.get().getX(), targetPosition.get().getY())).get());
 
         if (Double.isNaN(xAngularOffset) || Double.isNaN(yAngularOffset)) {
           return Optional.empty();

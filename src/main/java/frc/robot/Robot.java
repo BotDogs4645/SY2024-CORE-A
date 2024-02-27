@@ -4,10 +4,13 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.config.CTREConfigs;
+import java.util.Optional;
 
 /**
  * The main robot class. This handles the robot container (which contains the
@@ -19,6 +22,8 @@ public class Robot extends TimedRobot {
 
   public long initalizationTime;
   private RobotContainer m_robotContainer;
+  private Transform2d positionalError = new Transform2d();
+
   @Override
   public void robotInit() {
     ctreConfigs = new CTREConfigs();
@@ -30,6 +35,15 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     m_robotContainer.getAprilTag().aprilTagPeriodic();
+
+    Pose2d swervePose2D = m_robotContainer.getDrivetrain().getPose();
+    Optional<Pose2d> limelightPose2D = m_robotContainer.getAprilTag().determinePosition().map(transform3D -> new Pose2d(transform3D.getTranslation().toTranslation2d(), transform3D.getRotation().toRotation2d()));
+
+    if (limelightPose2D.isPresent()) {
+      positionalError = limelightPose2D.get().minus(swervePose2D);
+    }
+
+    m_robotContainer.getField().setRobotPose(swervePose2D.plus(positionalError));
   }
 
   @Override

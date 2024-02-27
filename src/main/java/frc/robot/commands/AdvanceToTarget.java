@@ -4,15 +4,13 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import java.util.Optional;
-import java.util.function.Function;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-import com.sun.org.apache.bcel.internal.Const;
+import java.util.Optional;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
@@ -23,18 +21,19 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.math.controller.PIDController;
 import java.util.List;
-import java.lang.Runnable;
+
 public class AdvanceToTarget extends Command {
 
     private Swerve swerveDrive;
     private AprilTag aprilTagInstance;
     private boolean robotActivated;
-    private Optional<Transform3d> targetPosition;
+    private Optional<Transform2d> targetPosition;
+    public Optional<SequentialCommandGroup> currentTargetCommand = Optional.empty();
 
     private SlewRateLimiter translationLimiter = new SlewRateLimiter(3.0);
     private SlewRateLimiter strafeLimiter = new SlewRateLimiter(3.0);
@@ -47,7 +46,7 @@ public class AdvanceToTarget extends Command {
         addRequirements(swerveDrive);
     }
 
-    public void specifyTarget(Transform3d targetPosition) {
+    public void specifyTarget(Transform2d targetPosition) {
         this.targetPosition = Optional.of(targetPosition);
     }
 
@@ -58,7 +57,8 @@ public class AdvanceToTarget extends Command {
             return;
         }
 
-        List<Translation2d> trajectoryWaypoints = List.of(new Translation2d(1, 1), new Translation2d(2, -1), targetPosition.get().getTranslation().toTranslation2d());
+        // List<Translation2d> trajectoryWaypoints = List.of(new Translation2d(1, 1), new Translation2d(2, -1), targetPosition.get().getTranslation().toTranslation2d());
+        List<Translation2d> trajectoryWaypoints = List.of(targetPosition.get().getTranslation());
 
         for (Translation2d currentWaypoint : trajectoryWaypoints) {
             if (!ObstacleDetection.continueAlongPath(currentPosition.get().getTranslation(), (currentWaypoint.getY() - currentPosition.get().getY()) / (currentWaypoint.getX() - currentPosition.get().getX()))) {
@@ -76,11 +76,10 @@ public class AdvanceToTarget extends Command {
     
         Trajectory projectedTrajectory =
             TrajectoryGenerator.generateTrajectory(
-                new Pose2d(0, 0, new Rotation2d(0)),
-                // Pass through the two interior waypoints defined below, constructing an 's' curve path
-                // List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-                List.of(),
-                new Pose2d(targetPosition.getTranslation().toTranslation2d(), targetPosition.getRotation().toRotation2d()),
+                // new Pose2d(0, 0, new Rotation2d(0)),
+                new Pose2d(currentPosition.get().getTranslation().toTranslation2d(), targetPosition.get().getRotation()),
+                trajectoryWaypoints,
+                new Pose2d(targetPosition.get().getTranslation(), targetPosition.get().getRotation()),
                 trajectoryConfig);
     
         var thetaController =
@@ -101,69 +100,20 @@ public class AdvanceToTarget extends Command {
                 swerveDrive::setModuleStates,
                 swerveDrive);
     
-        // Reset odometry to the starting pose of the trajectory.
-        // swerveDrive.resetOdometry(exampleTrajectory.getInitialPose()); // As of 2/26/2024, I am unsure as to why this line of code was included in the example resources from which this format is derived. - Carver
-    
         // Run path following command, then stop at the end.
-        swerveControllerCommand.andThen(() -> swerveDrive.drive(
+        currentTargetCommand = Optional.of(swerveControllerCommand.andThen(() -> swerveDrive.drive(
             new Translation2d(0, 0),
             0,
             !robotActivated,
-            true)).andThen(() -> this.targetPosition = Optional.empty()).schedule();
+            true)).andThen(() -> this.targetPosition = Optional.empty()));
+
+        currentTargetCommand.get().schedule();
     }
-
-    // @Override
-    // public void execute() {
-    //     if (targetPosition.isPresent() && aprilTagInstance.validTargetInput(Optional.of(targetPosition.get().getTranslation()))) {
-    //         double xAngle = aprilTagInstance.determineTargetRotationalOffset(Optional.of(targetPosition.get().getTranslation())).get()[0];
-
-    //         double translationVal;
-    //         double strafeVal;
-    //         double rotationVal;
-
-
-    //         if (xAngle < Constants.AdvanceToTarget.minAngle) {
-    //             translationVal = 0;
-    //             strafeVal = 0;
-    //             rotationVal = Constants.AdvanceToTarget.swerveRotationalValue;
-    //         } else if (xAngle > Constants.AdvanceToTarget.maxAngle) {
-    //             translationVal = 0;
-    //             strafeVal = 0;
-    //             rotationVal = -Constants.AdvanceToTarget.swerveRotationalValue;
-    //         } else {
-    //             translationVal = Constants.AdvanceToTarget.swerveTranslationValue;
-    //             strafeVal = 0;
-    //             rotationVal = 0;
-    //         }
-
-    //         translationVal =
-    //             translationLimiter.calculate(
-    //                 MathUtil.applyDeadband(translationVal, Constants.Swerve.stickDeadband));
-    //         strafeVal =
-    //             strafeLimiter.calculate(
-    //                 MathUtil.applyDeadband(strafeVal, Constants.Swerve.stickDeadband));
-    //         rotationVal =
-    //             rotationLimiter.calculate(
-    //                 MathUtil.applyDeadband(rotationVal, Constants.Swerve.stickDeadband));
-
-    //         swerveDrive.drive(
-    //             new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed),
-    //             rotationVal * Constants.Swerve.maxAngularVelocity,
-    //             !robotActivated,
-    //             true);
-    //     } else {
-    //         swerveDrive.drive(
-    //             new Translation2d(0, 0),
-    //             0,
-    //             !robotActivated,
-    //             true);
-
-    //         targetPosition = Optional.empty();
-    //     }
-    // }
 
     @Override
     public void end(boolean interrupted) {
+        currentTargetCommand.get().cancel();
+        
         swerveDrive.drive(
             new Translation2d(0, 0),
             0,
@@ -173,8 +123,6 @@ public class AdvanceToTarget extends Command {
 
     @Override
     public boolean isFinished() {
-        Optional<Transform3d> targetPos = aprilTagInstance.targetPos();
-        
-        return !targetPos.isPresent() && !targetPosition.isPresent();
+        return targetPosition.isEmpty() || currentTargetCommand.isEmpty() || currentTargetCommand.get().isFinished();
     }
 }
