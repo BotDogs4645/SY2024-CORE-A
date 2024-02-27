@@ -67,7 +67,7 @@ public class SwerveModule {
   /**
    * Sets the desired state (speed and rotation) of this module.
    * @param desiredState the desired state (speed and rotation)
-   * @param isOpenLoop if swerve is currently being controlled in a feedback
+   * @param isOpenLoop if swerve is currently being controlled in a feedforward
    *                   loop; if not, this will use PID for speed control
    */
   public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
@@ -129,7 +129,7 @@ public class SwerveModule {
    * Sets the desired speed of this module; this will ignore the rotation in
    * the {@code desiredState}
    * @param desiredState the desired speed
-   * @param isOpenLoop if swerve is currently being controlled in a feedback
+   * @param isOpenLoop if swerve is currently being controlled in a feedforward
    *                   loop; if not, this will use PID for speed control
    */
   private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {

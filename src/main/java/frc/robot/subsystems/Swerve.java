@@ -101,7 +101,7 @@ public class Swerve extends SubsystemBase {
    * @param rotation    the desired rotation of the robot itself
    * @param fieldRelative whether movement is relative to the front of the robot
    *                      or to the field itself
-   * @param isOpenLoop if swerve is currently being controlled in a feedback
+   * @param isOpenLoop if swerve is currently being controlled in a feedforward
    *                   loop; if not, this will use PID for speed control
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
@@ -117,7 +117,7 @@ public class Swerve extends SubsystemBase {
   /**
    * Sets each module to the provided state.
    * @param states the array of states (one per swerve module)
-   * @param isOpenLoop if swerve is currently being controlled in a feedback
+   * @param isOpenLoop if swerve is currently being controlled in a feedforward
    *                   loop; if not, this will use PID for speed control
    */
   public void setModuleStates(SwerveModuleState[] states, boolean isOpenLoop) {
