@@ -59,15 +59,20 @@ public class AprilTag {
   // Fetches, calculates, and returns the offset from the robot to the current primary apriltag target.
 
   public Optional<Transform3d> targetPos() {
-        // Optional<double[]> targetPose = Optional.of(entry("targetpose_robotspace").get().getDoubleArray(new double[0]));
-        Optional<double[]> targetPose = Optional.of(new double[] {-5, 0, 0, 0, 0, 0});
+        Optional<double[]> targetPose = Optional.of(entry("targetpose_robotspace").get().getDoubleArray(new double[0]));
+        // Optional<double[]> targetPose = Optional.of(new double[] {-5, 0, 0, 0, 0, 0});
         
 
         if (targetPose.isPresent()) {
-          return Optional.of(new Transform3d(
+          Transform3d transform = new Transform3d(
               new Translation3d(targetPose.get()[0], targetPose.get()[1], targetPose.get()[2]),
               new Rotation3d(targetPose.get()[3], targetPose.get()[4], targetPose.get()[5])
-          ));
+          );
+          if(transform.getTranslation().getNorm() < 0.0001) {
+            return Optional.empty();
+          } else {
+            return Optional.of(transform);
+          }
         } else {
           return Optional.empty();
         }
@@ -115,7 +120,7 @@ public class AprilTag {
         return Optional.empty();
     }
     
-    Transform3d currentAprilTagLocation = Constants.APRILTAGS.get(aprilTagIdentifier);
+    Transform3d currentAprilTagLocation = Constants.Limelight.APRILTAGS.get(aprilTagIdentifier);
 
     double[] currentRelativeLocation = {
         currentAprilTagLocation.getX() + relativePositionalData.get().getX(), 
@@ -172,5 +177,84 @@ public Optional<double[]> determineTargetRotationalOffset(Optional<Translation3d
         System.out.println("Target X Offset: " + xAngularOffset + ", Target Y Offset " + yAngularOffset);
 
         return Optional.of(new double[] {xAngularOffset, yAngularOffset});
+    }
+
+    /**
+     * Returns the height difference between the robot and the target, if a target
+     * is detected.
+     * 
+     * @return an OptionalDouble representing the absolute height difference to the
+     *         target,
+     *         or an empty OptionalDouble if no target is detected.
+     */
+    public Optional<Double> getHeightDifferenceToTarget() {
+      // still need to implement the offsets between the actual target and the
+      // apriltag
+      if (targetPos().isPresent()) {
+        double heightDifference = targetPos().get().getY();
+        return Optional.of(Math.abs(heightDifference));
+      } else {
+        return Optional.empty();
+      }
+    }
+
+    /**
+     * Returns the vertical velocity component needed for the note to reach the
+     * target, if a
+     * target is detected.
+     * 
+     * @return an OptionalDouble representing the vertical velocity of the target,
+     *         or empty if no target is detected
+     */
+    public Optional<Double> getVerticalVelocity() {
+      if (targetPos().isPresent()) {
+        return Optional.of(Math.sqrt(
+            2 * Constants.Launcher.gravityAcceleration * getHeightDifferenceToTarget().get()));
+
+      } else {
+        return Optional.empty();
+      }
+    }
+
+    /**
+     * Calculates the time it takes for the note to travel to the target, if a
+     * target is detected.
+     * 
+     * @return An OptionalDouble representing the time to travel, or empty if there
+     *         is no target.
+     */
+    public Optional<Double> getTimeToTravel() {
+      if (targetPos().isPresent()) {
+        double timeToTravel = getVerticalVelocity().get() / Constants.Launcher.gravityAcceleration;
+        return Optional.of(timeToTravel);
+      }
+      return Optional.empty();
+    }
+
+
+    /**
+     * Returns the horizontal velocity component needed for the note to reach the
+     * target, if a
+     * target is detected.
+     * 
+     * @return an OptionalDouble representing the vertical velocity of the target,
+     *         or empty if no target is detected
+     */
+    public Optional<Double> getHorizontalVelocity() {
+      if (!targetPos().isPresent() && getHeightDifferenceToTarget().isPresent()) {
+        return Optional.empty();
+      }
+      //TODO: Use a new method to find the planar 2D distance to the target instead of getDirectDistance(), so that it disregards height.
+      return Optional.of(targetPos().map(transform -> Math.hypot(transform.getX(), transform.getY())).get() / getTimeToTravel().get());
+    }
+
+    /**
+     * Converts a velocity to RPM (Rotations Per Minute).
+     * 
+     * @param velocity the velocity to convert
+     * @return the converted RPM value
+     */
+    public double toRPM(double velocity) {
+      return velocity * 60 / (2 * Math.PI * Constants.Launcher.launcherWheelRadius);
     }
 }
