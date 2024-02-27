@@ -6,9 +6,9 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class LEDController extends SubsystemBase {
-  private static final int BLINKIN_PWM_PORT = 0;
   public static enum LEDColor {
     PINK(0.57),
     WHITE(0.93),
@@ -32,7 +32,7 @@ public class LEDController extends SubsystemBase {
   public LEDColor currentColor;
 
   public LEDController() {
-    this.controller = new Spark(BLINKIN_PWM_PORT);
+    this.controller = new Spark(Constants.ledControllerID);
     setLEDColor(LEDColor.WHITE);
   }
 

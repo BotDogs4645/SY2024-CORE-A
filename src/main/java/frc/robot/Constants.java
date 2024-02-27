@@ -221,6 +221,8 @@ public final class Constants {
 
   public static final int pdhID = 1;
 
+  public static final int ledControllerID = 0;
+
   public static final int kDriverControllerPort = 0;
 
   public static class Limelight {
