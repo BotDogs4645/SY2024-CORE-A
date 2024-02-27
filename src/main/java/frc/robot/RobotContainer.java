@@ -19,6 +19,7 @@ import frc.robot.subsystems.IntakeIndexer;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Swerve;
+import edu.wpi.first.cameraserver.CameraServer;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -48,6 +49,7 @@ public class RobotContainer {
             () -> driveController.leftBumper().getAsBoolean() // Field-oriented driving (yes or no)
         ));
 
+    CameraServer.startAutomaticCapture();
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
