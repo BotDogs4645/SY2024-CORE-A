@@ -23,6 +23,7 @@ public class IntakeIndexer extends SubsystemBase {
   public IntakeIndexer() {
     feederMotor = new PWMSparkMax(Constants.Intake.feederMotorPWMPort);
     intakeMotor = new PWMSparkMax(Constants.Intake.intakeMotorPWMPort);
+    feederMotor.setInverted(true);
     noteDetectionSwitch = new DigitalInput(Constants.Intake.noteDetectionSwitchDIOPort);
   }
 
@@ -54,7 +55,7 @@ public class IntakeIndexer extends SubsystemBase {
     if(feederMotor.get() != 0) {
       feederMotor.set(0);
     } else {
-      feederMotor.set(-1);
+      feederMotor.set(1);
     }
   }
   public void toggleBoth() {
