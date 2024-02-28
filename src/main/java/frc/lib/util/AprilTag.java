@@ -64,10 +64,15 @@ public class AprilTag {
         
 
         if (targetPose.isPresent()) {
-          return Optional.of(new Transform3d(
+          Transform3d transform = new Transform3d(
               new Translation3d(targetPose.get()[0], targetPose.get()[1], targetPose.get()[2]),
               new Rotation3d(targetPose.get()[3], targetPose.get()[4], targetPose.get()[5])
-          ));
+          );
+          if(transform.getTranslation().getNorm() < 0.0001) {
+            return Optional.empty();
+          } else {
+            return Optional.of(transform);
+          }
         } else {
           return Optional.empty();
         }
@@ -240,7 +245,7 @@ public Optional<double[]> determineTargetRotationalOffset(Optional<Translation3d
         return Optional.empty();
       }
       //TODO: Use a new method to find the planar 2D distance to the target instead of getDirectDistance(), so that it disregards height.
-      return Optional.of(getDirectDistance(targetPos()).get() / getTimeToTravel().get());
+      return Optional.of(targetPos().map(transform -> Math.hypot(transform.getX(), transform.getY())).get() / getTimeToTravel().get());
     }
 
     /**
