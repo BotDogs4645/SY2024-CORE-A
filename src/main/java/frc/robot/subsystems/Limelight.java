@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
  * The Limelight subsystem.
@@ -16,7 +17,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
  * 
  * We use the Limelight for location estimation with AprilTags.
  */
-public class Limelight {
+public class Limelight extends SubsystemBase {
 
     public static final NetworkTable TABLE = NetworkTableInstance.getDefault().getTable("limelight");
 

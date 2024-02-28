@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.util.AprilTag;
 import frc.robot.commands.AdvanceToTarget;
 import frc.robot.commands.TeleopSwerve;
-import frc.robot.subsystems.Intake;
+// import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Swerve;
@@ -45,7 +45,7 @@ public class RobotContainer {
   private final AprilTag aprilTagInstance = new AprilTag(limelightInstance);
   private final AdvanceToTarget advanceToTargetInstance = new AdvanceToTarget(drivetrain, aprilTagInstance, true);
 
-  private final Intake intake = new Intake();
+  // private final Intake intake = new Intake();
 
   // private final IntakeCommand intake = new IntakeCommand(intakeInstance);
   
@@ -59,7 +59,7 @@ public class RobotContainer {
             () -> -driveController.getLeftX(), // strafe
             () -> -driveController.getRightX(), // rotation
             () -> driveController.leftBumper().getAsBoolean() // field oriented, yes or no
-        ).finallyDo(() -> intake.deactivateIntake()));
+        )/*.finallyDo(() -> intake.deactivateIntake())*/);
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -74,20 +74,20 @@ public class RobotContainer {
     driveController.a().onTrue(new InstantCommand(() -> {
       drivetrain.zeroGyro();
     }, drivetrain));
-    driveController.leftTrigger().onTrue(Commands.run(
-        () -> {
-          if (intake.intakeEnabled) {
-            intake.deactivateIntake();
-          } else {
-            intake.activateIntake();
-          }
-        }));
+    // driveController.leftTrigger().onTrue(Commands.run(
+    //     () -> {
+    //       if (intake.intakeEnabled) {
+    //         intake.deactivateIntake();
+    //       } else {
+    //         intake.activateIntake();
+    //       }
+    //     }));
 
-    SequentialCommandGroup autoIntakeCommand = new SequentialCommandGroup (
-      Commands.runOnce(() -> intake.activateIntake(), intake),
-      Commands.waitSeconds(Constants.Intake.autonomousIntakeDuration),
-      Commands.runOnce(() -> intake.deactivateIntake(), intake)
-    );
+    // SequentialCommandGroup autoIntakeCommand = new SequentialCommandGroup (
+    //   Commands.runOnce(() -> intake.activateIntake(), intake),
+    //   Commands.waitSeconds(Constants.Intake.autonomousIntakeDuration),
+    //   Commands.runOnce(() -> intake.deactivateIntake(), intake)
+    // );
 
     // driveController.y().onTrue(new DriveToTag(
     //   drivetrain,
@@ -101,10 +101,6 @@ public class RobotContainer {
 
   public AprilTag getAprilTag() {
     return aprilTagInstance;
-  }
-
-  public Intake getIntake() {
-    return intake;
   }
 
   public Swerve getDrivetrain() {

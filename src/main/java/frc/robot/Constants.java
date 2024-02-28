@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.sun.org.apache.xml.internal.security.transforms.Transform;
+import com.sun.tools.classfile.StackMapTable_attribute.same_frame;
 import com.sun.tools.classfile.StackMapTable_attribute.stack_map_frame;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -29,8 +30,9 @@ import frc.lib.config.SwerveModuleConstants;
 public final class Constants {
 
   public static final class Intake {
-    public static final double defaultMotorSpeed = 0;
-    public static final double autonomousIntakeDuration = 0;
+    public static final int intakeMotorPWMPort = 0;
+    public static final int feederMotorPWMPort = 1;
+    public static final int noteDetectionSwitchDIOPort = 0;
   }
 
   public static class AdvanceToTarget {
@@ -56,17 +58,27 @@ public final class Constants {
     public static final double turnKI = 0.0;
     public static final double turnKD = 0.75;
   }
-  public static final class Launcher {
-    public static final double launcherWheelRadius = 0.04826;
+  
+  public static class Launcher {
+    public static final int angleMotorID = 18;
+    public static final int topMotorID = 13;
+    public static final int bottomMotorID = 14;
+
     public static final double gravityAcceleration = 9.81;
-    public static final double kP = 0.05;
-    public static final double kI = 0.0001;
-    public static final double kD = 0.0;
-    public static final double ampHeight = 0.66;
-    public static final double speakerHeight = 1.984;
-    public static final double trapHeight = 1.569;
     public static final double launcherHeight = 0.574;
-    public static final double feedVelocity = 0.5; // just a placeholder value - will need to be changed
+    public static final double launcherWheelRadius = 0.04826;
+
+    public static final double ampAngle = 90;//need to test to find
+    public static final double speakerAngle = 0;//need to test to find
+    public static final double trapAngle = 0;
+
+    public static final double ampSpeed = 0.2;
+    public static final double speakerSpeed = 0;//need to test to find
+    public static final double trapSpeed = 0;//need to test to find
+
+    public static final int ampNodeID = 0;
+    public static final int speakerNodeID = 0;
+    public static final int trapNodeID = 0;
   }
 
   public static final class Vision {
