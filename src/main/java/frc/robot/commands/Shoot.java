@@ -38,10 +38,10 @@ public class Shoot extends Command {
       new InstantCommand(() -> launcher.startLauncher(0.2)),
       new InstantCommand(() -> launcher.aimLauncher()),
       new WaitCommand(1),
-      new InstantCommand(() -> intakeIndexer.toggleBoth()),
+      new InstantCommand(() -> intakeIndexer.run()),
       new WaitCommand(3),
-      new InstantCommand(() -> intakeIndexer.toggleBoth()),
-      new InstantCommand(() -> intakeIndexer.hasNote = false),
+      new InstantCommand(() -> intakeIndexer.stop()),
+      new InstantCommand(() -> intakeIndexer.setHasNote(false)),
       new InstantCommand(() -> launcher.stopLauncher())
     ).schedule();
   }
@@ -55,10 +55,9 @@ public class Shoot extends Command {
   @Override
   public void end(boolean interrupted) {
     if (interrupted) {
-      intakeIndexer.stopFeeder();
-      intakeIndexer.stopIntake();
+      intakeIndexer.stop();
       launcher.stopLauncher();
-      intakeIndexer.hasNote = false;
+      intakeIndexer.setHasNote(false);
     }
   }
 

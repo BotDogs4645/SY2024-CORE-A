@@ -20,56 +20,48 @@ public class IntakeIndexer extends SubsystemBase {
 
   private DigitalInput noteDetectionSwitch;
  
-  public boolean hasNote;
+  private boolean hasNote;
 
   public IntakeIndexer() {
     feederMotor = new PWMSparkMax(Constants.Intake.feederMotorPWMPort);
     intakeMotor = new PWMSparkMax(Constants.Intake.intakeMotorPWMPort);
-    feederMotor.setInverted(true);
+    feederMotor.setInverted(Constants.Intake.invertFeederMotor);
+    intakeMotor.setInverted(Constants.Intake.invertIntakeMotor);
     noteDetectionSwitch = new DigitalInput(Constants.Intake.noteDetectionSwitchDIOPort);
-    hasNote = false;
   }
 
-  public void runFeeder(double speed) {
+  public void setHasNote(boolean hasNote) {
+    this.hasNote = hasNote;
+  }
+
+  public boolean hasNote() {
+    return this.hasNote;
+  }
+
+  public void run(double speed) {
     feederMotor.set(speed);
-  }
-
-  public void runIntake(double speed) {
     intakeMotor.set(speed);
   }
 
-  public void stopFeeder() {
-    feederMotor.set(0);
+  public void run() {
+    run(Constants.Intake.intakeSpeed);
   }
 
-  public void stopIntake() {
+  public void stop() {
+    feederMotor.set(0);
     intakeMotor.set(0);
   }
 
-  public void toggleIntake() {
+  public void toggle() {
     if(intakeMotor.get() != 0) {
-      intakeMotor.set(0);
+      stop();
     } else {
-      intakeMotor.set(0.5);
+      run(Constants.Intake.intakeSpeed);
     }
-  }
-
-  public void toggleFeeder() {
-    if(feederMotor.get() != 0) {
-      feederMotor.set(0);
-    } else {
-      feederMotor.set(0.5);
-    }
-  }
-
-  public void toggleBoth() {
-    toggleIntake();
-    toggleFeeder();
   }
 
   public void startSpittingNote() {
-    runFeeder(-1);
-    runIntake(-1);
+    run(-1);
     this.hasNote = false;
   }
 
@@ -79,7 +71,7 @@ public class IntakeIndexer extends SubsystemBase {
   }
 
   public boolean isRunning() {
-    return (intakeMotor.get() != 0);
+    return intakeMotor.get() != 0;
   };
   
   @Override

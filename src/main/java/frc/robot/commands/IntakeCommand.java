@@ -21,8 +21,8 @@ public class IntakeCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (!intakeIndexer.hasNote){
-      intakeIndexer.toggleBoth();
+    if (!intakeIndexer.hasNote()){
+      intakeIndexer.toggle();
     }
   }
 
@@ -33,8 +33,7 @@ public class IntakeCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intakeIndexer.stopIntake();
-    intakeIndexer.stopFeeder();
+    intakeIndexer.stop();
   }
 
   // Returns true when the command should end.
@@ -42,7 +41,7 @@ public class IntakeCommand extends Command {
   public boolean isFinished() {
     boolean limitSwitchTriggered = intakeIndexer.getLimitSwitch();
     if (limitSwitchTriggered) {
-      intakeIndexer.hasNote = true;
+      intakeIndexer.setHasNote(true);
     }
     return limitSwitchTriggered;
   }

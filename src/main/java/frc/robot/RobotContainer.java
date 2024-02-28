@@ -90,7 +90,7 @@ public class RobotContainer {
     driveController.leftTrigger().onTrue(new SequentialCommandGroup(
       new InstantCommand(() -> intakeIndexer.startSpittingNote()),
       new WaitCommand(1),
-      new InstantCommand(() -> intakeIndexer.toggleBoth())
+      new InstantCommand(() -> intakeIndexer.stop())
       ));
   }
 

@@ -40,6 +40,9 @@ public final class Constants {
   public static final class Intake {
     public static final int intakeMotorPWMPort = 0;
     public static final int feederMotorPWMPort = 1;
+    public static final boolean invertIntakeMotor = false;
+    public static final boolean invertFeederMotor = true;
+    public static final double intakeSpeed = 1;
     public static final int noteDetectionSwitchDIOPort = 0;
   }
 
