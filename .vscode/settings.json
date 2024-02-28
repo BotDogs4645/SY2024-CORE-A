@@ -25,6 +25,5 @@
       }
     },
   ],
-  "java.test.defaultConfig": "WPIlibUnitTests",
-  "workbench.colorCustomizations": {}
+  "java.test.defaultConfig": "WPIlibUnitTests"
 }
