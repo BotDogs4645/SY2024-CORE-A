@@ -55,9 +55,17 @@ public class Launcher extends SubsystemBase{
   public void setWantedAngle(double wantedAngle) {
     this.wantedAngle = wantedAngle;
   }
-  public void aimLauncher() {
+  public void aimLauncher(/*need node id*/) {
     //sets the setpoint angle to the angle calculated by the getLaunchAngle method
-    wantedAngle = limelight.getLaunchAngle().getAsDouble();
+    if (/*need node id to determine that we are at an amp*/){
+    wantedAngle = Constants.Launcher.ampAngle;
+    }
+    else if (/*need node id to determine that we are at a speaker*/){
+    wantedAngle = Constants.Launcher.speakerAngle;
+    }
+    else if (/*need node id to determine that we are at a trap*/){
+    wantedAngle = Constants.Launcher.trapAngle;
+    }
     controller.setReference(wantedAngle, CANSparkMax.ControlType.kPosition);
    
   }

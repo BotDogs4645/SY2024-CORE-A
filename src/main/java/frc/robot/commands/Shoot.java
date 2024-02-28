@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeIndexer;
 import frc.robot.subsystems.Launcher;
 import frc.robot.subsystems.Limelight;
+import frc.robot.Constants;
 
 public class Shoot extends Command {
   /** Creates a new Shoot. */
@@ -25,25 +26,23 @@ public class Shoot extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (intakeIndexer.hasNote()){
-      intakeIndexer.runIntake(0.5);
-    }
-    else{
-      intakeIndexer.stopIntake();
-    }
-      intakeIndexer.runFeeder(0.5);
-      launcher.startLauncher(0.5);
-      //put delay here (without causing a scheduling error)
-      launcher.stopLauncher();
-      launcher.aimLauncher();
+    launcher.aimLauncher();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    launcher.startLauncher(limelight.getLaunchVelocity().getAsDouble());
+    if (/*need node id to determine that we are at an amp*/){
+      vroom(Constants.Launcher.ampSpeed);
+    }
+    else if (/*need node id to determine that we are at a speaker*/){
+      vroom(Constants.Launcher.speakerSpeed);
+    }
+    else if (/*need node id to determine that we are at a trap*/){
+      vroom(Constants.Launcher.trapSpeed);
+    }
   }
-
+  
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
@@ -56,5 +55,10 @@ public class Shoot extends Command {
   @Override
   public boolean isFinished() {
     return false;
+  }
+  public void vroom(double speed){
+    intakeIndexer.runIntake(speed);
+    intakeIndexer.runFeeder(speed);
+    launcher.startLauncher(speed);
   }
 }

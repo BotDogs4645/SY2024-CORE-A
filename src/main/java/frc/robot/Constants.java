@@ -61,9 +61,12 @@ public final class Constants {
     public static final double launcherHeight = 0.574;
     public static final double launcherWheelRadius = 0.04826;
 
-    public static final double ampHeight = 0.66;
-    public static final double speakerHeight = 1.984;
-    public static final double trapHeight = 1.436;
+    public static final double ampAngle = 90;//need to test to find
+    public static final double speakerAngle = 0;//need to test to find
+    public static final double trapAngle = 0;
+    public static final double ampSpeed = 0.2;
+    public static final double speakerSpeed = 0;//need to test to find
+    public static final double trapSpeed = 0;//need to test to find
   }
 
   public static final class Pneumatics {
