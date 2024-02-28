@@ -1,12 +1,10 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.*;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
+
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -16,6 +14,13 @@ import frc.lib.math.OnboardModuleState;
 import frc.lib.util.CANSparkMaxUtil;
 import frc.robot.Constants;
 
+/**
+ * A singular Swerve module, controlling an angle motor and a drive motor.
+ * 
+ * A module is able to control its angle and velocity; this is what a
+ * SwerveModuleState is. Internally, we use a SparkPIDController to correctly
+ * set these values.
+ */
 public class SwerveModule {
   public int moduleNumber;
   private Rotation2d lastAngle;
@@ -59,6 +64,12 @@ public class SwerveModule {
     lastAngle = getState().angle;
   }
 
+  /**
+   * Sets the desired state (speed and rotation) of this module.
+   * @param desiredState the desired state (speed and rotation)
+   * @param isOpenLoop if swerve is currently being controlled in a feedforward
+   *                   loop; if not, this will use PID for speed control
+   */
   public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
     // Custom optimize command, since default WPILib optimize assumes continuous controller which
     // REV and CTRE are not
@@ -68,6 +79,9 @@ public class SwerveModule {
     setSpeed(desiredState, isOpenLoop);
   }
 
+  /**
+   * Resets the angle of this module.
+   */
   private void resetToAbsolute() {
     double absolutePosition = getCanCoder().getDegrees() - angleOffset.getDegrees();
     integratedAngleEncoder.setPosition(absolutePosition);
@@ -111,6 +125,13 @@ public class SwerveModule {
     driveEncoder.setPosition(0.0);
   }
 
+  /**
+   * Sets the desired speed of this module; this will ignore the rotation in
+   * the {@code desiredState}
+   * @param desiredState the desired speed
+   * @param isOpenLoop if swerve is currently being controlled in a feedforward
+   *                   loop; if not, this will use PID for speed control
+   */
   private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
     if (isOpenLoop) {
       double percentOutput = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
@@ -124,6 +145,11 @@ public class SwerveModule {
     }
   }
 
+  /**
+   * Sets the desired angle of this module; this will ignore the rotation in the
+   * {@code desiredState}.
+   * @param desiredState the desired rotation
+   */
   private void setAngle(SwerveModuleState desiredState) {
     // Prevent rotating module if speed is less then 1%. Prevents jittering.
     Rotation2d angle =
