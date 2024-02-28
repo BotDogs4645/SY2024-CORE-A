@@ -19,12 +19,15 @@ public class IntakeIndexer extends SubsystemBase {
   private PWMSparkMax intakeMotor;
 
   private DigitalInput noteDetectionSwitch;
+ 
+  public boolean hasNote;
 
   public IntakeIndexer() {
     feederMotor = new PWMSparkMax(Constants.Intake.feederMotorPWMPort);
     intakeMotor = new PWMSparkMax(Constants.Intake.intakeMotorPWMPort);
     feederMotor.setInverted(true);
     noteDetectionSwitch = new DigitalInput(Constants.Intake.noteDetectionSwitchDIOPort);
+    hasNote = false;
   }
 
   public void runFeeder(double speed) {
@@ -47,7 +50,7 @@ public class IntakeIndexer extends SubsystemBase {
     if(intakeMotor.get() != 0) {
       intakeMotor.set(0);
     } else {
-      intakeMotor.set(1);
+      intakeMotor.set(0.5);
     }
   }
 
@@ -55,17 +58,29 @@ public class IntakeIndexer extends SubsystemBase {
     if(feederMotor.get() != 0) {
       feederMotor.set(0);
     } else {
-      feederMotor.set(1);
+      feederMotor.set(0.5);
     }
   }
+
   public void toggleBoth() {
     toggleIntake();
     toggleFeeder();
   }
 
-  public boolean hasNote() {
-    return noteDetectionSwitch.get();
+  public void startSpittingNote() {
+    runFeeder(-1);
+    runIntake(-1);
+    this.hasNote = false;
   }
+
+  public boolean getLimitSwitch() {
+    //Limit switch is pulled up by default, and low when activated
+    return !noteDetectionSwitch.get();
+  }
+
+  public boolean isRunning() {
+    return (intakeMotor.get() != 0);
+  };
   
   @Override
   public void periodic() {

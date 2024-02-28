@@ -57,6 +57,9 @@ public final class Constants {
     public static final int topMotorID = 13;
     public static final int bottomMotorID = 14;
 
+    public static final boolean invertTopMotor = true;
+    public static final boolean invertBottomMotor = false;
+
     public static final double gravityAcceleration = 9.81;
     public static final double launcherHeight = 0.574;
     public static final double launcherWheelRadius = 0.04826;
@@ -162,7 +165,7 @@ public final class Constants {
       public static final int driveMotorID = 9;
 
       public static final boolean driveIsInverted = false;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(157.8515625 + 90);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(157.8515625 + 90 + 180);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset, driveIsInverted);
     }
@@ -174,7 +177,7 @@ public final class Constants {
       public static final int driveMotorID = 17;
       
       public static final boolean driveIsInverted = true;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(313.505857 + 90);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(313.505857 + 90 + 180);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset, driveIsInverted);
     }
@@ -186,7 +189,7 @@ public final class Constants {
       public static final int driveMotorID = 10;
       
       public static final boolean driveIsInverted = false;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(262.4431 + 90);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(262.4431 + 90 + 180);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset, driveIsInverted);
     }
@@ -198,7 +201,7 @@ public final class Constants {
       public static final int driveMotorID = 7;
       
       public static final boolean driveIsInverted = false;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(270.8719 + 90);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(270.8719 + 90 + 180);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset, driveIsInverted);
     }
