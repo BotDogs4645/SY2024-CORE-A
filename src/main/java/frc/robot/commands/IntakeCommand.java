@@ -34,15 +34,15 @@ public class IntakeCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     intakeIndexer.stop();
+    if (!interrupted) {
+        intakeIndexer.setHasNote(true);
+    }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     boolean limitSwitchTriggered = intakeIndexer.getLimitSwitch();
-    if (limitSwitchTriggered) {
-      intakeIndexer.setHasNote(true);
-    }
     return limitSwitchTriggered;
   }
 }
