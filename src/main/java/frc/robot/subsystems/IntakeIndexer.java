@@ -19,52 +19,60 @@ public class IntakeIndexer extends SubsystemBase {
   private PWMSparkMax intakeMotor;
 
   private DigitalInput noteDetectionSwitch;
+ 
+  private boolean hasNote;
 
   public IntakeIndexer() {
     feederMotor = new PWMSparkMax(Constants.Intake.feederMotorPWMPort);
     intakeMotor = new PWMSparkMax(Constants.Intake.intakeMotorPWMPort);
+    feederMotor.setInverted(Constants.Intake.invertFeederMotor);
+    intakeMotor.setInverted(Constants.Intake.invertIntakeMotor);
     noteDetectionSwitch = new DigitalInput(Constants.Intake.noteDetectionSwitchDIOPort);
   }
 
-  public void runFeeder(double speed) {
-    feederMotor.set(speed);
-  }
-
-  public void runIntake(double speed) {
-    intakeMotor.set(speed);
-  }
-
-  public void stopFeeder() {
-    feederMotor.set(0);
-  }
-
-  public void stopIntake() {
-    intakeMotor.set(0);
-  }
-
-  public void toggleIntake() {
-    if(intakeMotor.get() != 0) {
-      intakeMotor.set(0);
-    } else {
-      intakeMotor.set(1);
-    }
-  }
-
-  public void toggleFeeder() {
-    if(feederMotor.get() != 0) {
-      feederMotor.set(0);
-    } else {
-      feederMotor.set(-1);
-    }
-  }
-  public void toggleBoth() {
-    toggleIntake();
-    toggleFeeder();
+  public void setHasNote(boolean hasNote) {
+    this.hasNote = hasNote;
   }
 
   public boolean hasNote() {
-    return noteDetectionSwitch.get();
+    return this.hasNote;
   }
+
+  public void run(double speed) {
+    feederMotor.set(speed);
+    intakeMotor.set(speed);
+  }
+
+  public void run() {
+    run(Constants.Intake.intakeSpeed);
+  }
+
+  public void stop() {
+    feederMotor.set(0);
+    intakeMotor.set(0);
+  }
+
+  public void toggle() {
+    if(intakeMotor.get() != 0) {
+      stop();
+    } else {
+      run(Constants.Intake.intakeSpeed);
+    }
+  }
+
+  public void startSpittingNote() {
+    run(-1);
+    this.hasNote = false;
+  }
+
+  public boolean getLimitSwitch() {
+    //Limit switch is pulled up by default, and low when activated
+    return !noteDetectionSwitch.get();
+  }
+
+  public boolean isRunning() {
+    return intakeMotor.get() != 0;
+  };
   
   @Override
   public void periodic() {
