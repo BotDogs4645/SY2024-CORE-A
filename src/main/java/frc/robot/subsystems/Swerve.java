@@ -23,6 +23,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+/**
+ * Controls the Swerve subsystem.
+ * 
+ * Swerve drive can move in any direction using its four distinct modules.
+ * This also enables it to move in any direction, regardless of the direction of
+ * the frame of the robot.
+ * 
+ * The subsystem itself simply controls logic for its four constituent modules.
+ */
 public class Swerve extends SubsystemBase {
   private final Pigeon2 gyro;
 
@@ -65,6 +74,10 @@ public class Swerve extends SubsystemBase {
         this.field = field;
   }
 
+  /**
+   * Drives Swerve towards the given target. For details on how this is done,
+   * see {@link #drive(Translation2d, double, boolean, boolean)}.
+   */
   public void driveToTag(Pose3d target) {
     SwerveModuleState[] states =
         Constants.Swerve.swerveKinematics.toSwerveModuleStates(
@@ -76,6 +89,21 @@ public class Swerve extends SubsystemBase {
     }
   }
 
+  /**
+   * Converts the desired rotation and translation into a list of module states
+   * to pipe into {@link #setModuleStates(SwerveModuleState[], boolean)}.
+   * This will essentially calculate what the speed and rotation of each module
+   * needs to be in order to move in the provided direction and send that
+   * information to each module.
+   * 
+   * @param translation the 2d translation offset; used to calculate the
+   *                    magnitude and direction of movement
+   * @param rotation    the desired rotation of the robot itself
+   * @param fieldRelative whether movement is relative to the front of the robot
+   *                      or to the field itself
+   * @param isOpenLoop if swerve is currently being controlled in a feedforward
+   *                   loop; if not, this will use PID for speed control
+   */
   public void drive(
       Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
     SwerveModuleState[] swerveModuleStates =
@@ -99,10 +127,16 @@ public class Swerve extends SubsystemBase {
     }
   }
 
+  /**
+  * @return the robot position, as estimated by the Swerve odometry
+  */
   public Pose2d getPose() {
     return swerveOdometry.getPoseMeters();
   }
 
+  /**
+  * @return an array of module positions, one for each module
+  */
   public SwerveModulePosition[] getModulePositions() {
     SwerveModulePosition[] positions = new SwerveModulePosition[4];
 
@@ -112,6 +146,9 @@ public class Swerve extends SubsystemBase {
     return positions;
   }
 
+  /**
+    * Overrides the Swerve odometry's estimated position with the provided pose
+  */
   public void resetOdometry(Pose2d pose) {
     swerveOdometry.resetPosition(getYaw(), getModulePositions(), pose);
   }

@@ -11,14 +11,11 @@ import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.CANSparkBase.IdleMode;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.config.SwerveModuleConstants;
 
 /**
@@ -68,13 +65,13 @@ public final class Constants {
     public static final double launcherHeight = 0.574;
     public static final double launcherWheelRadius = 0.04826;
 
-    public static final double ampAngle = 90;//need to test to find
-    public static final double speakerAngle = 90;//need to test to find
+    public static final double ampAngle = 90; // need to test to find
+    public static final double speakerAngle = 90; // need to test to find
     public static final double trapAngle = 0;
 
     public static final double ampSpeed = 0.2;
-    public static final double speakerSpeed = 0.65;//need to test to find
-    public static final double trapSpeed = 0;//need to test to find
+    public static final double speakerSpeed = 0.65; // need to test to find
+    public static final double trapSpeed = 0; // need to test to find
 
     public static final int ampNodeID = 0;
     public static final int speakerNodeID = 0;

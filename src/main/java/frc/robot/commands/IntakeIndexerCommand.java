@@ -14,6 +14,8 @@ public class IntakeIndexerCommand extends Command {
 
     public IntakeIndexerCommand(IntakeIndexer intakeIndexerInstance) {
         this.intakeIndexerInstance = Optional.of(intakeIndexerInstance);
+
+        addRequirements(intakeIndexerInstance);
     }
 
     @Override
