@@ -51,7 +51,7 @@ public final class Constants {
     public static final double turnKD = 0.75;
   }
   public static final class Launcher {
-    public static final double launcherWheelRadius = 0.04826;
+    public static final double launcherWheelRadius = 0.1016;
     public static final double gravityAcceleration = 9.81;
     public static final double kP = 0.05;
     public static final double kI = 0.0001;
@@ -59,7 +59,8 @@ public final class Constants {
     public static final double ampHeight = 0.66;
     public static final double speakerHeight = 1.984;
     public static final double trapHeight = 1.569;
-    public static final double launcherHeight = 0.574;
+    public static final double launcherHeight = 0.584;
+    public static final double launcherStartingAngle = 25;
     public static final double feedVelocity = 0.5; // just a placeholder value - will need to be changed
   }
 
@@ -67,7 +68,7 @@ public final class Constants {
     //all units in meters
     // sign of offsets follows std convention rel to swerve
     public static final double LimelightAngleDegrees = 30;
-    public static final double LimelightOffsetZ = 10.5 * 0.0254;
+    public static final double LimelightOffsetZ = 0.2667;
     public static final double LimelightOffsetX = 0.32;
     public static final double LimelightOffsetY = 0.0;
 
