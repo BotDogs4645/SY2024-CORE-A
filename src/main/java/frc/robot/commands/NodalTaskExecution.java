@@ -6,23 +6,23 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.util.AprilTag;
-import frc.robot.RobotContainer;
 import frc.lib.util.NodeStorage;
 
 public class NodalTaskExecution extends Command {
 
-    public RobotContainer robotContainerInstance;
     public AprilTag aprilTagInstance;
     public AdvanceToTarget advanceToTargetInstance;
+    public Field2d playingField;
 
     public Optional<NodeStorage.Node> currentNode = Optional.empty();
 
-    public NodalTaskExecution(RobotContainer robotContainerInstance, AprilTag aprilTagInstance, AdvanceToTarget advanceToTargetInstance) {
-        this.robotContainerInstance = robotContainerInstance;
+    public NodalTaskExecution(AprilTag aprilTagInstance, AdvanceToTarget advanceToTargetInstance, Field2d playingField) {
         this.aprilTagInstance = aprilTagInstance;
         this.advanceToTargetInstance = advanceToTargetInstance;
+        this.playingField = playingField;
     }
     
     public Optional<NodeStorage.Node> detectCurrentNode(Pose2d currentPosition) {
@@ -37,7 +37,7 @@ public class NodalTaskExecution extends Command {
 
     @Override
     public void initialize() {
-        currentNode = detectCurrentNode(robotContainerInstance.getField().getRobotPose());
+        currentNode = detectCurrentNode(playingField.getRobotPose());
 
         if (currentNode.isPresent()) {
 

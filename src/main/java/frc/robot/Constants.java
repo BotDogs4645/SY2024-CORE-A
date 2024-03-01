@@ -6,6 +6,9 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -99,14 +102,12 @@ public final class Constants {
   public static final class Swerve {
     public static final double stickDeadband = 0.1;
 
-    public static final int pigeonID = 14;
+    public static final int pigeonID = 50;
     public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
 
-
-
     /* Drivetrain Constants */
-    public static final double trackWidth = Units.inchesToMeters(27.75);
-    public static final double wheelBase = Units.inchesToMeters(34);
+    public static final double trackWidth = Units.inchesToMeters(26);
+    public static final double wheelBase = Units.inchesToMeters(26);
     public static final double wheelDiameter = Units.inchesToMeters(4.0);
     public static final double wheelCircumference = wheelDiameter * Math.PI;
 
@@ -170,47 +171,59 @@ public final class Constants {
     /* Angle Encoder Invert */
     public static final boolean canCoderInvert = false;
 
+    public static final CANcoderConfiguration canCoderConfig;
+
+    static {
+      canCoderConfig = new CANcoderConfiguration();
+      canCoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
+      canCoderConfig.MagnetSensor.SensorDirection = Constants.Swerve.canCoderInvert ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive;
+    }
+
     /* Module Specific Constants */
     /* Front Left Module - Module 0 */
     public static final class Mod0 {
-      public static final int driveMotorID = 7;
+      public static final int canCoderID = 4;
+      public static final int angleMotorID = 8;
+      public static final int driveMotorID = 9;
+
       public static final boolean driveIsInverted = false;
-      public static final int angleMotorID = 6;
-      public static final int canCoderID = 2;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(218.76953125);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(157.8515625 - 90);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset, driveIsInverted);
     }
 
     /* Front Right Module - Module 1 */
     public static final class Mod1 {
-      public static final int driveMotorID = 12;
+      public static final int canCoderID = 5;
+      public static final int angleMotorID = 16;
+      public static final int driveMotorID = 17;
+      
       public static final boolean driveIsInverted = true;
-      public static final int angleMotorID = 13;
-      public static final int canCoderID = 3;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(12.744140625);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(313.505857 - 90);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset, driveIsInverted);
     }
 
     /* Back Left Module - Module 2 */
     public static final class Mod2 {
-      public static final int driveMotorID = 8;
+      public static final int canCoderID = 3;
+      public static final int angleMotorID = 11;
+      public static final int driveMotorID = 10;
+      
       public static final boolean driveIsInverted = false;
-      public static final int angleMotorID = 9; 
-      public static final int canCoderID = 5;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(80.419921875 + 180);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(262.4431 - 90);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset, driveIsInverted);
     }
 
     /* Back Right Module - Module 3 */
     public static final class Mod3 {
-      public static final int driveMotorID = 11;
+      public static final int canCoderID = 2;
+      public static final int angleMotorID = 6;
+      public static final int driveMotorID = 7;
+      
       public static final boolean driveIsInverted = false;
-      public static final int angleMotorID = 10;
-      public static final int canCoderID = 4;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(120.673828125);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(270.8719 - 90);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset, driveIsInverted);
     }
@@ -231,9 +244,11 @@ public final class Constants {
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
 
-  public static final int kDriverControllerPort = 0;
-  public static final int pcmCanID = 15;
+  public static final int pdhID = 1;
 
+  public static final int ledControllerID = 0;
+
+  public static final int kDriverControllerPort = 0;
   public static class Limelight {
 
   /**

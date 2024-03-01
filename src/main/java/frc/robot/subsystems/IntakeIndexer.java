@@ -57,10 +57,8 @@ public class IntakeIndexer extends SubsystemBase {
     intakeEnabled = false;
   }
 
-  public BooleanSupplier hasNote() {
-    BooleanSupplier noteDetected = () -> noteDetectionSwitch.get();
-
-    return noteDetected;
+  public boolean hasNote() {
+    return noteDetectionSwitch.get();
   }
   
   @Override

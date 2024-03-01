@@ -6,7 +6,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 
-import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -50,18 +49,13 @@ public class Launcher extends SubsystemBase{
     return cancoder.getPosition().getValue() * (Math.PI / 180.0);
   }
 
-  public void setWantedAngle(double wantedAngle) {
-    this.wantedAngle = wantedAngle;
-  }
   public void aimLauncher(int currentNodeID) {
-    //sets the setpoint angle to the angle calculated by the getLaunchAngle method
-    if (currentNodeID == Constants.Launcher.ampNodeID){
+    // Sets the setpoint angle to the angle calculated by the getLaunchAngle method
+    if (currentNodeID == Constants.Launcher.ampNodeID) {
     wantedAngle = Constants.Launcher.ampAngle;
-    }
-    else if (currentNodeID == Constants.Launcher.speakerNodeID){
+    } else if (currentNodeID == Constants.Launcher.speakerNodeID) {
     wantedAngle = Constants.Launcher.speakerAngle;
-    }
-    else if (currentNodeID == Constants.Launcher.speakerNodeID){
+    } else if (currentNodeID == Constants.Launcher.speakerNodeID) {
     wantedAngle = Constants.Launcher.trapAngle;
     }
     

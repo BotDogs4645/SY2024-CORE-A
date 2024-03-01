@@ -6,6 +6,7 @@ package frc.lib.util;
 
 import java.util.Optional;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -103,29 +104,29 @@ public class AprilTag {
     }
   }
 
-      /**
-     * Estimates the position of the robot, using the Limelight's knowledge of
-     * the position of each AprilTag in the game board.
-     * If no AprilTags are deteted, this returns 'Optional.empty()'.
-     * 
-     * For a map of the game board and AprilTag positions, see
-     * {@link https://firstfrc.blob.core.windows.net/frc2024/FieldAssets/2024FieldDrawings.pdf},
-     * page 4.
-     * 
-     * @return(s) the robot's estimated position in the board.
-     */
-    public Optional<Transform3d> determinePosition() {
-      Optional<Transform3d> targetOffset = targetPos();
-      if (targetOffset.isEmpty()) return Optional.empty();
+    /**
+   * Estimates the position of the robot, using the Limelight's knowledge of
+   * the position of each AprilTag in the game board.
+   * If no AprilTags are deteted, this returns 'Optional.empty()'.
+   * 
+   * For a map of the game board and AprilTag positions, see
+   * {@link https://firstfrc.blob.core.windows.net/frc2024/FieldAssets/2024FieldDrawings.pdf},
+   * page 4.
+   * 
+   * @return(s) the robot's estimated position in the board.
+   */
+  public Optional<Transform3d> determinePosition() {
+    Optional<Transform3d> targetOffset = targetPos();
+    if (targetOffset.isEmpty()) return Optional.empty();
 
-      Optional<Transform3d> originToTarget = Optional.of(Constants.Limelight.APRILTAGS.get(limelightInstance.targetId().get()));
-      if (originToTarget.isEmpty()) return Optional.empty();
+    Optional<Transform3d> originToTarget = Optional.of(Constants.Limelight.APRILTAGS.get(limelightInstance.targetId().get()));
+    if (originToTarget.isEmpty()) return Optional.empty();
 
-      Transform3d targetToRobot = targetOffset.get().inverse();
+    Transform3d targetToRobot = targetOffset.get().inverse();
 
-      Transform3d originToRobot = originToTarget.get().plus(targetToRobot);
+    Transform3d originToRobot = originToTarget.get().plus(targetToRobot);
 
-      return Optional.of(originToRobot);
+    return Optional.of(originToRobot);
   }
 
   /** 
@@ -137,24 +138,24 @@ public class AprilTag {
   * {@link https://firstfrc.blob.core.windows.net/frc2024/FieldAssets/2024FieldDrawings.pdf},
   * page 4.
   */
-  public Optional<double[]> determineTargetRotationalOffset(Optional<Translation3d> targetPosition) {
-        Optional<Transform3d> currentRelativePosition = determinePosition();
+  public Optional<Rotation2d> determineTargetRotationalOffset(Optional<Translation3d> targetPosition) {
+      Optional<Transform3d> currentRelativePosition = determinePosition();
 
-        if ((targetPosition.isEmpty() || currentRelativePosition.isEmpty()) && !validTargetInput(targetPosition)) {
-          return Optional.empty();
-        }
+      if ((targetPosition.isEmpty() || currentRelativePosition.isEmpty()) && !validTargetInput(targetPosition)) {
+        return Optional.empty();
+      }
 
-        double xAxisOffset = currentRelativePosition.get().getX() - targetPosition.get().getX();
-        double yAxisOffset = currentRelativePosition.get().getY() - targetPosition.get().getY();
-        double xAngularOffset = (Math.atan2(yAxisOffset, xAxisOffset) * (180 / Math.PI)) - currentRelativePosition.get().getRotation().getX();
-      
-        double yAngularOffset = Math.asin((targetPosition.get().getZ() - currentRelativePosition.get().getZ()) / getPlanarDistance(new Translation2d(currentRelativePosition.get().getX(), currentRelativePosition.get().getY()), new Translation2d(targetPosition.get().getX(), targetPosition.get().getY())).get());
+      double xAxisOffset = currentRelativePosition.get().getX() - targetPosition.get().getX();
+      double yAxisOffset = currentRelativePosition.get().getY() - targetPosition.get().getY();
 
-        if (Double.isNaN(xAngularOffset) || Double.isNaN(yAngularOffset)) {
-          return Optional.empty();
-        }
+      double xAngularOffset = (Math.atan2(yAxisOffset, xAxisOffset) * (180 / Math.PI)) - currentRelativePosition.get().getRotation().getX();
+      double yAngularOffset = Math.asin((targetPosition.get().getZ() - currentRelativePosition.get().getZ()) / getPlanarDistance(new Translation2d(currentRelativePosition.get().getX(), currentRelativePosition.get().getY()), new Translation2d(targetPosition.get().getX(), targetPosition.get().getY())).get());
 
-        return Optional.of(new double[] {xAngularOffset, yAngularOffset});
+      if (Double.isNaN(xAngularOffset) || Double.isNaN(yAngularOffset)) {
+        return Optional.empty();
+      }
+
+      return Optional.of(new Rotation2d(xAngularOffset, yAngularOffset));
     }
 
     /**
@@ -162,14 +163,13 @@ public class AprilTag {
      * is detected.
      * 
      * @return an OptionalDouble representing the absolute height difference to the
-     *         target,
-     *         or an empty OptionalDouble if no target is detected.
+     * target, or an empty OptionalDouble if one is not detected.
      */
-    public Optional<Double> getHeightDifferenceToTarget() {
+    public Optional<Double> getHeightDifferenceToTarget(Translation3d targetPosition) {
       // still need to implement the offsets between the actual target and the
       // apriltag
       if (targetPos().isPresent()) {
-        double heightDifference = targetPos().get().getY();
+        double heightDifference = targetPos().get().getY() - targetPosition.getY();
         return Optional.of(Math.abs(heightDifference));
       } else {
         return Optional.empty();
@@ -178,17 +178,14 @@ public class AprilTag {
 
     /**
      * Returns the vertical velocity component needed for the note to reach the
-     * target, if a
-     * target is detected.
+     * target, if one is detected.
      * 
      * @return an OptionalDouble representing the vertical velocity of the target,
-     *         or empty if no target is detected
+     * or empty, if no target is detected
      */
-    public Optional<Double> getVerticalVelocity() {
+    public Optional<Double> getVerticalVelocity(Translation3d targetPosition) {
       if (targetPos().isPresent()) {
-        return Optional.of(Math.sqrt(
-            2 * Constants.Launcher.gravityAcceleration * getHeightDifferenceToTarget().get()));
-
+        return Optional.of(Math.sqrt(2 * Constants.Launcher.gravityAcceleration * getHeightDifferenceToTarget(targetPosition).get()));
       } else {
         return Optional.empty();
       }
@@ -199,11 +196,11 @@ public class AprilTag {
      * target is detected.
      * 
      * @return An OptionalDouble representing the time to travel, or empty if there
-     *         is no target.
+     * is no target.
      */
-    public Optional<Double> getTimeToTravel() {
+    public Optional<Double> getTimeToTravel(Translation3d targetPosition) {
       if (targetPos().isPresent()) {
-        double timeToTravel = getVerticalVelocity().get() / Constants.Launcher.gravityAcceleration;
+        double timeToTravel = getVerticalVelocity(targetPosition).get() / Constants.Launcher.gravityAcceleration;
         return Optional.of(timeToTravel);
       }
       return Optional.empty();
@@ -211,18 +208,17 @@ public class AprilTag {
 
     /**
      * Returns the horizontal velocity component needed for the note to reach the
-     * target, if a
-     * target is detected.
+     * target, if one is detected.
      * 
      * @return an OptionalDouble representing the vertical velocity of the target,
      * or empty if no target is detected
      */
-    public Optional<Double> getHorizontalVelocity(Translation2d targetPosition) {
-      if (targetPos().isEmpty() || getHeightDifferenceToTarget().isEmpty()) {
+    public Optional<Double> getHorizontalVelocity(Translation3d targetPosition) {
+      if (targetPos().isEmpty() || getHeightDifferenceToTarget(targetPosition).isEmpty()) {
         return Optional.empty();
       }
 
-      return getPlanarDistance(targetPos().get().getTranslation().toTranslation2d(), targetPosition);
+      return getPlanarDistance(targetPos().get().getTranslation().toTranslation2d(), targetPosition.toTranslation2d());
     }
 
     /**

@@ -12,10 +12,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.util.AprilTag;
 import frc.robot.commands.AdvanceToTarget;
+import frc.robot.commands.IntakeIndexerCommand;
+import frc.robot.commands.NodalTaskExecution;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.IntakeIndexer;
 import frc.robot.subsystems.Limelight;
@@ -43,8 +44,10 @@ public class RobotContainer {
   private final Limelight limelightInstance = new Limelight();
   private final AprilTag aprilTagInstance = new AprilTag(limelightInstance);
   private final AdvanceToTarget advanceToTargetInstance = new AdvanceToTarget(drivetrain, aprilTagInstance, true);
+  private final NodalTaskExecution nodalTaskExecutionInstance = new NodalTaskExecution(aprilTagInstance, advanceToTargetInstance, playingField);
 
   private final IntakeIndexer intakeIndexerInstance = new IntakeIndexer();
+  private final IntakeIndexerCommand intakeIndexerCommand = new IntakeIndexerCommand(intakeIndexerInstance);
   
   private final SendableChooser<Command> autoChooser;
 
@@ -59,6 +62,9 @@ public class RobotContainer {
         ).finallyDo(() -> {
           intakeIndexerInstance.stopIntake();
           intakeIndexerInstance.stopFeeder();
+
+          intakeIndexerCommand.cancel();
+          nodalTaskExecutionInstance.cancel();
         }));
 
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -74,28 +80,24 @@ public class RobotContainer {
       drivetrain.zeroGyro();
     }, drivetrain));
 
-    SequentialCommandGroup loadRobotIndexer = new SequentialCommandGroup (
-      Commands.run(() -> {
-        intakeIndexerInstance.runIntake(0.5);
-        intakeIndexerInstance.runFeeder(0.5);
-      }),
-      
-      Commands.waitUntil(intakeIndexerInstance.hasNote()),
-
-      Commands.runOnce(() -> {
-        intakeIndexerInstance.stopIntake();
-        intakeIndexerInstance.stopFeeder();
-      })
-    );
-
     driveController.leftTrigger().onTrue(Commands.run(
       () -> {
-        if (intakeIndexerInstance.intakeEnabled) {
-          loadRobotIndexer.schedule();
-        } else if (loadRobotIndexer.isScheduled()) {
-          loadRobotIndexer.cancel();
+        if (!intakeIndexerCommand.isScheduled()) {
+          intakeIndexerCommand.schedule();
+        } else {
+          intakeIndexerCommand.cancel();
         }
     }));
+
+    driveController.rightTrigger().onTrue(Commands.run(
+      () -> {
+        if (!nodalTaskExecutionInstance.isScheduled()) {
+          nodalTaskExecutionInstance.schedule();
+        } else {
+          nodalTaskExecutionInstance.cancel();
+        }
+      }
+    ));
 
     // driveController.y().onTrue(new DriveToTag(
     //   drivetrain,
@@ -117,5 +119,9 @@ public class RobotContainer {
 
   public Field2d getField() {
     return playingField;
+  }
+
+  public AdvanceToTarget getAdvanceToTarget() {
+      return advanceToTargetInstance;
   }
 }
