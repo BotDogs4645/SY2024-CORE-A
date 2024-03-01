@@ -7,7 +7,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.lib.config.CTREConfigs;
 import frc.lib.util.AprilTag;
 
 /**
@@ -15,7 +14,6 @@ import frc.lib.util.AprilTag;
  * subsystems) and handles triggers during different modes.
  */
 public class Robot extends TimedRobot {
-  public static CTREConfigs ctreConfigs;
   private Command m_autonomousCommand;
 
   private AprilTag aprilTagInstance = new AprilTag();
@@ -26,7 +24,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    ctreConfigs = new CTREConfigs();
     m_robotContainer = new RobotContainer();
     // aprilTagInstance = new AprilTag();
     initalizationTime = System.currentTimeMillis();

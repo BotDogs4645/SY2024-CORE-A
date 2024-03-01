@@ -23,6 +23,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+/**
+ * Controls the Swerve subsystem.
+ * 
+ * Swerve drive can move in any direction using its four distinct modules.
+ * This also enables it to move in any direction, regardless of the direction of
+ * the frame of the robot.
+ * 
+ * The subsystem itself simply controls logic for its four constituent modules.
+ */
 public class Swerve extends SubsystemBase {
   private final Pigeon2 gyro;
 
@@ -32,7 +41,7 @@ public class Swerve extends SubsystemBase {
   private Field2d field;
 
   public Swerve() {
-    gyro = new Pigeon2(Constants.Swerve.pigeonID);
+    gyro = new Pigeon2(Constants.Swerve.pigeonID, "*");
     gyro.getConfigurator().apply(new Pigeon2Configuration());
     zeroGyro();
 
@@ -57,7 +66,7 @@ public class Swerve extends SubsystemBase {
         this::getPose,
         this::resetOdometry,
         () -> Constants.Swerve.swerveKinematics.toChassisSpeeds(getStates()),
-        speeds -> setModuleStates(Constants.Swerve.swerveKinematics.toSwerveModuleStates(speeds)),
+        speeds -> setModuleStates(Constants.Swerve.swerveKinematics.toSwerveModuleStates(speeds), false),
         pathConfig,
         () -> DriverStation.getAlliance().filter(a -> a == DriverStation.Alliance.Red).isPresent(),
         this);
@@ -66,44 +75,68 @@ public class Swerve extends SubsystemBase {
     SmartDashboard.putData("Field", field);
   }
 
+  /**
+   * Drives Swerve towards the given target. For details on how this is done,
+   * see {@link #drive(Translation2d, double, boolean, boolean)}.
+   */
   public void driveToTag(Pose3d target) {
     SwerveModuleState[] states =
         Constants.Swerve.swerveKinematics.toSwerveModuleStates(
           new ChassisSpeeds(target.getX(), target.getY(), target.getRotation().getAngle()));
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.Swerve.maxSpeed);
 
-    for(SwerveModule mod : mSwerveMods) {
-      mod.setDesiredState(states[mod.moduleNumber], false);
-    }
+
+    setModuleStates(states, false);
   }
 
-  public void drive(
-      Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
-    SwerveModuleState[] swerveModuleStates =
+  /**
+   * Converts the desired rotation and translation into a list of module states
+   * to pipe into {@link #setModuleStates(SwerveModuleState[], boolean)}.
+   * This will essentially calculate what the speed and rotation of each module
+   * needs to be in order to move in the provided direction and send that
+   * information to each module.
+   * 
+   * @param translation the 2d translation offset; used to calculate the
+   *                    magnitude and direction of movement
+   * @param rotation    the desired rotation of the robot itself
+   * @param fieldRelative whether movement is relative to the front of the robot
+   *                      or to the field itself
+   * @param isOpenLoop if swerve is currently being controlled in a feedforward
+   *                   loop; if not, this will use PID for speed control
+   */
+  public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
+    SwerveModuleState[] states =
         Constants.Swerve.swerveKinematics.toSwerveModuleStates(
             fieldRelative
                 ? ChassisSpeeds.fromFieldRelativeSpeeds(translation.getX(), translation.getY(), rotation, getYaw())
                 : new ChassisSpeeds(translation.getX(), translation.getY(), rotation));
-    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
+
+    setModuleStates(states, isOpenLoop);
+  }
+
+  /**
+   * Sets each module to the provided state.
+   * @param states the array of states (one per swerve module)
+   * @param isOpenLoop if swerve is currently being controlled in a feedforward
+   *                   loop; if not, this will use PID for speed control
+   */
+  public void setModuleStates(SwerveModuleState[] states, boolean isOpenLoop) {
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.Swerve.maxSpeed);
 
     for (SwerveModule mod : mSwerveMods) {
-      mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
+      mod.setDesiredState(states[mod.moduleNumber], isOpenLoop);
     }
   }
 
-  /* Used by SwerveControllerCommand in Auto */
-  public void setModuleStates(SwerveModuleState[] desiredStates) {
-    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
-
-    for (SwerveModule mod : mSwerveMods) {
-      mod.setDesiredState(desiredStates[mod.moduleNumber], false);
-    }
-  }
-
+  /**
+   * @return the robot position as estimated by the Swerve odometry
+   */
   public Pose2d getPose() {
     return swerveOdometry.getPoseMeters();
   }
 
+  /**
+   * @return an array of module positions, one for each module
+   */
   public SwerveModulePosition[] getModulePositions() {
     SwerveModulePosition[] positions = new SwerveModulePosition[4];
 
@@ -113,6 +146,9 @@ public class Swerve extends SubsystemBase {
     return positions;
   }
 
+  /**
+   * Overrides the Swerve odometry's estimated position with the provided pose
+   */
   public void resetOdometry(Pose2d pose) {
     swerveOdometry.resetPosition(getYaw(), getModulePositions(), pose);
   }

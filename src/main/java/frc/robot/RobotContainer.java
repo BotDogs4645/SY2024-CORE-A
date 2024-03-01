@@ -16,23 +16,26 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveToTag;
 import frc.lib.util.AprilTag;
+import frc.robot.Constants.Intake;
+import frc.robot.Constants.Limelight;
 import frc.robot.commands.AdvanceToTarget;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.TeleopSwerve;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeIndexer;
 import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Swerve;
+import edu.wpi.first.cameraserver.CameraServer;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
- * Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in
- * the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of
- * the robot (including
- * subsystems, commands, and button mappings) should be declared here.
+ * Command-based is a "declarative" paradigm, very little robot logic should
+ * actually be handled in the {@link Robot} periodic methods (other than the
+ * scheduler calls). Instead, the structure of the robot (including subsystems,
+ *  commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
 
@@ -48,18 +51,23 @@ public class RobotContainer {
   // private final IntakeCommand intake = new IntakeCommand(intakeInstance);
 
   private final Limelight limelight = new Limelight();
-  
+  private final Pneumatics pneumatics = new Pneumatics();
+  private final IntakeIndexer intakeIndexer = new IntakeIndexer();
+
+  private final IntakeCommand intakeCommand = new IntakeCommand(intakeIndexer);
   private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
     drivetrain.setDefaultCommand(
         new TeleopSwerve(
             drivetrain,
-            () -> -driveController.getLeftY(), // translation
-            () -> -driveController.getLeftX(), // strafe
-            () -> -driveController.getRightX(), // rotation
-            () -> driveController.leftBumper().getAsBoolean() // field oriented, yes or no
-        ).finallyDo(() -> intake.deactivateIntake()));
+            () -> -driveController.getLeftY(), // Translation
+            () -> -driveController.getLeftX(), // Strafe
+            () -> -driveController.getRightX(), // Rotation
+            () -> driveController.leftBumper().getAsBoolean() // Field-oriented driving (yes or no)
+        ));
+
+    CameraServer.startAutomaticCapture();
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -71,29 +79,28 @@ public class RobotContainer {
     driveController.a().onTrue(new InstantCommand(() -> {
       drivetrain.zeroGyro();
     }, drivetrain));
-    driveController.leftTrigger().onTrue(Commands.run(
-        () -> {
-          if (intake.intakeEnabled) {
-            intake.deactivateIntake();
-          } else {
-            intake.activateIntake();
-          }
-        }));
 
-    // Command autoIntakeCommand = Commands.deadline(
-    //     Commands.waitSeconds(Constants.Intake.autonomousIntakeDuration),
-    //     Commands.startEnd(() -> intake.activateIntake(), () -> intake.deactivateIntake(), intake));
+    driveController.y().onTrue(
+      new InstantCommand(() -> {
+        pneumatics.toggleClimber();
+      }, pneumatics)
+    );
+    
+    driveController.x().onTrue(
+      new InstantCommand(() -> {
+        pneumatics.toggleAmpGuide();
 
-    SequentialCommandGroup autoIntakeCommand = new SequentialCommandGroup (
-      Commands.runOnce(() -> intake.activateIntake(), intake),
-      Commands.waitSeconds(Constants.Intake.autonomousIntakeDuration),
-      Commands.runOnce(() -> intake.deactivateIntake(), intake)
+      }, pneumatics)
     );
 
-    // driveController.y().onTrue(new DriveToTag(
-    //   drivetrain,
-    //   limelight.getTargetPose()
-    // ));
+    driveController.leftBumper().toggleOnTrue(intakeCommand);
+
+    driveController.leftTrigger().onTrue(new SequentialCommandGroup(
+      new InstantCommand(() -> intakeIndexer.startSpittingNote()),
+      new WaitCommand(1),
+      new InstantCommand(() -> intakeIndexer.stop())
+    ));
+
   }
 
   public Command getAutonomousCommand() {
