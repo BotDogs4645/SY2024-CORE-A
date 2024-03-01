@@ -5,6 +5,7 @@
 package frc.lib.util;
 
 import java.util.Optional;
+import java.util.OptionalInt;
 
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -14,6 +15,8 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.Limelight;
+import frc.robot.LimelightHelpers;
 import frc.robot.commands.AdvanceToTarget;
 
 // The AprilTag class, harnessed in order to
@@ -179,6 +182,15 @@ public Optional<double[]> determineTargetRotationalOffset(Optional<Translation3d
         return Optional.of(new double[] {xAngularOffset, yAngularOffset});
     }
 
+
+    public Optional<Integer> getTagID() {
+        try {
+            return Optional.of((int) LimelightHelpers.getFiducialID(""));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
     /**
      * Returns the height difference between the robot and the target, if a target
      * is detected.
@@ -191,7 +203,7 @@ public Optional<double[]> determineTargetRotationalOffset(Optional<Translation3d
       // still need to implement the offsets between the actual target and the
       // apriltag
       if (targetPos().isPresent()) {
-        double heightDifference = targetPos().get().getY();
+        double heightDifference = targetPos().get().getY() - (Constants.Launcher.launcherHeight - Constants.Vision.LimelightOffsetZ) + (Constants.Launcher.speakerHeight - Constants.Limelight.APRILTAGS.get(getTagID().get()).getY() * 0.0254);
         return Optional.of(Math.abs(heightDifference));
       } else {
         return Optional.empty();
@@ -257,4 +269,12 @@ public Optional<double[]> determineTargetRotationalOffset(Optional<Translation3d
     public double toRPM(double velocity) {
       return velocity * 60 / (2 * Math.PI * Constants.Launcher.launcherWheelRadius);
     }
+
+    public Optional<Double> getLaunchAngle() {
+      if(!targetPos().isPresent()) {
+        return Optional.empty();
+      }
+      return Optional.of(Math.toDegrees(Math.atan(getVerticalVelocity().get() / getHorizontalVelocity().get())) - Constants.Launcher.launcherStartingAngle);
+  }
+
 }
