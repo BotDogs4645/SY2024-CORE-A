@@ -66,11 +66,11 @@ public final class Constants {
     public static final double launcherWheelRadius = 0.04826;
 
     public static final double ampAngle = 90;//need to test to find
-    public static final double speakerAngle = 0;//need to test to find
+    public static final double speakerAngle = 90;//need to test to find
     public static final double trapAngle = 0;
 
     public static final double ampSpeed = 0.2;
-    public static final double speakerSpeed = 0;//need to test to find
+    public static final double speakerSpeed = 0.65;//need to test to find
     public static final double trapSpeed = 0;//need to test to find
 
     public static final int ampNodeID = 0;
