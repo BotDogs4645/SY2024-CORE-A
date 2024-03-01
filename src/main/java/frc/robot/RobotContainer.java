@@ -12,14 +12,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveToTag;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.IntakeIndexer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Swerve;
+import edu.wpi.first.cameraserver.CameraServer;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -37,7 +41,7 @@ public class RobotContainer {
   public static final Pneumatics pneumatics = new Pneumatics();
   public static final IntakeIndexer intakeIndexer = new IntakeIndexer();
   public static final Shooter shooter = new Shooter();
-  
+
   private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
@@ -50,6 +54,7 @@ public class RobotContainer {
             () -> driveController.leftBumper().getAsBoolean() // Field-oriented driving (yes or no)
         ));
 
+    CameraServer.startAutomaticCapture();
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -76,25 +81,13 @@ public class RobotContainer {
       }, pneumatics)
     );
 
-    driveController.leftBumper().onTrue(
-      new InstantCommand(() -> {
-        intakeIndexer.toggleIntake();
-        intakeIndexer.toggleFeeder();
-      }, intakeIndexer)
-    );
+    driveController.leftBumper().toggleOnTrue(new IntakeCommand(intakeIndexer));
 
-    driveController.b().onTrue(
-      new InstantCommand(() -> {
-        shooter.setShooterAngle(0.1);
-      },shooter)
-    );
-
-    driveController.rightBumper().onTrue(
-      new InstantCommand(() -> {
-        shooter.toggleShooter();
-      },shooter)
-    );
-
+    driveController.leftTrigger().onTrue(new SequentialCommandGroup(
+      new InstantCommand(() -> intakeIndexer.startSpittingNote()),
+      new WaitCommand(1),
+      new InstantCommand(() -> intakeIndexer.stop())
+    ));
   }
 
   public Command getAutonomousCommand() {
