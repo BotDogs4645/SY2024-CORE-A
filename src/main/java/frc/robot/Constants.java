@@ -56,6 +56,8 @@ public final class Constants {
     public static final int angleMotorID = 18;
     public static final int topMotorID = 13;
     public static final int bottomMotorID = 14;
+    public static final int absEncoderId = 40;
+    public static final double absEncoderOffset = 0;
 
     public static final double gravityAcceleration = 9.81;
     public static final double launcherHeight = 0.574;
@@ -64,6 +66,13 @@ public final class Constants {
     public static final double ampHeight = 0.66;
     public static final double speakerHeight = 1.984;
     public static final double trapHeight = 1.436;
+
+    public static final class PID {
+      public static final double kP = 0;
+      public static final double kI = 0;
+      public static final double kD = 0;
+
+    }
   }
 
   public static final class Pneumatics {
@@ -173,7 +182,7 @@ public final class Constants {
       public static final int angleMotorID = 16;
       public static final int driveMotorID = 17;
       
-      public static final boolean driveIsInverted = true;
+      public static final boolean driveIsInverted = false;
       public static final Rotation2d angleOffset = Rotation2d.fromDegrees(313.505857 + 90);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset, driveIsInverted);

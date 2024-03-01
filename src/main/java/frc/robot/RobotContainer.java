@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveToTag;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.IntakeIndexer;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Swerve;
@@ -31,10 +32,11 @@ public class RobotContainer {
 
   private final CommandXboxController driveController = new CommandXboxController(Constants.kDriverControllerPort);
 
-  private final Swerve drivetrain = new Swerve();
-  private final Limelight limelight = new Limelight();
-  private final Pneumatics pneumatics = new Pneumatics();
-  private final IntakeIndexer intakeIndexer = new IntakeIndexer();
+  public static final Swerve drivetrain = new Swerve();
+  public static final Limelight limelight = new Limelight();
+  public static final Pneumatics pneumatics = new Pneumatics();
+  public static final IntakeIndexer intakeIndexer = new IntakeIndexer();
+  public static final Shooter shooter = new Shooter();
   
   private final SendableChooser<Command> autoChooser;
 
@@ -44,7 +46,7 @@ public class RobotContainer {
             drivetrain,
             () -> -driveController.getLeftY(), // Translation
             () -> -driveController.getLeftX(), // Strafe
-            () -> -driveController.getRightX(), // Rotation
+            () -> driveController.getRightX(), // Rotation
             () -> driveController.leftBumper().getAsBoolean() // Field-oriented driving (yes or no)
         ));
 
@@ -79,6 +81,18 @@ public class RobotContainer {
         intakeIndexer.toggleIntake();
         intakeIndexer.toggleFeeder();
       }, intakeIndexer)
+    );
+
+    driveController.b().onTrue(
+      new InstantCommand(() -> {
+        shooter.setShooterAngle(0.1);
+      },shooter)
+    );
+
+    driveController.rightBumper().onTrue(
+      new InstantCommand(() -> {
+        shooter.toggleShooter();
+      },shooter)
     );
 
   }
