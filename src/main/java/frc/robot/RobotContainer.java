@@ -5,7 +5,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.sun.org.apache.bcel.internal.classfile.Field;
 
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -18,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.util.AprilTag;
 import frc.robot.commands.AdvanceToTarget;
 import frc.robot.commands.TeleopSwerve;
-// import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeIndexer;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Swerve;
@@ -45,9 +44,7 @@ public class RobotContainer {
   private final AprilTag aprilTagInstance = new AprilTag(limelightInstance);
   private final AdvanceToTarget advanceToTargetInstance = new AdvanceToTarget(drivetrain, aprilTagInstance, true);
 
-  // private final Intake intake = new Intake();
-
-  // private final IntakeCommand intake = new IntakeCommand(intakeInstance);
+  private final IntakeIndexer intakeIndexerInstance = new IntakeIndexer();
   
   private final SendableChooser<Command> autoChooser;
 
@@ -59,12 +56,14 @@ public class RobotContainer {
             () -> -driveController.getLeftX(), // strafe
             () -> -driveController.getRightX(), // rotation
             () -> driveController.leftBumper().getAsBoolean() // field oriented, yes or no
-        )/*.finallyDo(() -> intake.deactivateIntake())*/);
+        ).finallyDo(() -> {
+          intakeIndexerInstance.stopIntake();
+          intakeIndexerInstance.stopFeeder();
+        }));
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
-    // playingField = new Field2d();
     SmartDashboard.putData("Field", playingField);
 
     configureBindings();
@@ -74,20 +73,29 @@ public class RobotContainer {
     driveController.a().onTrue(new InstantCommand(() -> {
       drivetrain.zeroGyro();
     }, drivetrain));
-    // driveController.leftTrigger().onTrue(Commands.run(
-    //     () -> {
-    //       if (intake.intakeEnabled) {
-    //         intake.deactivateIntake();
-    //       } else {
-    //         intake.activateIntake();
-    //       }
-    //     }));
 
-    // SequentialCommandGroup autoIntakeCommand = new SequentialCommandGroup (
-    //   Commands.runOnce(() -> intake.activateIntake(), intake),
-    //   Commands.waitSeconds(Constants.Intake.autonomousIntakeDuration),
-    //   Commands.runOnce(() -> intake.deactivateIntake(), intake)
-    // );
+    SequentialCommandGroup loadRobotIndexer = new SequentialCommandGroup (
+      Commands.run(() -> {
+        intakeIndexerInstance.runIntake(0.5);
+        intakeIndexerInstance.runFeeder(0.5);
+      }),
+      
+      Commands.waitUntil(intakeIndexerInstance.hasNote()),
+
+      Commands.runOnce(() -> {
+        intakeIndexerInstance.stopIntake();
+        intakeIndexerInstance.stopFeeder();
+      })
+    );
+
+    driveController.leftTrigger().onTrue(Commands.run(
+      () -> {
+        if (intakeIndexerInstance.intakeEnabled) {
+          loadRobotIndexer.schedule();
+        } else if (loadRobotIndexer.isScheduled()) {
+          loadRobotIndexer.cancel();
+        }
+    }));
 
     // driveController.y().onTrue(new DriveToTag(
     //   drivetrain,

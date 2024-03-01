@@ -34,17 +34,22 @@ public class Limelight extends SubsystemBase {
     * from the robot to the current primary apriltag target.
     */
     public Optional<Transform3d> targetPos() {
-    Optional<double[]> targetPose = Optional.of(entry("targetpose_robotspace").get().getDoubleArray(new double[0]));
-    
+        Optional<double[]> targetPose = Optional.of(entry("targetpose_robotspace").get().getDoubleArray(new double[0]));
+        
 
-    if (targetPose.isPresent()) {
-        return Optional.of(new Transform3d(
-            new Translation3d(targetPose.get()[0], targetPose.get()[1], targetPose.get()[2]),
-            new Rotation3d(targetPose.get()[3], targetPose.get()[4], targetPose.get()[5])
-        ));
-    } else {
-        return Optional.empty();
-    }
+        if (targetPose.isPresent()) {
+          Transform3d transform = new Transform3d(
+              new Translation3d(targetPose.get()[0], targetPose.get()[1], targetPose.get()[2]),
+              new Rotation3d(targetPose.get()[3], targetPose.get()[4], targetPose.get()[5])
+          );
+          if (transform.getTranslation().getNorm() < 0.0001) {
+            return Optional.empty();
+          } else {
+            return Optional.of(transform);
+          }
+        } else {
+          return Optional.empty();
+        }
     };
 
     /**

@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.sun.org.apache.bcel.internal.Const;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 

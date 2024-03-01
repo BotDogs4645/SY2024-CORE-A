@@ -4,19 +4,20 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
-
-import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import java.util.function.BooleanSupplier;
 
 public class IntakeIndexer extends SubsystemBase {
   /** Creates a new IntakeIndexer. */
 
   private PWMSparkMax feederMotor;
   private PWMSparkMax intakeMotor;
+
+  public boolean intakeEnabled;
+  public boolean feederEnabled;
 
   private DigitalInput noteDetectionSwitch;
 
@@ -28,48 +29,42 @@ public class IntakeIndexer extends SubsystemBase {
 
   public void runFeeder(double speed) {
     feederMotor.set(speed);
+
+    if (speed != 0) {
+      feederEnabled = true;
+    } else {
+      feederEnabled = false;
+    }
   }
 
   public void runIntake(double speed) {
     intakeMotor.set(speed);
+
+    if (speed != 0) {
+      intakeEnabled = true;
+    } else {
+      intakeEnabled = false;
+    }
   }
 
   public void stopFeeder() {
     feederMotor.set(0);
+    feederEnabled = false;
   }
 
   public void stopIntake() {
     intakeMotor.set(0);
+    intakeEnabled = false;
   }
 
-  public void toggleIntake() {
-    if(intakeMotor.get() != 0) {
-      intakeMotor.set(0);
-    } else {
-      intakeMotor.set(1);
-    }
-  }
+  public BooleanSupplier hasNote() {
+    BooleanSupplier noteDetected = () -> noteDetectionSwitch.get();
 
-  public void toggleFeeder() {
-    if(feederMotor.get() != 0) {
-      feederMotor.set(0);
-    } else {
-      feederMotor.set(-1);
-    }
-  }
-  public void toggleBoth() {
-    toggleIntake();
-    toggleFeeder();
-  }
-
-  public boolean hasNote() {
-    return noteDetectionSwitch.get();
+    return noteDetected;
   }
   
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
-
-
 }

@@ -6,7 +6,6 @@ package frc.lib.util;
 
 import java.util.Optional;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -82,7 +81,7 @@ public class AprilTag {
    * within the method's parameters on a 2D plane.
    */
   public Optional<Double> getPlanarDistance(Translation2d originPosition, Translation2d targetPosition) {
-      return Optional.of(Math.sqrt(Math.pow(targetPosition.getY() - originPosition.getY(), 2) + Math.pow(targetPosition.getX() - originPosition.getX(), 2)));
+    return Optional.of(Math.hypot(targetPosition.getX() - originPosition.getX(), targetPosition.getY() - originPosition.getY()));
   }
 
   /**
@@ -156,5 +155,83 @@ public class AprilTag {
         }
 
         return Optional.of(new double[] {xAngularOffset, yAngularOffset});
+    }
+
+    /**
+     * Returns the height difference between the robot and the target, if a target
+     * is detected.
+     * 
+     * @return an OptionalDouble representing the absolute height difference to the
+     *         target,
+     *         or an empty OptionalDouble if no target is detected.
+     */
+    public Optional<Double> getHeightDifferenceToTarget() {
+      // still need to implement the offsets between the actual target and the
+      // apriltag
+      if (targetPos().isPresent()) {
+        double heightDifference = targetPos().get().getY();
+        return Optional.of(Math.abs(heightDifference));
+      } else {
+        return Optional.empty();
+      }
+    }
+
+    /**
+     * Returns the vertical velocity component needed for the note to reach the
+     * target, if a
+     * target is detected.
+     * 
+     * @return an OptionalDouble representing the vertical velocity of the target,
+     *         or empty if no target is detected
+     */
+    public Optional<Double> getVerticalVelocity() {
+      if (targetPos().isPresent()) {
+        return Optional.of(Math.sqrt(
+            2 * Constants.Launcher.gravityAcceleration * getHeightDifferenceToTarget().get()));
+
+      } else {
+        return Optional.empty();
+      }
+    }
+
+    /**
+     * Calculates the time it takes for the note to travel to the target, if a
+     * target is detected.
+     * 
+     * @return An OptionalDouble representing the time to travel, or empty if there
+     *         is no target.
+     */
+    public Optional<Double> getTimeToTravel() {
+      if (targetPos().isPresent()) {
+        double timeToTravel = getVerticalVelocity().get() / Constants.Launcher.gravityAcceleration;
+        return Optional.of(timeToTravel);
+      }
+      return Optional.empty();
+    }
+
+    /**
+     * Returns the horizontal velocity component needed for the note to reach the
+     * target, if a
+     * target is detected.
+     * 
+     * @return an OptionalDouble representing the vertical velocity of the target,
+     * or empty if no target is detected
+     */
+    public Optional<Double> getHorizontalVelocity(Translation2d targetPosition) {
+      if (targetPos().isEmpty() || getHeightDifferenceToTarget().isEmpty()) {
+        return Optional.empty();
+      }
+
+      return getPlanarDistance(targetPos().get().getTranslation().toTranslation2d(), targetPosition);
+    }
+
+    /**
+     * Converts a velocity to RPM (Rotations Per Minute).
+     * 
+     * @param velocity the velocity to convert
+     * @return the converted RPM value
+     */
+    public double toRPM(double velocity) {
+      return velocity * 60 / (2 * Math.PI * Constants.Launcher.launcherWheelRadius);
     }
 }
