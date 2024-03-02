@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveToTag;
-import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.IntakeNote;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.IntakeIndexer;
 import frc.robot.subsystems.Shooter;
@@ -81,13 +81,19 @@ public class RobotContainer {
       }, pneumatics)
     );
 
-    driveController.leftBumper().toggleOnTrue(new IntakeCommand(intakeIndexer));
+    driveController.leftBumper().onTrue(new IntakeNote(intakeIndexer, intakeIndexer.hasNote()));
 
     driveController.leftTrigger().onTrue(new SequentialCommandGroup(
       new InstantCommand(() -> intakeIndexer.startSpittingNote()),
       new WaitCommand(1),
       new InstantCommand(() -> intakeIndexer.stop())
     ));
+
+    driveController.rightBumper().onTrue(new InstantCommand(() -> {
+        shooter.toggleShooter();
+        shooter.setShooterAngle(0.1);
+      },shooter)
+    );
   }
 
   public Command getAutonomousCommand() {

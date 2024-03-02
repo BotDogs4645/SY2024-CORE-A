@@ -38,14 +38,11 @@ public class IntakeIndexer extends SubsystemBase {
     return this.hasNote;
   }
 
-  public void run(double speed) {
+  public void setSpeed(double speed) {
     feederMotor.set(speed);
     intakeMotor.set(speed);
   }
 
-  public void run() {
-    run(Constants.Intake.intakeSpeed);
-  }
 
   public void stop() {
     feederMotor.set(0);
@@ -56,12 +53,12 @@ public class IntakeIndexer extends SubsystemBase {
     if(intakeMotor.get() != 0) {
       stop();
     } else {
-      run(Constants.Intake.intakeSpeed);
+      setSpeed(Constants.Intake.intakeSpeed);
     }
   }
 
   public void startSpittingNote() {
-    run(-1);
+    setSpeed(-1);
     this.hasNote = false;
   }
 
@@ -76,7 +73,9 @@ public class IntakeIndexer extends SubsystemBase {
   
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    if(getLimitSwitch() == true) {
+      hasNote = true;
+    }
   }
 
 

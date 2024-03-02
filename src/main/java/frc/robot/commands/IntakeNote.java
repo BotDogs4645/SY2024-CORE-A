@@ -5,15 +5,18 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.subsystems.IntakeIndexer;
 
-public class IntakeCommand extends Command {
+public class IntakeNote extends Command {
+  /** Creates a new IntakeNote. */
 
   IntakeIndexer intakeIndexer;
-  /** Creates a new IntakeCommand. */
-  public IntakeCommand(IntakeIndexer intakeIndexer) {
-    this.intakeIndexer = intakeIndexer;
+  boolean hasNoteAlready;
 
+  public IntakeNote(IntakeIndexer intakeIndexer, boolean hasNoteAlready) {
+    this.hasNoteAlready = hasNoteAlready;
+    this.intakeIndexer = intakeIndexer;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(intakeIndexer);
   }
@@ -21,28 +24,27 @@ public class IntakeCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (!intakeIndexer.hasNote()){
-      intakeIndexer.toggle();
-    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    if(intakeIndexer.getLimitSwitch() && !hasNoteAlready) {
+      intakeIndexer.setSpeed(0);
+      intakeIndexer.setHasNote(false);
+      super.cancel();
+    } else {
+      intakeIndexer.setSpeed(Constants.Intake.intakeSpeed);
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    intakeIndexer.stop();
-    if (!interrupted) {
-        intakeIndexer.setHasNote(true);
-    }
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    boolean limitSwitchTriggered = intakeIndexer.getLimitSwitch();
-    return limitSwitchTriggered;
+    return false;
   }
 }
