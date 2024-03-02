@@ -14,14 +14,17 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.util.AprilTag;
+import frc.robot.Constants;
 import frc.robot.commands.AdvanceToTarget;
 import frc.robot.commands.IntakeIndexerCommand;
 import frc.robot.commands.NodalTaskExecution;
+import frc.robot.commands.Shoot;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.IntakeIndexer;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.Launcher;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -39,6 +42,7 @@ public class RobotContainer {
   private final Field2d playingField = new Field2d();
 
   private final Swerve drivetrain = new Swerve(playingField);
+  private final Swerve swerveInstance = new Swerve(playingField);
   private final Pneumatics m_pneumaticsSubsystem = new Pneumatics();
 
   private final Limelight limelightInstance = new Limelight();
@@ -48,7 +52,8 @@ public class RobotContainer {
 
   private final IntakeIndexer intakeIndexerInstance = new IntakeIndexer();
   private final IntakeIndexerCommand intakeIndexerCommand = new IntakeIndexerCommand(intakeIndexerInstance);
-  
+  private final Launcher launcherInstance = new Launcher();
+  private final Shoot shoot = new Shoot(swerveInstance, launcherInstance, intakeIndexerInstance, aprilTagInstance, nodalTaskExecutionInstance);
   private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
@@ -98,6 +103,16 @@ public class RobotContainer {
         }
       }
     ));
+
+    driveController.rightBumper().onTrue(Commands.run(
+      () -> {
+        if (!shoot.isScheduled()){
+          shoot.schedule();
+        } else {
+          shoot.cancel();
+        }
+      }
+      ));
 
     // driveController.y().onTrue(new DriveToTag(
     //   drivetrain,

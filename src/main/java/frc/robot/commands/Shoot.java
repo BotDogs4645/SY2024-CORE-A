@@ -17,21 +17,21 @@ import java.util.Optional;
 public class Shoot extends Command {
   /** Creates a new Shoot. */
   Swerve swerveInstance;
-  Launcher launcher;
-  IntakeIndexer intakeIndexer;
+  Launcher launcherInstance;
+  IntakeIndexer intakeIndexerInstance;
   AprilTag aprilTagInstance;
   NodalTaskExecution nodalTaskExecutionInstance;
   Optional<Node> currentNode;
   
-  public Shoot(Swerve swerveInstance, Launcher launcher, IntakeIndexer intakeIndexer, AprilTag aprilTagInstance, NodalTaskExecution nodalTaskExecutionInstance) {
+  public Shoot(Swerve swerveInstance, Launcher launcherInstance, IntakeIndexer intakeIndexerInstance, AprilTag aprilTagInstance, NodalTaskExecution nodalTaskExecutionInstance) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.swerveInstance = swerveInstance;
-    this.launcher = launcher;
-    this.intakeIndexer = intakeIndexer;
+    this.launcherInstance = launcherInstance;
+    this.intakeIndexerInstance = intakeIndexerInstance;
     this.aprilTagInstance = aprilTagInstance;
     this.nodalTaskExecutionInstance = nodalTaskExecutionInstance;
 
-    addRequirements(launcher, intakeIndexer);
+    addRequirements(launcherInstance, intakeIndexerInstance);
   }
 
   // Called when the command is initially scheduled.
@@ -39,7 +39,7 @@ public class Shoot extends Command {
   public void initialize() {
     currentNode = nodalTaskExecutionInstance.detectCurrentNode(swerveInstance.getPose());
     if (currentNode.isPresent()) {
-        launcher.aimLauncher(currentNode.get().nodeID);
+        launcherInstance.aimLauncher(currentNode.get().nodeID);
     }
   }
 
@@ -62,9 +62,9 @@ public class Shoot extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    launcher.stopLauncher();
-    intakeIndexer.stopIntake();
-    intakeIndexer.stopFeeder();
+    launcherInstance.stopLauncher();
+    intakeIndexerInstance.stopIntake();
+    intakeIndexerInstance.stopFeeder();
   }
 
   // Returns true when the command should end.
@@ -73,8 +73,8 @@ public class Shoot extends Command {
     return false;
   }
   public void vroom(double speed){
-    intakeIndexer.runIntake(speed);
-    intakeIndexer.runFeeder(speed);
-    launcher.startLauncher(speed);
+    intakeIndexerInstance.runIntake(speed);
+    intakeIndexerInstance.runFeeder(speed);
+    launcherInstance.startLauncher(speed);
   }
 }
