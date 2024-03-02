@@ -76,6 +76,8 @@ public final class Constants {
     public static final int ampNodeID = 0;
     public static final int speakerNodeID = 0;
     public static final int trapNodeID = 0;
+
+    public static final long executionDurationMillis = 1000;
   }
 
   public static final class Vision {

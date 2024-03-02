@@ -8,7 +8,6 @@ import frc.lib.util.AprilTag;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeIndexer;
 import frc.robot.subsystems.Launcher;
-import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Swerve;
 import frc.robot.Constants;
 import frc.lib.util.NodeStorage.Node;
@@ -20,16 +19,17 @@ public class Shoot extends Command {
   Launcher launcher;
   IntakeIndexer intakeIndexer;
   AprilTag aprilTagInstance;
-  NodalTaskExecution nodalTaskExecutionInstance;
-  Optional<Node> currentNode;
+  int currentNodeID;
+
+  Optional<Long> initalizationTime;
   
-  public Shoot(Swerve swerveInstance, Launcher launcher, IntakeIndexer intakeIndexer, AprilTag aprilTagInstance, NodalTaskExecution nodalTaskExecutionInstance) {
+  public Shoot(Swerve swerveInstance, Launcher launcher, IntakeIndexer intakeIndexer, AprilTag aprilTagInstance, int currentNodeID) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.swerveInstance = swerveInstance;
     this.launcher = launcher;
     this.intakeIndexer = intakeIndexer;
     this.aprilTagInstance = aprilTagInstance;
-    this.nodalTaskExecutionInstance = nodalTaskExecutionInstance;
+    this.currentNodeID = currentNodeID;
 
     addRequirements(launcher, intakeIndexer);
   }
@@ -37,17 +37,14 @@ public class Shoot extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    currentNode = nodalTaskExecutionInstance.detectCurrentNode(swerveInstance.getPose());
-    if (currentNode.isPresent()) {
-        launcher.aimLauncher(currentNode.get().nodeID);
-    }
+    initalizationTime = Optional.of(System.currentTimeMillis());
+
+    launcher.aimLauncher(currentNodeID);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    int currentNodeID = currentNode.get().nodeID;
-
     if (currentNodeID == Constants.Launcher.ampNodeID){
       vroom(Constants.Launcher.ampSpeed);
     }
@@ -70,8 +67,9 @@ public class Shoot extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return initalizationTime.isEmpty() || System.currentTimeMillis() - initalizationTime.get() > Constants.Launcher.executionDurationMillis;
   }
+
   public void vroom(double speed){
     intakeIndexer.runIntake(speed);
     intakeIndexer.runFeeder(speed);

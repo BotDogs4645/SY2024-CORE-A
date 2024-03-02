@@ -31,7 +31,7 @@ public class AdvanceToTarget extends Command {
 
     private Swerve swerveDrive;
     private AprilTag aprilTagInstance;
-    private boolean robotActivated;
+    private boolean fieldOrientated;
     private Optional<Transform2d> targetPosition;
     public Optional<SequentialCommandGroup> currentTargetCommand = Optional.empty();
 
@@ -39,15 +39,14 @@ public class AdvanceToTarget extends Command {
     private SlewRateLimiter strafeLimiter = new SlewRateLimiter(3.0);
     private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3.0);
 
-    public AdvanceToTarget(Swerve swerveDrive, AprilTag aprilTagInstance, boolean robotActivated) {
+    public AdvanceToTarget(Swerve swerveDrive, AprilTag aprilTagInstance, boolean fieldOrientated, Transform2d targetPosition) {
         this.swerveDrive = swerveDrive;
         this.aprilTagInstance = aprilTagInstance;
-        this.robotActivated = robotActivated;
-        addRequirements(swerveDrive);
-    }
-
-    public void specifyTarget(Transform2d targetPosition) {
+        this.fieldOrientated = fieldOrientated;
+        
         this.targetPosition = Optional.of(targetPosition);
+
+        addRequirements(swerveDrive);
     }
 
     @Override
@@ -104,7 +103,7 @@ public class AdvanceToTarget extends Command {
         currentTargetCommand = Optional.of(swerveControllerCommand.andThen(() -> swerveDrive.drive(
             new Translation2d(0, 0),
             0,
-            !robotActivated,
+            !fieldOrientated,
             true)).andThen(() -> this.targetPosition = Optional.empty()));
 
         currentTargetCommand.get().schedule();
@@ -117,7 +116,7 @@ public class AdvanceToTarget extends Command {
         swerveDrive.drive(
             new Translation2d(0, 0),
             0,
-            !robotActivated,
+            !fieldOrientated,
             true);
     }
 

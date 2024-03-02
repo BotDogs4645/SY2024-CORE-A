@@ -57,6 +57,16 @@ public class IntakeIndexer extends SubsystemBase {
     intakeEnabled = false;
   }
 
+  public void haltIntakeIndexer() {
+    stopFeeder();
+    stopIntake();
+  }
+
+  public void unloadIntakeIndexer() {
+    runFeeder(-1);
+    runIntake(-1);
+  }
+
   public boolean hasNote() {
     return noteDetectionSwitch.get();
   }

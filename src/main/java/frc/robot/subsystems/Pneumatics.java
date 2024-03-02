@@ -15,22 +15,21 @@ public class Pneumatics extends SubsystemBase {
   DoubleSolenoid climber;
   DoubleSolenoid ampGuide;
 
-  PneumaticsControlModule pcm;
-
   public Pneumatics() {
     climber = new DoubleSolenoid(
+      Constants.Pneumatics.pcmCanID,
       PneumaticsModuleType.CTREPCM,
       Constants.Pneumatics.climberForward,
       Constants.Pneumatics.climberReverse
     );
 
     ampGuide = new DoubleSolenoid(
+      Constants.Pneumatics.pcmCanID,
       PneumaticsModuleType.CTREPCM,
       Constants.Pneumatics.ampGuideForward,
       Constants.Pneumatics.ampGuideReverse
     );
 
-    pcm = new PneumaticsControlModule(Constants.Pneumatics.pcmCanID);
   }
 
   public void extendClimber() {
@@ -45,6 +44,22 @@ public class Pneumatics extends SubsystemBase {
   }
   public void retractAmpGuide() {
     ampGuide.set(DoubleSolenoid.Value.kReverse);
+  }
+
+  public void toggleClimber() {
+    if (climber.get() == DoubleSolenoid.Value.kForward) {
+      retractClimber();
+    } else {
+      extendClimber();
+    }
+  }
+
+  public void toggleAmpGuide() {
+    if (ampGuide.get() == DoubleSolenoid.Value.kForward) {
+      retractAmpGuide();
+    } else {
+      extendAmpGuide();
+    }
   }
 
 
