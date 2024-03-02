@@ -10,7 +10,6 @@ import frc.robot.subsystems.IntakeIndexer;
 import frc.robot.subsystems.Launcher;
 import frc.robot.subsystems.Swerve;
 import frc.robot.Constants;
-import frc.lib.util.NodeStorage.Node;
 import java.util.Optional;
 
 public class Shoot extends Command {
@@ -26,8 +25,8 @@ public class Shoot extends Command {
   public Shoot(Swerve swerveInstance, Launcher launcher, IntakeIndexer intakeIndexer, AprilTag aprilTagInstance, int currentNodeID) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.swerveInstance = swerveInstance;
-    this.launcherInstance = launcherInstance;
-    this.intakeIndexerInstance = intakeIndexerInstance;
+    this.launcherInstance = launcher;
+    this.intakeIndexerInstance = intakeIndexer;
     this.aprilTagInstance = aprilTagInstance;
     this.currentNodeID = currentNodeID;
 
@@ -39,7 +38,7 @@ public class Shoot extends Command {
   public void initialize() {
     initalizationTime = Optional.of(System.currentTimeMillis());
 
-    launcher.aimLauncher(currentNodeID);
+    launcherInstance.aimLauncher(currentNodeID);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
