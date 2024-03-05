@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -14,11 +13,11 @@ import java.util.Optional;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
-import frc.lib.util.AprilTag;
 import frc.lib.util.ObstacleDetection;
 
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -30,7 +29,7 @@ import java.util.List;
 public class AdvanceToTarget extends Command {
 
     private Swerve swerveDrive;
-    private AprilTag aprilTagInstance;
+    private Field2d playingField;
     private boolean fieldOrientated;
     private Optional<Transform2d> targetPosition;
     public Optional<SequentialCommandGroup> currentTargetCommand = Optional.empty();
@@ -39,9 +38,9 @@ public class AdvanceToTarget extends Command {
     private SlewRateLimiter strafeLimiter = new SlewRateLimiter(3.0);
     private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3.0);
 
-    public AdvanceToTarget(Swerve swerveDrive, AprilTag aprilTagInstance, boolean fieldOrientated, Transform2d targetPosition) {
+    public AdvanceToTarget(Swerve swerveDrive, Field2d playingField, boolean fieldOrientated, Transform2d targetPosition) {
         this.swerveDrive = swerveDrive;
-        this.aprilTagInstance = aprilTagInstance;
+        this.playingField = playingField;
         this.fieldOrientated = fieldOrientated;
         
         this.targetPosition = Optional.of(targetPosition);
@@ -51,7 +50,7 @@ public class AdvanceToTarget extends Command {
 
     @Override
     public void initialize() {
-        Optional<Transform3d> currentPosition = aprilTagInstance.determinePosition();
+        Optional<Pose2d> currentPosition = Optional.of(playingField.getRobotPose());
         if (currentPosition.isEmpty() || targetPosition.isEmpty()) {
             return;
         }
@@ -76,7 +75,7 @@ public class AdvanceToTarget extends Command {
         Trajectory projectedTrajectory =
             TrajectoryGenerator.generateTrajectory(
                 // new Pose2d(0, 0, new Rotation2d(0)),
-                new Pose2d(currentPosition.get().getTranslation().toTranslation2d(), targetPosition.get().getRotation()),
+                new Pose2d(currentPosition.get().getTranslation(), targetPosition.get().getRotation()),
                 trajectoryWaypoints,
                 new Pose2d(targetPosition.get().getTranslation(), targetPosition.get().getRotation()),
                 trajectoryConfig);

@@ -1,5 +1,6 @@
 package frc.lib.util;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 
 public class ObstacleDetection
@@ -15,7 +16,7 @@ public class ObstacleDetection
      * @return(s) whether the robot "should" 
      * continue along its current path.
      */
-    public static boolean continueAlongPath(Translation3d currentPosition, double lineSlope) {
+    public static boolean continueAlongPath(Translation2d currentPosition, double lineSlope) {
 
         for (double[] currentObstacle : knownObstacles) {
             double[] formattedLineData = formatLineData(currentPosition.getX(), currentPosition.getY(), lineSlope);

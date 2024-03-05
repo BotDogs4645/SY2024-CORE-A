@@ -29,6 +29,9 @@ public final class Constants {
   public static final class Intake {
     public static final int intakeMotorPWMPort = 0;
     public static final int feederMotorPWMPort = 1;
+    public static final boolean invertIntakeMotor = false;
+    public static final boolean invertFeederMotor = true;
+    public static final double intakeSpeed = 1;
     public static final int noteDetectionSwitchDIOPort = 0;
   }
 
@@ -60,10 +63,16 @@ public final class Constants {
     public static final int angleMotorID = 18;
     public static final int topMotorID = 13;
     public static final int bottomMotorID = 14;
+    public static final int absEncoderId = 40;
+    public static final double absEncoderOffset = 0;
 
     public static final double gravityAcceleration = 9.81;
     public static final double launcherHeight = 0.574;
     public static final double launcherWheelRadius = 0.04826;
+
+    public static final double ampHeight = 0.66;
+    public static final double speakerHeight = 1.984;
+    public static final double trapHeight = 1.436;
 
     public static final double ampAngle = 90; // need to test to find
     public static final double speakerAngle = 90; // need to test to find
@@ -78,6 +87,12 @@ public final class Constants {
     public static final int trapNodeID = 0;
 
     public static final long executionDurationMillis = 1000;
+    public static final class PID {
+      public static final double kP = 0;
+      public static final double kI = 0;
+      public static final double kD = 0;
+
+    }
   }
 
   public static final class Vision {

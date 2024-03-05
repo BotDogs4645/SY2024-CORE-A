@@ -54,7 +54,7 @@ public class RobotContainer {
 
   private final Launcher launcherInstance = new Launcher();
 
-  private final NodeStorage nodeStorageInstance = new NodeStorage(drivetrain, aprilTagInstance, launcherInstance, intakeIndexerInstance);
+  private final NodeStorage nodeStorageInstance = new NodeStorage(drivetrain, playingField, launcherInstance, intakeIndexerInstance);
 
   Optional<IntakeIndexerCommand> intakeIndexerCommandInstance = Optional.empty();
   Optional<NodalTaskExecution> nodalTaskExecutionInstance = Optional.empty();
@@ -87,7 +87,6 @@ public class RobotContainer {
       drivetrain.zeroGyro();
     }, drivetrain));
 
-
     driveController.leftBumper().onTrue(Commands.run(
       () -> {
         if (intakeIndexerCommandInstance.isEmpty() || !intakeIndexerCommandInstance.get().isScheduled()) {
@@ -98,12 +97,11 @@ public class RobotContainer {
         }
     }));
 
-    driveController.leftTrigger().onTrue(new SequentialCommandGroup(
-      new InstantCommand(() -> intakeIndexerInstance.unloadIntakeIndexer()),
-      new WaitCommand(1.5),
-      new InstantCommand(() -> intakeIndexerInstance.haltIntakeIndexer())
-    ));
-
+    // driveController.leftTrigger().onTrue(new SequentialCommandGroup(
+    //   new InstantCommand(() -> intakeIndexerInstance.unloadIntakeIndexer()),
+    //   new WaitCommand(1.5),
+    //   new InstantCommand(() -> intakeIndexerInstance.haltIntakeIndexer())
+    // ));
 
     driveController.rightTrigger().onTrue(Commands.run(
       () -> {
@@ -128,11 +126,6 @@ public class RobotContainer {
 
       }, pneumatics)
     );
-
-    // driveController.y().onTrue(new DriveToTag(
-    //   drivetrain,
-    //   limelight.getTargetPose()
-    // ));
   }
 
   public Command getAutonomousCommand() {

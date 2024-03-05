@@ -57,6 +57,11 @@ public class IntakeIndexer extends SubsystemBase {
     intakeEnabled = false;
   }
 
+  public void runIntakeIndexer() {
+    runIntake(1);
+    runFeeder(1);
+  }
+
   public void haltIntakeIndexer() {
     stopFeeder();
     stopIntake();
