@@ -58,6 +58,7 @@ public class RobotContainer {
 
   Optional<IntakeIndexerCommand> intakeIndexerCommandInstance = Optional.empty();
   Optional<NodalTaskExecution> nodalTaskExecutionInstance = Optional.empty();
+  Optional<Shoot> shootInstance = Optional.empty();
   
   private final SendableChooser<Command> autoChooser;
 
@@ -96,6 +97,16 @@ public class RobotContainer {
           intakeIndexerCommandInstance = Optional.empty();
         }
     }));
+    driveController.rightBumper().onTrue(Commands.run(
+      () -> {
+        if (!shootInstance.isEmpty() || !shootInstance.get().isScheduled()){
+          shootInstance = Optional.of(new Shoot(launcherInstance, intakeIndexerInstance, 0));
+        } else if(shootInstance.isPresent() && shootInstance.get().isScheduled()){
+          shootInstance.get().cancel();
+          shootInstance = Optional.empty();
+        }
+      }
+      ));
 
     // driveController.leftTrigger().onTrue(new SequentialCommandGroup(
     //   new InstantCommand(() -> intakeIndexerInstance.unloadIntakeIndexer()),
