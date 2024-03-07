@@ -23,7 +23,6 @@ import frc.robot.Constants;
  */
 public class SwerveModule {
   public int moduleNumber;
-  private Rotation2d lastAngle;
   private Rotation2d angleOffset;
 
   private CANSparkMax angleMotor;
@@ -60,8 +59,6 @@ public class SwerveModule {
     driveEncoder = driveMotor.getEncoder();
     driveController = driveMotor.getPIDController();
     configDriveMotor();
-
-    lastAngle = getState().angle;
   }
 
   /**
@@ -85,6 +82,7 @@ public class SwerveModule {
   public void resetToAbsolute() {
     double absolutePosition = getCanCoder().getDegrees() - angleOffset.getDegrees();
     integratedAngleEncoder.setPosition(absolutePosition);
+    angleController.setReference(absolutePosition, CANSparkBase.ControlType.kPosition);
   }
 
   private void configAngleEncoder() {
@@ -152,13 +150,9 @@ public class SwerveModule {
    */
   private void setAngle(SwerveModuleState desiredState) {
     // Prevent rotating module if speed is less then 1%. Prevents jittering.
-    Rotation2d angle =
-        (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.Swerve.maxSpeed * 0.01))
-            ? lastAngle
-            : desiredState.angle;
-
-    angleController.setReference(angle.getDegrees(), CANSparkBase.ControlType.kPosition);
-    lastAngle = angle;
+    if (Math.abs(desiredState.speedMetersPerSecond) >= (Constants.Swerve.maxSpeed * 0.01)) {
+      angleController.setReference(desiredState.angle.getDegrees(), CANSparkBase.ControlType.kPosition);
+    }
   }
 
   private Rotation2d getAngle() {
