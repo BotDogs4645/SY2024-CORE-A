@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.time.Instant;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose3d;
@@ -11,6 +13,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -50,8 +53,8 @@ public class RobotContainer {
             drivetrain,
             () -> -driveController.getLeftY(), // Translation
             () -> -driveController.getLeftX(), // Strafe
-            () -> driveController.getRightX(), // Rotation
-            () -> driveController.leftBumper().getAsBoolean() // Field-oriented driving (yes or no)
+            () -> -driveController.getRightX(), // Rotation
+            () -> driveController.rightTrigger().getAsBoolean() // Field-oriented driving (yes or no)
         ));
 
     CameraServer.startAutomaticCapture();
@@ -81,7 +84,7 @@ public class RobotContainer {
       }, pneumatics)
     );
 
-    driveController.leftBumper().onTrue(new IntakeNote(intakeIndexer, intakeIndexer.hasNote()));
+    driveController.leftBumper().toggleOnTrue(new IntakeNote(intakeIndexer, intakeIndexer.hasNote()));
 
     driveController.leftTrigger().onTrue(new SequentialCommandGroup(
       new InstantCommand(() -> intakeIndexer.startSpittingNote()),
@@ -89,11 +92,28 @@ public class RobotContainer {
       new InstantCommand(() -> intakeIndexer.stop())
     ));
 
-    driveController.rightBumper().onTrue(new InstantCommand(() -> {
+    // driveController.rightBumper().onTrue(new InstantCommand(() -> {
+    //     shooter.toggleShooter();
+    //     shooter.setShooterAngle(0.1);
+
+    //     intakeIndexer.toggle();
+    //     intakeIndexer.setHasNote(false);
+    //   },shooter, intakeIndexer)
+    // );
+
+    driveController.rightBumper().onTrue(Commands.parallel(
+      new InstantCommand(() -> {shooter.toggleShooter();}, shooter),
+      new WaitCommand(0.5).andThen(
+        new InstantCommand(() -> {
+          intakeIndexer.toggle();
+        }, intakeIndexer)
+      )
+    ).andThen(
+      new WaitCommand(1).andThen(() -> {
+        intakeIndexer.toggle(); 
         shooter.toggleShooter();
-        shooter.setShooterAngle(0.1);
-      },shooter)
-    );
+      }, intakeIndexer, shooter)
+    ));
   }
 
   public Command getAutonomousCommand() {

@@ -8,7 +8,9 @@ import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -21,6 +23,8 @@ public class IntakeIndexer extends SubsystemBase {
   private DigitalInput noteDetectionSwitch;
  
   private boolean hasNote;
+  private double initIntakeTime = 0;
+  private double tripTime = 0;
 
   public IntakeIndexer() {
     feederMotor = new PWMSparkMax(Constants.Intake.feederMotorPWMPort);
@@ -70,12 +74,30 @@ public class IntakeIndexer extends SubsystemBase {
   public boolean isRunning() {
     return intakeMotor.get() != 0;
   };
+
+  public double getTripTime() {
+    return tripTime;
+  }
+
+  public void resetSwitch() {
+    initIntakeTime = 0;
+  }
   
   @Override
   public void periodic() {
+    
+    
     if(getLimitSwitch() == true) {
       hasNote = true;
+      initIntakeTime = Timer.getFPGATimestamp();
     }
+    if (getLimitSwitch() == true && hasNote) {
+      tripTime = Timer.getFPGATimestamp() - initIntakeTime;
+    }
+
+
+    SmartDashboard.putNumber("curr Time", tripTime);
+    SmartDashboard.putNumber("init time", initIntakeTime);
   }
 
 
