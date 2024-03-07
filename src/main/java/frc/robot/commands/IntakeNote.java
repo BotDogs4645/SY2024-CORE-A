@@ -29,9 +29,15 @@ public class IntakeNote extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    if(Math.abs(intakeIndexer.getTripTime()) > 1) {
+      intakeIndexer.setSpeed(Constants.Intake.intakeSpeed);
+      super.cancel();
+    } 
+
     if(intakeIndexer.getLimitSwitch() && !hasNoteAlready) {
       intakeIndexer.setSpeed(0);
-      intakeIndexer.setHasNote(false);
+      intakeIndexer.setHasNote(true);
       super.cancel();
     } else {
       intakeIndexer.setSpeed(Constants.Intake.intakeSpeed);
@@ -40,7 +46,10 @@ public class IntakeNote extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+      intakeIndexer.setSpeed(0);
+      intakeIndexer.resetSwitch();
+  }
 
   // Returns true when the command should end.
   @Override
