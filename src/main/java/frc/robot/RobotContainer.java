@@ -39,11 +39,11 @@ public class RobotContainer {
 
   private final CommandXboxController driveController = new CommandXboxController(Constants.kDriverControllerPort);
 
-  public static final Swerve drivetrain = new Swerve();
-  public static final Limelight limelight = new Limelight();
-  public static final Pneumatics pneumatics = new Pneumatics();
-  public static final IntakeIndexer intakeIndexer = new IntakeIndexer();
-  public static final Shooter shooter = new Shooter();
+  private final Swerve drivetrain = new Swerve();
+  private final Limelight limelight = new Limelight();
+  private final Pneumatics pneumatics = new Pneumatics();
+  private final IntakeIndexer intakeIndexer = new IntakeIndexer();
+  private final Shooter shooter = new Shooter();
 
   private final SendableChooser<Command> autoChooser;
 
@@ -122,5 +122,13 @@ public class RobotContainer {
 
   public Limelight getLimelight() {
     return limelight;
+  }
+
+  public IntakeIndexer getIntakeindexer() {
+      return intakeIndexer;
+  }
+
+  public Swerve getDrivetrain() {
+      return drivetrain;
   }
 }
