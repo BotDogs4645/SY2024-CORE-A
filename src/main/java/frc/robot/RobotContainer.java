@@ -84,6 +84,15 @@ public class RobotContainer {
       }, pneumatics)
     );
 
+    driveController.povDown().onTrue(new InstantCommand(() -> {
+      shooter.intakeFromSource();
+      intakeIndexer.setSpeed(-0.125);
+    }, shooter, intakeIndexer).andThen(
+      new WaitCommand(0.5).andThen(() -> {
+        shooter.setShooterSpeed(0);
+        intakeIndexer.setSpeed(0);
+      }, shooter, intakeIndexer)));
+
     driveController.leftBumper().toggleOnTrue(new IntakeNote(intakeIndexer, intakeIndexer.hasNote()));
 
     driveController.leftTrigger().onTrue(new SequentialCommandGroup(
@@ -92,17 +101,11 @@ public class RobotContainer {
       new InstantCommand(() -> intakeIndexer.stop())
     ));
 
-    // driveController.rightBumper().onTrue(new InstantCommand(() -> {
-    //     shooter.toggleShooter();
-    //     shooter.setShooterAngle(0.1);
-
-    //     intakeIndexer.toggle();
-    //     intakeIndexer.setHasNote(false);
-    //   },shooter, intakeIndexer)
-    // );
-
     driveController.rightBumper().onTrue(Commands.parallel(
-      new InstantCommand(() -> {shooter.toggleShooter();}, shooter),
+      new InstantCommand(() -> {
+        shooter.toggleShooter();
+        shooter.setShooterAngle(0.1);
+      }, shooter),
       new WaitCommand(0.5).andThen(
         new InstantCommand(() -> {
           intakeIndexer.toggle();
@@ -112,6 +115,23 @@ public class RobotContainer {
       new WaitCommand(1).andThen(() -> {
         intakeIndexer.toggle(); 
         shooter.toggleShooter();
+      }, intakeIndexer, shooter)
+    ));
+
+    driveController.b().onTrue(Commands.parallel(
+      new InstantCommand(() -> {
+        shooter.toggleShooterAmp();
+        shooter.setShooterAngle(0.1);
+      }, shooter),
+      new WaitCommand(0.5).andThen(
+        new InstantCommand(() -> {
+          intakeIndexer.toggle();
+        }, intakeIndexer)
+      )
+    ).andThen(
+      new WaitCommand(1).andThen(() -> {
+        intakeIndexer.toggle(); 
+        shooter.toggleShooterAmp();
       }, intakeIndexer, shooter)
     ));
   }

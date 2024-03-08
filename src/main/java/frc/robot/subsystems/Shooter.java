@@ -58,6 +58,21 @@ public class Shooter extends SubsystemBase {
     }
   }
 
+   public void toggleShooterAmp() {
+    if(topMotor.get() != 0) {
+      topMotor.set(0);
+      bottomMotor.set(0);
+    } else {
+      topMotor.set(0.1475);
+      bottomMotor.set(-0.1475);
+    }
+  }
+
+  public void intakeFromSource() {
+    topMotor.set(-0.5);
+    bottomMotor.set(0.5);
+  }
+
   public void setShooterAngle(double theta) {
     // this.theta = theta;
     positionMotor.set(theta);
