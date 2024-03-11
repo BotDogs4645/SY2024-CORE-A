@@ -236,6 +236,7 @@ public final class Constants {
   public static final int ledControllerID = 0;
 
   public static final int kDriverControllerPort = 0;
+  public static final int kManipulatorControllerPort = 1;
 
   public static class Limelight {
 

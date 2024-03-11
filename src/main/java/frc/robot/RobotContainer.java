@@ -38,6 +38,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 public class RobotContainer {
 
   private final CommandXboxController driveController = new CommandXboxController(Constants.kDriverControllerPort);
+  private final CommandXboxController manipulatorController = new CommandXboxController(Constants.kManipulatorControllerPort);
 
   private final Swerve drivetrain = new Swerve();
   private final Limelight limelight = new Limelight();
@@ -61,7 +62,7 @@ public class RobotContainer {
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
-
+    
     configureBindings();
   }
 
@@ -70,69 +71,74 @@ public class RobotContainer {
       drivetrain.zeroGyro();
     }, drivetrain));
 
+    // Left red button - Intake
+    manipulatorController.leftBumper().toggleOnTrue(new IntakeNote(intakeIndexer, intakeIndexer.hasNote()));
 
-    driveController.y().onTrue(
+    // Right red button - Source
+    manipulatorController.povDown().onTrue(new InstantCommand(() -> {
+      shooter.intakeFromSource();
+      intakeIndexer.setSpeed(-0.125);
+    }, shooter, intakeIndexer).andThen(
+        new WaitCommand(0.5).andThen(() -> {
+          shooter.setShooterSpeed(0);
+          intakeIndexer.setSpeed(0);
+        }, shooter, intakeIndexer)));
+    
+    // Left yellow button - A (Amp) Shoot
+    manipulatorController.b().onTrue(Commands.parallel(
+      new InstantCommand(() -> {
+        shooter.toggleShooterAmp();
+        shooter.setShooterAngle(0.1);
+      }, shooter),
+      new WaitCommand(0.5).andThen(
+        new InstantCommand(() -> {
+          intakeIndexer.toggle();
+        }, intakeIndexer)
+      )
+    ).andThen(
+      new WaitCommand(1).andThen(() -> {
+        intakeIndexer.toggle(); 
+        shooter.toggleShooterAmp();
+      }, intakeIndexer, shooter)
+    ));
+
+    // Right yellow button - Shoot
+    manipulatorController.rightBumper().onTrue(Commands.parallel(
+      new InstantCommand(() -> {
+        shooter.toggleShooter();
+        shooter.setShooterAngle(0.1);
+      }, shooter),
+      new WaitCommand(0.5).andThen(
+        new InstantCommand(() -> {
+          intakeIndexer.toggle();
+        }, intakeIndexer)
+      )
+    ).andThen(
+      new WaitCommand(1).andThen(() -> {
+        intakeIndexer.toggle(); 
+        shooter.toggleShooter();
+      }, intakeIndexer, shooter)
+    ));
+
+    // Top blue button - Climb
+    manipulatorController.y().onTrue(
       new InstantCommand(() -> {
         pneumatics.toggleClimber();
       }, pneumatics)
     );
     
-    driveController.x().onTrue(
+    // Bottom blue button - Panel
+    manipulatorController.x().onTrue(
       new InstantCommand(() -> {
-        pneumatics.toggleAmpGuide();
-
+        pneumatics.toggleAmpGuide();    
       }, pneumatics)
     );
 
-    driveController.povDown().onTrue(new InstantCommand(() -> {
-      shooter.intakeFromSource();
-      intakeIndexer.setSpeed(-0.125);
-    }, shooter, intakeIndexer).andThen(
-      new WaitCommand(0.5).andThen(() -> {
-        shooter.setShooterSpeed(0);
-        intakeIndexer.setSpeed(0);
-      }, shooter, intakeIndexer)));
-
-    driveController.leftBumper().toggleOnTrue(new IntakeNote(intakeIndexer, intakeIndexer.hasNote()));
-
-    driveController.leftTrigger().onTrue(new SequentialCommandGroup(
+    // Black button - spit
+    manipulatorController.leftTrigger().onTrue(new SequentialCommandGroup(
       new InstantCommand(() -> intakeIndexer.startSpittingNote()),
       new WaitCommand(1),
       new InstantCommand(() -> intakeIndexer.stop())
-    ));
-
-    driveController.rightBumper().onTrue(Commands.parallel(
-      new InstantCommand(() -> {
-        shooter.toggleShooter();
-        shooter.setShooterAngle(0.1);
-      }, shooter),
-      new WaitCommand(0.5).andThen(
-        new InstantCommand(() -> {
-          intakeIndexer.toggle();
-        }, intakeIndexer)
-      )
-    ).andThen(
-      new WaitCommand(1).andThen(() -> {
-        intakeIndexer.toggle(); 
-        shooter.toggleShooter();
-      }, intakeIndexer, shooter)
-    ));
-
-    driveController.b().onTrue(Commands.parallel(
-      new InstantCommand(() -> {
-        shooter.toggleShooterAmp();
-        shooter.setShooterAngle(0.1);
-      }, shooter),
-      new WaitCommand(0.5).andThen(
-        new InstantCommand(() -> {
-          intakeIndexer.toggle();
-        }, intakeIndexer)
-      )
-    ).andThen(
-      new WaitCommand(1).andThen(() -> {
-        intakeIndexer.toggle(); 
-        shooter.toggleShooterAmp();
-      }, intakeIndexer, shooter)
     ));
   }
 
