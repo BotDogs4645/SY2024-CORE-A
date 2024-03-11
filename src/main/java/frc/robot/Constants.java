@@ -80,8 +80,8 @@ public final class Constants {
 
   public static final class Pneumatics {
     public static final int pcmCanID = 15;
-    public static final int climberForward = 6;
-    public static final int climberReverse = 7;
+    public static final int climberForward = 7;
+    public static final int climberReverse = 6;
     public static final int ampGuideForward = 4;
     public static final int ampGuideReverse = 5;
   }
