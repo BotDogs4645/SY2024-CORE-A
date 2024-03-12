@@ -50,6 +50,8 @@ public final class Constants {
     
     public static final class FrontLimelight {
 
+      public static final String Name = "limelight-front";
+
       // Offsets follow Limelight localization rules
       // Measured in meters
       public static final double Forward = 0.343;
@@ -63,6 +65,8 @@ public final class Constants {
     }
 
     public static final class BackLimelight {
+
+      public static final String Name = "limelight-back";
 
       // Offsets follow Limelight localization rules
       // Measured in meters
