@@ -34,7 +34,7 @@ public class FrontLimelight extends SubsystemBase {
     private AprilTag target = new AprilTag();
 
     public boolean hasTarget() {
-        return (LimelightHelpers.getTA("") > 0.1) ? true : false;
+        return (LimelightHelpers.getTA(Vision.FrontLimelight.Name) > 0.1) ? true : false;
     }
 
     public OptionalDouble getLateralAngleToTarget() {
@@ -47,7 +47,7 @@ public class FrontLimelight extends SubsystemBase {
 
     public OptionalInt getTagID() {
         try {
-            return OptionalInt.of((int) LimelightHelpers.getFiducialID(""));
+            return OptionalInt.of((int) LimelightHelpers.getFiducialID(Vision.FrontLimelight.Name));
         } catch (Exception e) {
             return OptionalInt.empty();
         }
@@ -59,7 +59,7 @@ public class FrontLimelight extends SubsystemBase {
         }
         double d = (
             (Constants.Vision.FrontLimelight.Up - Constants.Limelight.APRILTAGS.get(
-                (int) LimelightHelpers.getFiducialID("")).getZ()
+                (int) LimelightHelpers.getFiducialID(Vision.FrontLimelight.Name)).getZ()
             ) / Math.tan(Constants.Vision.FrontLimelight.Pitch + ty.getAsDouble())
         ); 
 
@@ -69,7 +69,7 @@ public class FrontLimelight extends SubsystemBase {
   
     public Optional<Pose3d> getTargetPoseRobotRealative() {
         try {
-            return Optional.of(LimelightHelpers.getTargetPose3d_RobotSpace(""));             
+            return Optional.of(LimelightHelpers.getTargetPose3d_RobotSpace(Vision.FrontLimelight.Name));             
         } catch (Exception e) {
             return Optional.empty();
         }
@@ -80,7 +80,7 @@ public class FrontLimelight extends SubsystemBase {
             return Optional.empty();
         }
 
-        return Optional.of(LimelightHelpers.getBotPose2d_wpiBlue(""))
+        return Optional.of(LimelightHelpers.getBotPose2d_wpiBlue(Vision.FrontLimelight.Name))
             .filter(pose -> pose.getX() != 0 && pose.getY() != 0);
     }
 
@@ -139,8 +139,8 @@ public class FrontLimelight extends SubsystemBase {
     @Override
     public void periodic() {
         if(hasTarget()) {
-            tx = OptionalDouble.of(LimelightHelpers.getTX(""));
-            ty = OptionalDouble.of(LimelightHelpers.getTY(""));
+            tx = OptionalDouble.of(LimelightHelpers.getTX(Vision.FrontLimelight.Name));
+            ty = OptionalDouble.of(LimelightHelpers.getTY(Vision.FrontLimelight.Name));
             distanceToTarget = getDistanceToTarget();
         } else {
             tx = OptionalDouble.empty();
