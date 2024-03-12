@@ -23,7 +23,8 @@ import frc.robot.commands.IntakeNote;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.IntakeIndexer;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.BackLimelight;
+import frc.robot.subsystems.FrontLimelight;
 import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Swerve;
 import edu.wpi.first.cameraserver.CameraServer;
@@ -41,7 +42,8 @@ public class RobotContainer {
   private final CommandXboxController manipulatorController = new CommandXboxController(Constants.kManipulatorControllerPort);
 
   private final Swerve drivetrain = new Swerve();
-  private final Limelight limelight = new Limelight();
+  private final FrontLimelight frontLimelight = new FrontLimelight();
+  private final BackLimelight backLimelight = new BackLimelight();
   private final Pneumatics pneumatics = new Pneumatics();
   private final IntakeIndexer intakeIndexer = new IntakeIndexer();
   private final Shooter shooter = new Shooter();
@@ -62,7 +64,7 @@ public class RobotContainer {
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
-    
+
     configureBindings();
   }
 
@@ -146,8 +148,12 @@ public class RobotContainer {
     return autoChooser.getSelected();
   }
 
-  public Limelight getLimelight() {
-    return limelight;
+  public FrontLimelight getFrontLimelight() {
+    return frontLimelight;
+  }
+
+  public BackLimelight getBackLimelight() {
+    return backLimelight;
   }
 
   public IntakeIndexer getIntakeindexer() {

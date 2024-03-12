@@ -47,12 +47,34 @@ public final class Constants {
   }
 
   public static final class Vision {
-    //all units in meters
-    // sign of offsets follows std convention rel to swerve
-    public static final double LimelightAngleDegrees = 30;
-    public static final double LimelightOffsetZ = 10.5 * 0.0254;
-    public static final double LimelightOffsetX = 0.32;
-    public static final double LimelightOffsetY = 0.0;
+    
+    public static final class FrontLimelight {
+
+      // Offsets follow Limelight localization rules
+      // Measured in meters
+      public static final double Forward = 0.343;
+      public static final double Right = 0.343;
+      public static final double Up = 0.27;
+
+      // Measured in degrees
+      public static final double Pitch = 16;
+      public static final double Yaw = 0;
+      public static final double Roll = 1.5;
+    }
+
+    public static final class BackLimelight {
+
+      // Offsets follow Limelight localization rules
+      // Measured in meters
+      public static final double Forward = -0.325;
+      public static final double Right = -0.09;
+      public static final double Up = 0.31;
+
+      // Measured in degrees
+      public static final double Pitch = 20;
+      public static final double Yaw = 3.5;
+      public static final double Roll = 0;
+    }
 
   }
   public static class Launcher {

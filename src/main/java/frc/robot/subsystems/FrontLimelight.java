@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -24,7 +25,7 @@ import frc.robot.LimelightHelpers;
  * 
  * We use the Limelight for location estimation with AprilTags.
  */
-public class Limelight extends SubsystemBase {
+public class FrontLimelight extends SubsystemBase {
 
     private OptionalDouble distanceToTarget = OptionalDouble.empty();
     private OptionalDouble ty = OptionalDouble.empty();
@@ -57,9 +58,9 @@ public class Limelight extends SubsystemBase {
             return OptionalDouble.empty();
         }
         double d = (
-            (Constants.Vision.LimelightOffsetZ - Constants.Limelight.APRILTAGS.get(
+            (Constants.Vision.FrontLimelight.Up - Constants.Limelight.APRILTAGS.get(
                 (int) LimelightHelpers.getFiducialID("")).getZ()
-            ) / Math.tan(Constants.Vision.LimelightAngleDegrees + ty.getAsDouble())
+            ) / Math.tan(Constants.Vision.FrontLimelight.Pitch + ty.getAsDouble())
         ); 
 
         return OptionalDouble.of(d);
@@ -72,6 +73,15 @@ public class Limelight extends SubsystemBase {
         } catch (Exception e) {
             return Optional.empty();
         }
+    }
+
+    public Optional<Pose2d> getRobotPosition_FieldSpace() {
+        if (!hasTarget()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(LimelightHelpers.getBotPose2d_wpiBlue(""))
+            .filter(pose -> pose.getX() != 0 && pose.getY() != 0);
     }
 
     public OptionalDouble getVerticalVelocity() {
