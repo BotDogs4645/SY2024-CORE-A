@@ -21,7 +21,9 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.PathPlanner;
 import frc.robot.commands.DriveToTag;
+import frc.robot.commands.IntakeFromSource;
 import frc.robot.commands.IntakeNote;
+import frc.robot.commands.ShootAmp;
 import frc.robot.commands.ShootSpeaker;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.IntakeIndexer;
@@ -67,7 +69,11 @@ public class RobotContainer {
     CameraServer.startAutomaticCapture();
 
     autoChooser = AutoBuilder.buildAutoChooser();
+
     NamedCommands.registerCommand("Shoot Speaker", new ShootSpeaker(intakeIndexer, shooter));
+    NamedCommands.registerCommand("Shoot Amp", new ShootAmp(intakeIndexer, shooter));
+    NamedCommands.registerCommand("Intake From Source", new IntakeFromSource(intakeIndexer, shooter));
+    NamedCommands.registerCommand("Intake Note", new IntakeNote(intakeIndexer, intakeIndexer.hasNote()));
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
@@ -83,32 +89,10 @@ public class RobotContainer {
     manipulatorController.leftBumper().toggleOnTrue(new IntakeNote(intakeIndexer, intakeIndexer.hasNote()));
 
     // Right red button - Source
-    manipulatorController.povDown().onTrue(new InstantCommand(() -> {
-      shooter.intakeFromSource();
-      intakeIndexer.setSpeed(-0.125);
-    }, shooter, intakeIndexer).andThen(
-        new WaitCommand(0.5).andThen(() -> {
-          shooter.setShooterSpeed(0);
-          intakeIndexer.setSpeed(0);
-        }, shooter, intakeIndexer)));
+    manipulatorController.povDown().onTrue(new IntakeFromSource(intakeIndexer, shooter));
     
     // Left yellow button - A (Amp) Shoot
-    manipulatorController.b().onTrue(Commands.parallel(
-      new InstantCommand(() -> {
-        shooter.toggleShooterAmp();
-        shooter.setShooterAngle(0.1);
-      }, shooter),
-      new WaitCommand(0.5).andThen(
-        new InstantCommand(() -> {
-          intakeIndexer.toggle();
-        }, intakeIndexer)
-      )
-    ).andThen(
-      new WaitCommand(1).andThen(() -> {
-        intakeIndexer.toggle(); 
-        shooter.toggleShooterAmp();
-      }, intakeIndexer, shooter)
-    ));
+    manipulatorController.b().onTrue(new ShootAmp(intakeIndexer, shooter));
 
     // Right yellow button - Shoot
     manipulatorController.rightBumper().onTrue(new ShootSpeaker(intakeIndexer, shooter));

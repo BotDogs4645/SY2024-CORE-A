@@ -11,18 +11,16 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.IntakeIndexer;
 import frc.robot.subsystems.Shooter;
 
-public class ShootSpeaker extends Command {
-  /** Creates a new ShootSpeaker2. */
-
-  private IntakeIndexer intakeIndexer;
+public class ShootAmp extends Command {
+  /** Creates a new ShootAmp. */
   private Shooter shooter;
+  private IntakeIndexer intakeIndexer;
 
-  public ShootSpeaker(IntakeIndexer intakeIndexer, Shooter shooter) {
-    this.intakeIndexer = intakeIndexer;
+  public ShootAmp(IntakeIndexer intakeIndexer, Shooter shooter) {
     this.shooter = shooter;
+    this.intakeIndexer = intakeIndexer;
 
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(intakeIndexer,shooter);
+    addRequirements(shooter, intakeIndexer);
   }
 
   // Called when the command is initially scheduled.
@@ -30,18 +28,20 @@ public class ShootSpeaker extends Command {
   public void initialize() {
     Commands.parallel(
       new InstantCommand(() -> {
-          shooter.toggleShooter();
-          shooter.setShooterAngle(0.1);
-        }, shooter),
-        new WaitCommand(0.5).andThen(
-          new InstantCommand(() -> {
-            intakeIndexer.toggle();
-          }, intakeIndexer)
-        )
-    ).andThen(new WaitCommand(1).andThen(() -> {
-      shooter.setShooterSpeed(0);
-      intakeIndexer.setSpeed(0);
-    }, shooter, intakeIndexer)).schedule();
+        shooter.toggleShooterAmp();
+        shooter.setShooterAngle(0.1);
+      }, shooter),
+      new WaitCommand(0.5).andThen(
+        new InstantCommand(() -> {
+          intakeIndexer.toggle();
+        }, intakeIndexer)
+      )
+    ).andThen(
+      new WaitCommand(1).andThen(() -> {
+        intakeIndexer.toggle(); 
+        shooter.toggleShooterAmp();
+      }, intakeIndexer, shooter)
+    ).schedule();
     super.cancel();
   }
 
