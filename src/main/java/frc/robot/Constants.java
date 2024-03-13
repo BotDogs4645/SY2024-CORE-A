@@ -49,6 +49,9 @@ public final class Constants {
   public static final class Vision {
     
     public static final class FrontLimelight {
+      // IP: http://10.46.45.73:5801/
+
+      public static final String Name = "limelight-front";
 
       // Offsets follow Limelight localization rules
       // Measured in meters
@@ -63,6 +66,9 @@ public final class Constants {
     }
 
     public static final class BackLimelight {
+      // IP: http://10.46.45.32:5801/
+
+      public static final String Name = "limelight-back";
 
       // Offsets follow Limelight localization rules
       // Measured in meters
