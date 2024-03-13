@@ -7,6 +7,7 @@ package frc.robot;
 import java.time.Instant;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -18,8 +19,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.PathPlanner;
 import frc.robot.commands.DriveToTag;
 import frc.robot.commands.IntakeNote;
+import frc.robot.commands.ShootSpeaker;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.IntakeIndexer;
 import frc.robot.subsystems.Shooter;
@@ -51,6 +54,7 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
+
     drivetrain.setDefaultCommand(
         new TeleopSwerve(
             drivetrain,
@@ -63,6 +67,8 @@ public class RobotContainer {
     CameraServer.startAutomaticCapture();
 
     autoChooser = AutoBuilder.buildAutoChooser();
+    NamedCommands.registerCommand("Shoot Speaker", new ShootSpeaker(intakeIndexer, shooter));
+
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
     configureBindings();
@@ -105,22 +111,7 @@ public class RobotContainer {
     ));
 
     // Right yellow button - Shoot
-    manipulatorController.rightBumper().onTrue(Commands.parallel(
-      new InstantCommand(() -> {
-        shooter.toggleShooter();
-        shooter.setShooterAngle(0.1);
-      }, shooter),
-      new WaitCommand(0.5).andThen(
-        new InstantCommand(() -> {
-          intakeIndexer.toggle();
-        }, intakeIndexer)
-      )
-    ).andThen(
-      new WaitCommand(1).andThen(() -> {
-        intakeIndexer.toggle(); 
-        shooter.toggleShooter();
-      }, intakeIndexer, shooter)
-    ));
+    manipulatorController.rightBumper().onTrue(new ShootSpeaker(intakeIndexer, shooter));
 
     // Top blue button - Climb
     manipulatorController.y().onTrue(

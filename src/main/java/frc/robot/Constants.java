@@ -29,12 +29,12 @@ import frc.lib.config.SwerveModuleConstants;
 public final class Constants {
 
   public static final class PathPlanner {
-    public static final double driveKP = 2.5;
+    public static final double driveKP = 0.1;
     public static final double driveKI = 0.0;
     public static final double driveKD = 0.0;
-    public static final double turnKP = 0.3;
+    public static final double turnKP = 0.01;
     public static final double turnKI = 0.0;
-    public static final double turnKD = 0.75;
+    public static final double turnKD = 0.0;
   }
 
   public static final class Intake {
