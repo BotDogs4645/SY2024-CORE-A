@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 3.3971249486420887,
-      "y": 5.49228881953771
+      "x": 2,
+      "y": 2
     },
     "rotation": 0
   },
@@ -14,13 +14,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Path Speaker Shoot Preload"
+            "pathName": "Intake from Midfield"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Shoot Speaker"
+            "pathName": "DS2 Collect and Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shoot and Mobility"
           }
         }
       ]
