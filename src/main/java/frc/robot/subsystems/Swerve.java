@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -41,7 +40,7 @@ public class Swerve extends SubsystemBase {
 
   private Field2d field;
 
-  public Swerve() {
+  public Swerve(Field2d field) {
     gyro = new Pigeon2(Constants.Swerve.pigeonID, "*");
     gyro.getConfigurator().apply(new Pigeon2Configuration());
     zeroGyro();
@@ -72,8 +71,7 @@ public class Swerve extends SubsystemBase {
         () -> DriverStation.getAlliance().filter(a -> a == DriverStation.Alliance.Red).isPresent(),
         this);
 
-    field = new Field2d();
-    SmartDashboard.putData("Field", field);
+    this.field = field;
   }
 
   /**

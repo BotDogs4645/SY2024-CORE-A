@@ -40,7 +40,6 @@ public class Shooter extends SubsystemBase {
       Constants.Launcher.PID.kI,
       Constants.Launcher.PID.kD
     );
-
   }
 
   public void setShooterSpeed(double speed) {
@@ -74,16 +73,16 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setShooterAngle(double theta) {
-    // this.theta = theta;
-    positionMotor.set(theta);
+    this.theta = theta;
+    // positionMotor.set(theta);
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("shooter angle power", positionMotor.get());
+    SmartDashboard.putNumber("Shooter angle power", positionMotor.get());
     SmartDashboard.putNumber("Shooter abs Encoder", absEncoder.getAbsolutePosition().getValue());
-    // positionMotor.set(controller.calculate(
-    //   absEncoder.getAbsolutePosition().getValue(), theta
-    // ));
+    positionMotor.set(controller.calculate(
+      absEncoder.getAbsolutePosition().getValue(), theta
+    ));
   }
 }

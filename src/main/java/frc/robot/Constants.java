@@ -46,6 +46,18 @@ public final class Constants {
     public static final int noteDetectionSwitchDIOPort = 0;
   }
 
+  public static final class RedNodeMapping {
+    public static final int speakerNodeID = 0;
+    public static final int ampNodeID = 0;
+    public static final int sourceNodeID = 0;
+  }
+
+  public static final class BlueNodeMapping {
+    public static final int speakerNodeID = 0;
+    public static final int ampNodeID = 0;
+    public static final int sourceNodeID = 0;
+  }
+
   public static final class Vision {
     
     public static final class FrontLimelight {

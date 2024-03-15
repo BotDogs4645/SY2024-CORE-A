@@ -31,7 +31,6 @@ public class FrontLimelight extends SubsystemBase {
     private OptionalDouble ty = OptionalDouble.empty();
     private OptionalDouble tx = OptionalDouble.empty();
 
-    private AprilTag target = new AprilTag();
 
     public boolean hasTarget() {
         return (LimelightHelpers.getTA(Vision.FrontLimelight.Name) > 0.1) ? true : false;
@@ -67,7 +66,7 @@ public class FrontLimelight extends SubsystemBase {
     }
 
   
-    public Optional<Pose3d> getTargetPoseRobotRealative() {
+    public Optional<Pose3d> getTargetPoseRelative() {
         try {
             return Optional.of(LimelightHelpers.getTargetPose3d_RobotSpace(Vision.FrontLimelight.Name));             
         } catch (Exception e) {
@@ -149,9 +148,9 @@ public class FrontLimelight extends SubsystemBase {
         }
         SmartDashboard.putNumber("LL Distance", getDistanceToTarget().orElse(-1));
         try {
-            SmartDashboard.putNumber("LL From Pose X", getTargetPoseRobotRealative().get().getX());
-            SmartDashboard.putNumber("LL From Pose Y", getTargetPoseRobotRealative().get().getY());
-            SmartDashboard.putNumber("LL From Pose Z", getTargetPoseRobotRealative().get().getZ());
+            SmartDashboard.putNumber("LL From Pose X", getTargetPoseRelative().get().getX());
+            SmartDashboard.putNumber("LL From Pose Y", getTargetPoseRelative().get().getY());
+            SmartDashboard.putNumber("LL From Pose Z", getTargetPoseRelative().get().getZ());
         } catch (Exception e) {}
     }                                                                                        
 }
