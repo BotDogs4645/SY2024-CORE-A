@@ -62,12 +62,12 @@ public class RobotContainer {
 
     CameraServer.startAutomaticCapture();
 
-    autoChooser = AutoBuilder.buildAutoChooser();
-
     NamedCommands.registerCommand("Shoot Speaker", new ShootSpeaker(intakeIndexer, shooter));
     NamedCommands.registerCommand("Shoot Amp", new ShootAmp(intakeIndexer, shooter));
     NamedCommands.registerCommand("Intake From Source", new IntakeFromSource(intakeIndexer, shooter));
     NamedCommands.registerCommand("Intake Note", new IntakeNote(intakeIndexer, intakeIndexer.hasNote()));
+    
+    autoChooser = AutoBuilder.buildAutoChooser();
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
