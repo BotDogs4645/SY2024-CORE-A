@@ -78,6 +78,8 @@ public class Swerve extends SubsystemBase {
 
     autoChooser = AutoBuilder.buildAutoChooser();
 
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+
     
     field = new Field2d();
     SmartDashboard.putData("Field", field);
