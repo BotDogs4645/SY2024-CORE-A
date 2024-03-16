@@ -20,7 +20,9 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -40,6 +42,8 @@ public class Swerve extends SubsystemBase {
   private SwerveModule[] mSwerveMods;
 
   private Field2d field;
+
+  private final SendableChooser<Command> autoChooser;
 
   public Swerve() {
     gyro = new Pigeon2(Constants.Swerve.pigeonID, "*");
@@ -72,6 +76,9 @@ public class Swerve extends SubsystemBase {
         () -> DriverStation.getAlliance().filter(a -> a == DriverStation.Alliance.Red).isPresent(),
         this);
 
+    autoChooser = AutoBuilder.buildAutoChooser();
+
+    
     field = new Field2d();
     SmartDashboard.putData("Field", field);
   }
@@ -126,6 +133,10 @@ public class Swerve extends SubsystemBase {
     for (SwerveModule mod : mSwerveMods) {
       mod.setDesiredState(states[mod.moduleNumber], isOpenLoop);
     }
+  }
+
+  public Command getAutoCommand() {
+    return autoChooser.getSelected();
   }
 
   public void resetToAbsEncoders() {
@@ -184,9 +195,13 @@ public class Swerve extends SubsystemBase {
     return gyro;
   }
 
-  // public ChassisSpeeds getRobotRelativeSpeeds() {
+  public ChassisSpeeds getRobotRelativeSpeeds() {
+    return Constants.Swerve.swerveKinematics.toChassisSpeeds(getStates());
+  }
 
-  // }
+  public void setFromChasisSpeeds(ChassisSpeeds speeds) {
+    setModuleStates(Constants.Swerve.swerveKinematics.toSwerveModuleStates(speeds), false);
+  }
 
   @Override
   public void periodic() {

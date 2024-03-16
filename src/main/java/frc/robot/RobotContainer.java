@@ -46,8 +46,6 @@ public class RobotContainer {
   private final IntakeIndexer intakeIndexer = new IntakeIndexer();
   private final Shooter shooter = new Shooter();
 
-  private final SendableChooser<Command> autoChooser;
-
   public RobotContainer() {
 
     drivetrain.setDefaultCommand(
@@ -65,13 +63,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("Shoot Amp", new ShootAmp(intakeIndexer, shooter));
     NamedCommands.registerCommand("Intake From Source", new IntakeFromSource(intakeIndexer, shooter));
     NamedCommands.registerCommand("Intake Note", new IntakeNote(intakeIndexer, intakeIndexer.hasNote()));
+      
     
-    // AutoBuilder.configureHolonomic(() -> drivetrain.getPose(), drivetrain::resetOdometry, () -> drivetrain.get, null, null, null, backLimelight);
-    autoChooser = AutoBuilder.buildAutoChooser();
-    
-    
-
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+    // SmartDashboard.putData("Auto Chooser", );
 
     configureBindings();
   }
@@ -116,7 +110,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    return drivetrain.getAutoCommand();
   }
 
   public FrontLimelight getFrontLimelight() {
