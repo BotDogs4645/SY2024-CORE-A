@@ -44,7 +44,7 @@ public class Swerve extends SubsystemBase {
   public Swerve() {
     gyro = new Pigeon2(Constants.Swerve.pigeonID, "*");
     gyro.getConfigurator().apply(new Pigeon2Configuration());
-    zeroGyro();
+    //zeroGyro();
 
     mSwerveMods =
         new SwerveModule[] {
@@ -170,6 +170,8 @@ public class Swerve extends SubsystemBase {
 
   public void zeroGyro() {
     gyro.setYaw(0);
+    System.out.println("Gyro Reset");
+    Thread.dumpStack();
   }
 
   public Rotation2d getYaw() {
@@ -181,6 +183,10 @@ public class Swerve extends SubsystemBase {
   public Pigeon2 getGyro() {
     return gyro;
   }
+
+  // public ChassisSpeeds getRobotRelativeSpeeds() {
+
+  // }
 
   @Override
   public void periodic() {
