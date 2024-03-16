@@ -17,7 +17,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.Constants;
 import frc.robot.subsystems.FrontLimelight;
 import frc.robot.subsystems.Shooter;
-import edu.wpi.first.wpilibj.DriverStation;
 
 /**
 * The AprilTag class, harnessed in order to calculate and execute various 
@@ -54,8 +53,6 @@ public class AprilTag {
     if (currentPosition.isEmpty() || getTargetPoseRelative().isEmpty()) {
       System.out.println("No Limelight target.");
     }
-
-    // Transform3d targetPosition = determinePosition().get().plus(targetPos().get());
 
     Translation3d targetPosition = determinePosition().get().getTranslation().plus(getTargetPoseRelative().get().getTranslation());
 
