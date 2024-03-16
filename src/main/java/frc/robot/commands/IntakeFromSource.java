@@ -15,14 +15,8 @@ import frc.robot.subsystems.Shooter;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class IntakeFromSource extends SequentialCommandGroup {
 
-  private IntakeIndexer intakeIndexer;
-  private Shooter shooter;
-
   /** Creates a new IntakeFromSource. */
   public IntakeFromSource(IntakeIndexer intakeIndexer, Shooter shooter) {
-
-    this.intakeIndexer = intakeIndexer;
-    this.shooter = shooter;
 
     addCommands(
       new InstantCommand(() -> {

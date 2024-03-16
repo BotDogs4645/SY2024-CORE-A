@@ -30,13 +30,11 @@ public class AprilTag {
   public final FrontLimelight limelightInstance;
   public final NodeStorage nodeStorageInstance;
   public final Shooter shooterInstance;
-  public final LaunchCalculations launchCalculationsInstance;
 
-  public AprilTag(FrontLimelight limelightInstance, NodeStorage nodeStorageInstance, Shooter shooterInstance, LaunchCalculations launchCalculationsInstance) {
+  public AprilTag(FrontLimelight limelightInstance, NodeStorage nodeStorageInstance, Shooter shooterInstance) {
     this.limelightInstance = limelightInstance;
     this.nodeStorageInstance = nodeStorageInstance;
     this.shooterInstance = shooterInstance;
-    this.launchCalculationsInstance = launchCalculationsInstance;
   }
 
   public Optional<Pose3d> getTargetPoseRelative() {
@@ -130,11 +128,10 @@ public class AprilTag {
     Optional<Pose3d> targetOffset = getTargetPoseRelative();
     if (targetOffset.isEmpty()) return Optional.empty();
 
-    // System.out.println(limelightInstance.getTagID().getAsInt());
-
     if (limelightInstance.getTagID().getAsInt() == -1) {
       return Optional.empty();
     }
+
 
     Optional<Transform3d> originToTarget = Optional.of(Constants.Limelight.APRILTAGS.get(limelightInstance.getTagID().getAsInt()));
     if (originToTarget.isEmpty()) return Optional.empty();
@@ -177,13 +174,21 @@ public class AprilTag {
       return Optional.of(new Rotation2d(xAngularOffset, yAngularOffset));
     }
 
-    public Optional<NodeStorage.Node> detectCurrentNode(Pose2d currentPosition) {
-      for (NodeStorage.Node currentNode : nodeStorageInstance.nodes) {
-          if (getPlanarDistance(currentPosition.getTranslation(), new Translation2d(currentNode.position.getX(), currentNode.position.getY())).get() < currentNode.radius) {
-              return Optional.of(currentNode);
-          }
-      }
+  
+  /**
+   * Detects whether the robot is currently occupying the space of
+   * any of the nodes declared in the 'NodeStorage' class.
+   * 
+   * @return(s) the current node the robot occupies, or 
+   * Optional.empty() if such does not apply.
+   */
+  public Optional<NodeStorage.Node> detectCurrentNode(Pose2d currentPosition) {
+    for (NodeStorage.Node currentNode : nodeStorageInstance.nodes) {
+        if (getPlanarDistance(currentPosition.getTranslation(), new Translation2d(currentNode.position.getX(), currentNode.position.getY())).get() < currentNode.radius) {
+            return Optional.of(currentNode);
+        }
+    }
 
-      return Optional.empty();
+    return Optional.empty();
   }
 }

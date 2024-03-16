@@ -6,13 +6,8 @@ package frc.robot;
 
 import java.util.Optional;
 
-import javax.xml.crypto.dsig.Transform;
-
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -43,28 +38,25 @@ public class Robot extends TimedRobot {
     Optional<Pose2d> limelightPose2D = m_robotContainer.getAprilTag().determinePosition().map(transform3D -> new Pose2d(transform3D.getTranslation().toTranslation2d(), transform3D.getRotation().toRotation2d()));
 
     if (limelightPose2D.isPresent() && m_robotContainer.getAprilTag().getTargetPoseRelative().isPresent()) {
-      System.out.println("AprilTag detected.");
-
       positionalError = limelightPose2D.get().minus(swervePose2D);
     }
-
+  
     System.out.println("Positional offset: " + positionalError.getTranslation().getNorm());
 
     m_robotContainer.getField().setRobotPose(swervePose2D.plus(positionalError));
 
-    //
+    
+    // Pose2d currentPosition = m_robotContainer.getField().getRobotPose();
 
-    Pose2d currentPosition = m_robotContainer.getField().getRobotPose();
+    // Optional<NodeStorage.Node> currentNode = m_robotContainer.getAprilTag().detectCurrentNode(currentPosition);
 
-    Optional<NodeStorage.Node> currentNode = m_robotContainer.getAprilTag().detectCurrentNode(currentPosition);
+    // if (currentNode.isPresent() && ((DriverStation.getAlliance().filter(currentAlliance -> currentAlliance == DriverStation.Alliance.Red).isPresent() && currentNode.get().nodeID == Constants.RedNodeMapping.speakerNodeID) || (DriverStation.getAlliance().filter(currentAlliance -> currentAlliance == DriverStation.Alliance.Blue).isPresent() && currentNode.get().nodeID == Constants.BlueNodeMapping.speakerNodeID))) {
+    //   double estimatedLaunchAngle = m_robotContainer.getLaunchCalculations().getLaunchAngle(m_robotContainer.getAprilTag().getPlanarDistance(currentPosition.getTranslation(), currentNode.get().targetPosition.toTranslation2d()).get(), currentNode.get().targetPosition.getZ() - Constants.Launcher.launcherHeight);
 
-    if (currentNode.isPresent() && ((DriverStation.getAlliance().filter(currentAlliance -> currentAlliance == DriverStation.Alliance.Red).isPresent() && currentNode.get().nodeID == Constants.RedNodeMapping.speakerNodeID) || (DriverStation.getAlliance().filter(currentAlliance -> currentAlliance == DriverStation.Alliance.Blue).isPresent() && currentNode.get().nodeID == Constants.BlueNodeMapping.speakerNodeID))) {
-      double estimatedLaunchAngle = m_robotContainer.getLaunchCalculations().getLaunchAngle(m_robotContainer.getAprilTag().getPlanarDistance(currentPosition.getTranslation(), currentNode.get().targetPosition.toTranslation2d()).get(), currentNode.get().targetPosition.getZ() - Constants.Launcher.launcherHeight);
-
-      m_robotContainer.getShooter().setShooterAngle(estimatedLaunchAngle);
-    } else {
-      m_robotContainer.getShooter().setShooterAngle(0);
-    }
+    //   m_robotContainer.getShooter().setShooterAngle(estimatedLaunchAngle);
+    // } else {
+    //   m_robotContainer.getShooter().setShooterAngle(0);
+    // }
   }
 
   @Override

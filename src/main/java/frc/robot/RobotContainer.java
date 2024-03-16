@@ -4,14 +4,9 @@
 
 package frc.robot;
 
-import java.time.Instant;
-import java.util.Optional;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,11 +17,9 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.util.NodeStorage;
-import frc.robot.Constants.PathPlanner;
-import frc.robot.commands.DriveToTag;
+import frc.robot.commands.AlignNote;
 import frc.robot.commands.IntakeFromSource;
 import frc.robot.commands.IntakeNote;
-import frc.robot.commands.NodalTaskExecution;
 import frc.robot.commands.ShootAmp;
 import frc.robot.commands.ShootSpeaker;
 import frc.robot.commands.TeleopSwerve;
@@ -38,7 +31,6 @@ import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Swerve;
 import edu.wpi.first.cameraserver.CameraServer;
 import frc.lib.util.AprilTag;
-import frc.lib.util.LaunchCalculations;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -62,10 +54,7 @@ public class RobotContainer {
   private final Shooter shooter = new Shooter();
 
   private final NodeStorage nodeStorage = new NodeStorage(drivetrain, field);
-  private final LaunchCalculations launchCalculations = new LaunchCalculations();
-  private final AprilTag aprilTag = new AprilTag(frontLimelight, nodeStorage, shooter, launchCalculations);
-
-  private Optional<NodalTaskExecution> nodalTaskExecutionInstance = Optional.empty();
+  private final AprilTag aprilTag = new AprilTag(frontLimelight, nodeStorage, shooter);
 
   private final SendableChooser<Command> autoChooser;
 
@@ -87,7 +76,11 @@ public class RobotContainer {
     NamedCommands.registerCommand("Shoot Speaker", new ShootSpeaker(intakeIndexer, shooter));
     NamedCommands.registerCommand("Shoot Amp", new ShootAmp(intakeIndexer, shooter));
     NamedCommands.registerCommand("Intake From Source", new IntakeFromSource(intakeIndexer, shooter));
-    NamedCommands.registerCommand("Intake Note", new IntakeNote(intakeIndexer, intakeIndexer.hasNote()));
+    // NamedCommands.registerCommand("Intake Note", new IntakeNote(intakeIndexer, intakeIndexer.hasNote()));
+    NamedCommands.registerCommand("Intake Note", new IntakeNote(Commands.parallel(
+      new AlignNote(drivetrain, field, backLimelight),
+      new IntakeNote(intakeIndexer, intakeIndexer.hasNote())
+    )));
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
     SmartDashboard.putData("Field", field);
@@ -101,7 +94,12 @@ public class RobotContainer {
     }, drivetrain));
 
     // Left red button - Intake
-    manipulatorController.leftBumper().toggleOnTrue(new IntakeNote(intakeIndexer, intakeIndexer.hasNote()));
+    // manipulatorController.leftBumper().toggleOnTrue(new IntakeNote(intakeIndexer, intakeIndexer.hasNote()));
+
+    manipulatorController.leftBumper().toggleOnTrue(Commands.parallel(
+      new AlignNote(drivetrain, field, backLimelight),
+      new IntakeNote(intakeIndexer, intakeIndexer.hasNote())
+    ));
 
     // Right red button - Source
     manipulatorController.povDown().onTrue(new IntakeFromSource(intakeIndexer, shooter));
@@ -160,10 +158,6 @@ public class RobotContainer {
 
   public AprilTag getAprilTag() {
       return aprilTag;
-  }
-
-  public LaunchCalculations getLaunchCalculations() {
-      return launchCalculations;
   }
 
   public Shooter getShooter() {

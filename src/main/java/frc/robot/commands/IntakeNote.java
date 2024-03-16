@@ -12,30 +12,31 @@ public class IntakeNote extends Command {
   /** Creates a new IntakeNote. */
 
   IntakeIndexer intakeIndexer;
+
   boolean hasNoteAlready;
 
   public IntakeNote(IntakeIndexer intakeIndexer, boolean hasNoteAlready) {
     this.hasNoteAlready = hasNoteAlready;
     this.intakeIndexer = intakeIndexer;
+
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(intakeIndexer);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
 
-    if(Math.abs(intakeIndexer.getTripTime()) > 1) {
+    if (Math.abs(intakeIndexer.getTripTime()) > 1) {
       intakeIndexer.setSpeed(Constants.Intake.intakeSpeed);
       super.cancel();
     } 
 
-    if(intakeIndexer.getLimitSwitch() && !hasNoteAlready) {
+    if (intakeIndexer.getLimitSwitch() && !hasNoteAlready) {
       intakeIndexer.setSpeed(0);
       intakeIndexer.setHasNote(true);
       super.cancel();
@@ -47,8 +48,8 @@ public class IntakeNote extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-      intakeIndexer.setSpeed(0);
-      intakeIndexer.resetSwitch();
+    intakeIndexer.setSpeed(0);
+    intakeIndexer.resetSwitch();
   }
 
   // Returns true when the command should end.

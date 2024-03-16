@@ -76,7 +76,5 @@ public class ObstacleDetection
     * and aura radius in the zeroth, first, and second 
     * indicies of said storage respectively.
     */
-    public static double[][] knownObstacles = {        
-        {0, 0, 5},
-    };
+    public static double[][] knownObstacles = {};
 }

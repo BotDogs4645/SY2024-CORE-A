@@ -9,19 +9,19 @@ import frc.robot.subsystems.Swerve;
 public class NodeStorage {
 
   public NodeStorage(Swerve swerveDrive, Field2d playingField) {
-    // nodes = new Node[] {
-    //   initalizeNode(0, new SequentialCommandGroup(
-    //     new AdvanceToTarget(swerveDrive, playingField, true, new Transform2d(new Translation2d(13, 5.547868), new Rotation2d(0, 0))),
-    //     launchNoteCommand
-    //   ),
-    //   new Translation2d(15.579342, 5.547868), 100)
-    // };
     nodes = new Node[] {
-        initalizeTargetNode(0, 
-        new Translation2d(15.579342, 5.547868), 
-        new Translation3d(), 
-        3)
+      // initalizeNode(0, new SequentialCommandGroup(
+      //   new AdvanceToTarget(swerveDrive, playingField, true, new Transform2d(new Translation2d(13, 5.547868), new Rotation2d(0, 0))),
+      //   launchNoteCommand
+      // ),
+      // new Translation2d(15.579342, 5.547868), 100)
     };
+    // nodes = new Node[] {
+    //     initalizeTargetNode(0, 
+    //     new Translation2d(15.579342, 5.547868), 
+    //     new Translation3d(), 
+    //     3),
+    // };
   }
 
   public static class Node {
