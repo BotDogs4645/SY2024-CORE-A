@@ -33,13 +33,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "R3 sucky middle"
+            "pathName": "BLUE R3 sucky middle"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "R3 from sucky sucky to speaker"
+            "pathName": "BLUE R3 from sucky sucky to speaker"
           }
         },
         {
@@ -64,12 +64,12 @@
         {
           "type": "path",
           "data": {
-            "pathName": "R3 no suckkly"
+            "pathName": "BLUE R3 no suckkly"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "BLUE",
   "choreoAuto": false
 }

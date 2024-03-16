@@ -8,7 +8,10 @@
     "Blue R3",
     "Red R1"
   ],
-  "autoFolders": [],
+  "autoFolders": [
+    "BLUE",
+    "RED"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,

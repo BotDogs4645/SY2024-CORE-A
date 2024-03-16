@@ -33,7 +33,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "R2 intake note"
+            "pathName": "BLUE R2 intake note"
           }
         },
         {
@@ -45,7 +45,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "R2 to speaker"
+            "pathName": "BLUE R2 to speaker"
           }
         },
         {
@@ -70,13 +70,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "R2 sucky middle"
+            "pathName": "BLUE R2 sucky middle"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "R2 from sucky sucky to speaker"
+            "pathName": "BLUE 'R2 from sucky sucky to speaker"
           }
         },
         {
@@ -101,12 +101,12 @@
         {
           "type": "path",
           "data": {
-            "pathName": "R2 back tf up"
+            "pathName": "BLUE R2 back tf up"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "BLUE",
   "choreoAuto": false
 }
