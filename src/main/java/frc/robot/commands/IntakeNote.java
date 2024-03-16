@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakeIndexer;
@@ -13,6 +14,8 @@ public class IntakeNote extends Command {
 
   IntakeIndexer intakeIndexer;
   boolean hasNoteAlready;
+
+  SlewRateLimiter slewRateLimiter = new SlewRateLimiter(0.33);
 
   public IntakeNote(IntakeIndexer intakeIndexer, boolean hasNoteAlready) {
     this.hasNoteAlready = hasNoteAlready;
@@ -31,7 +34,7 @@ public class IntakeNote extends Command {
   public void execute() {
 
     if(Math.abs(intakeIndexer.getTripTime()) > 1) {
-      intakeIndexer.setSpeed(Constants.Intake.intakeSpeed);
+      intakeIndexer.setSpeed(slewRateLimiter.calculate(Constants.Intake.intakeSpeed));
       super.cancel();
     } 
 
@@ -40,7 +43,7 @@ public class IntakeNote extends Command {
       intakeIndexer.setHasNote(true);
       super.cancel();
     } else {
-      intakeIndexer.setSpeed(Constants.Intake.intakeSpeed);
+      intakeIndexer.setSpeed(slewRateLimiter.calculate(Constants.Intake.intakeSpeed));
     }
   }
 
