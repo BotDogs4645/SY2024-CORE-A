@@ -33,13 +33,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "R1 intake note"
+            "pathName": "Red R1 intake note"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "R1 to speaker"
+            "pathName": "RED R1 to speaker"
           }
         },
         {
@@ -64,13 +64,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "R1 sucky middle"
+            "pathName": "RED R1 sucky middle"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "R1 from sucky sucky to speaker"
+            "pathName": "RED R1 from sucky sucky to speaker"
           }
         },
         {
@@ -95,12 +95,12 @@
         {
           "type": "path",
           "data": {
-            "pathName": "R1 back tf up"
+            "pathName": "RED R1 back tf up"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "RED",
   "choreoAuto": false
 }
