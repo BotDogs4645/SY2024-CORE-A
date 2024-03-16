@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3866850093948635,
-        "y": 5.572415049000463
+        "x": 1.3432149726428593,
+        "y": 5.523008323503558
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2025157093792447,
-        "y": 5.062520861510224
+        "x": 2.3532592963964287,
+        "y": 5.508681453663083
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.110004081587578,
-        "y": 4.101006107957202
+        "x": 2.983641569377379,
+        "y": 5.523008323503558
       },
       "prevControl": {
-        "x": 6.471058478940383,
-        "y": 4.028164081172883
+        "x": 2.0918874253578683,
+        "y": 5.523008323503558
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,8 +32,8 @@
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0,
+      "name": "spin up sucky",
+      "waypointRelativePos": 0.1,
       "command": {
         "type": "sequential",
         "data": {
@@ -57,14 +57,14 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 178.181697035548,
+    "rotation": 180.0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Blue R2",
   "previewStartingState": {
-    "rotation": -178.91907581333922,
+    "rotation": 180.0,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }
