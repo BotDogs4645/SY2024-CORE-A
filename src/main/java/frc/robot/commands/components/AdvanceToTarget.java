@@ -72,7 +72,7 @@ public class AdvanceToTarget extends Command {
         Trajectory projectedTrajectory =
             TrajectoryGenerator.generateTrajectory(
                 // new Pose2d(0, 0, new Rotation2d(0)),
-                new Pose2d(currentPosition.get().getTranslation(), targetPosition.get().getRotation()),
+                new Pose2d(currentPosition.get().getTranslation(), currentPosition.get().getRotation()),
                 trajectoryWaypoints,
                 new Pose2d(targetPosition.get().getTranslation(), targetPosition.get().getRotation()),
                 trajectoryConfig);
