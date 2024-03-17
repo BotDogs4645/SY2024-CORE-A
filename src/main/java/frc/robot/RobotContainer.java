@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.CommandBuilder;
-import frc.robot.commands.components.IntakeNote;
 import frc.robot.commands.components.TeleopSwerve;
 import frc.robot.subsystems.IntakeIndexer;
 import frc.robot.subsystems.Shooter;
@@ -23,7 +22,7 @@ import frc.robot.subsystems.BackLimelight;
 import frc.robot.subsystems.FrontLimelight;
 import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Swerve;
-import edu.wpi.first.cameraserver.CameraServer;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -68,7 +67,6 @@ public class RobotContainer {
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
-    // SmartDashboard.putData("Auto Chooser", );
 
     configureBindings();
   }
@@ -82,7 +80,6 @@ public class RobotContainer {
     manipulatorController.leftBumper().toggleOnTrue(CommandBuilder.IntakeNote(intakeIndexer));
 
     // Right red button - Source
-    // manipulatorController.povDown().onTrue(new IntakeFromSource(intakeIndexer, shooter));
     manipulatorController.povDown().onTrue(CommandBuilder.IntakeFromSource(intakeIndexer, shooter));
     
     // Left yellow button - A (Amp) Shoot

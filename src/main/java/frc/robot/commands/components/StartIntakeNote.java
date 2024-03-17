@@ -8,12 +8,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakeIndexer;
 
-public class IntakeNote extends Command {
+public class StartIntakeNote extends Command {
   /** Creates a new IntakeNote. */
 
   private IntakeIndexer intakeIndexer;
 
-  public IntakeNote(IntakeIndexer intakeIndexer) {
+  public StartIntakeNote(IntakeIndexer intakeIndexer) {
     this.intakeIndexer = intakeIndexer;
 
     addRequirements(intakeIndexer);
