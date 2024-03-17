@@ -22,8 +22,8 @@ public class CommandBuilder {
     public static Command IntakeNote(IntakeIndexer intakeIndexer) {
         return new StartIntakeNote(intakeIndexer)
             .until(intakeIndexer::getPhotogate)
-            .andThen(() -> {intakeIndexer.setSpeed(0.35);}, intakeIndexer)
-            .andThen(new WaitCommand(0.5))
+            .andThen(() -> {intakeIndexer.setSpeed(0.15);}, intakeIndexer)
+            .andThen(new WaitCommand(0.15))
             .andThen(() -> {intakeIndexer.stop();}, intakeIndexer);
     }
 
