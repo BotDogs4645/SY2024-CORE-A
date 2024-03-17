@@ -43,7 +43,6 @@ public class Swerve extends SubsystemBase {
 
   private Field2d field;
 
-  private final SendableChooser<Command> autoChooser;
 
   public Swerve() {
     gyro = new Pigeon2(Constants.Swerve.pigeonID, "*");
@@ -75,12 +74,7 @@ public class Swerve extends SubsystemBase {
         pathConfig,
         () -> DriverStation.getAlliance().filter(a -> a == DriverStation.Alliance.Red).isPresent(),
         this);
-
-    autoChooser = AutoBuilder.buildAutoChooser();
-
-    SmartDashboard.putData("Auto Chooser", autoChooser);
-
-    
+   
     field = new Field2d();
     SmartDashboard.putData("Field", field);
   }
@@ -135,10 +129,6 @@ public class Swerve extends SubsystemBase {
     for (SwerveModule mod : mSwerveMods) {
       mod.setDesiredState(states[mod.moduleNumber], isOpenLoop);
     }
-  }
-
-  public Command getAutoCommand() {
-    return autoChooser.getSelected();
   }
 
   public void resetToAbsEncoders() {
