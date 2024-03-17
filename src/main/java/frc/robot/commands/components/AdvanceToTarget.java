@@ -13,7 +13,6 @@ import java.util.Optional;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
-import frc.lib.util.ObstacleDetection;
 
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
@@ -56,11 +55,11 @@ public class AdvanceToTarget extends Command {
         // List<Translation2d> trajectoryWaypoints = List.of(new Translation2d(1, 1), new Translation2d(2, -1), targetPosition.get().getTranslation().toTranslation2d());
         List<Translation2d> trajectoryWaypoints = List.of(targetPosition.get().getTranslation());
 
-        for (Translation2d currentWaypoint : trajectoryWaypoints) {
-            if (!ObstacleDetection.continueAlongPath(currentPosition.get().getTranslation(), (currentWaypoint.getY() - currentPosition.get().getY()) / (currentWaypoint.getX() - currentPosition.get().getX()))) {
-                return;
-            }
-        }
+        // for (Translation2d currentWaypoint : trajectoryWaypoints) {
+        //     if (!ObstacleDetection.continueAlongPath(currentPosition.get().getTranslation(), (currentWaypoint.getY() - currentPosition.get().getY()) / (currentWaypoint.getX() - currentPosition.get().getX()))) {
+        //         return;
+        //     }
+        // }
 
 
         TrajectoryConfig trajectoryConfig =

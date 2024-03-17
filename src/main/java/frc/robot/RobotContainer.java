@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.CommandBuilder;
-import frc.robot.commands.components.IntakeNote;
 import frc.robot.commands.components.TeleopSwerve;
 import frc.robot.subsystems.IntakeIndexer;
 import frc.robot.subsystems.Shooter;
@@ -23,7 +22,6 @@ import frc.robot.subsystems.BackLimelight;
 import frc.robot.subsystems.FrontLimelight;
 import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Swerve;
-import edu.wpi.first.cameraserver.CameraServer;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
