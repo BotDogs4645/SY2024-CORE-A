@@ -14,11 +14,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.IntakeFromSource;
-import frc.robot.commands.IntakeNote;
-import frc.robot.commands.ShootAmp;
-import frc.robot.commands.ShootSpeaker;
-import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.CommandBuilder;
+import frc.robot.commands.components.IntakeNote;
+import frc.robot.commands.components.TeleopSwerve;
 import frc.robot.subsystems.IntakeIndexer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.BackLimelight;
@@ -36,6 +34,8 @@ import edu.wpi.first.cameraserver.CameraServer;
  */
 public class RobotContainer {
 
+  private final SendableChooser<Command> autoChooser;
+
   private final CommandXboxController driveController = new CommandXboxController(Constants.kDriverControllerPort);
   private final CommandXboxController manipulatorController = new CommandXboxController(Constants.kManipulatorControllerPort);
 
@@ -48,6 +48,12 @@ public class RobotContainer {
 
   public RobotContainer() {
 
+    NamedCommands.registerCommand("Shoot Speaker", CommandBuilder.ShootSpeaker(intakeIndexer, shooter));
+    NamedCommands.registerCommand("Shoot Amp", CommandBuilder.ShootAmp(intakeIndexer, shooter, pneumatics));
+    NamedCommands.registerCommand("Intake Note", CommandBuilder.IntakeNote(intakeIndexer));
+
+    
+
     drivetrain.setDefaultCommand(
         new TeleopSwerve(
             drivetrain,
@@ -58,13 +64,10 @@ public class RobotContainer {
         )
     );
 
+    autoChooser = AutoBuilder.buildAutoChooser();
 
-    NamedCommands.registerCommand("Shoot Speaker", new ShootSpeaker(intakeIndexer, shooter));
-    NamedCommands.registerCommand("Shoot Amp", new ShootAmp(intakeIndexer, shooter));
-    NamedCommands.registerCommand("Intake From Source", new IntakeFromSource(intakeIndexer, shooter));
-    NamedCommands.registerCommand("Intake Note", new IntakeNote(intakeIndexer, intakeIndexer.hasNote()));
-      
-    
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+
     // SmartDashboard.putData("Auto Chooser", );
 
     configureBindings();
@@ -76,16 +79,17 @@ public class RobotContainer {
     }, drivetrain));
 
     // Left red button - Intake
-    manipulatorController.leftBumper().toggleOnTrue(new IntakeNote(intakeIndexer, intakeIndexer.hasNote()));
+    manipulatorController.leftBumper().toggleOnTrue(CommandBuilder.IntakeNote(intakeIndexer));
 
     // Right red button - Source
-    manipulatorController.povDown().onTrue(new IntakeFromSource(intakeIndexer, shooter));
+    // manipulatorController.povDown().onTrue(new IntakeFromSource(intakeIndexer, shooter));
+    manipulatorController.povDown().onTrue(CommandBuilder.IntakeFromSource(intakeIndexer, shooter));
     
     // Left yellow button - A (Amp) Shoot
-    manipulatorController.b().onTrue(new ShootAmp(intakeIndexer, shooter));
+    manipulatorController.b().onTrue(CommandBuilder.ShootAmp(intakeIndexer, shooter, pneumatics));
 
     // Right yellow button - Shoot
-    manipulatorController.rightBumper().onTrue(new ShootSpeaker(intakeIndexer, shooter));
+    manipulatorController.rightBumper().onTrue(CommandBuilder.ShootSpeaker(intakeIndexer, shooter));
 
     // Top blue button - Climb
     manipulatorController.y().onTrue(
@@ -110,7 +114,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return drivetrain.getAutoCommand();
+    return autoChooser.getSelected();
   }
 
   public FrontLimelight getFrontLimelight() {

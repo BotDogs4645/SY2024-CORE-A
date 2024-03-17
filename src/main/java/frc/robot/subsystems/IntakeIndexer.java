@@ -21,6 +21,7 @@ public class IntakeIndexer extends SubsystemBase {
   private PWMSparkMax intakeMotor;
 
   private DigitalInput noteDetectionSwitch;
+  private DigitalInput photogate;
  
   private boolean hasNote;
   private double initIntakeTime = 0;
@@ -32,6 +33,7 @@ public class IntakeIndexer extends SubsystemBase {
     feederMotor.setInverted(Constants.Intake.invertFeederMotor);
     intakeMotor.setInverted(Constants.Intake.invertIntakeMotor);
     noteDetectionSwitch = new DigitalInput(Constants.Intake.noteDetectionSwitchDIOPort);
+    photogate = new DigitalInput(2);
   }
 
   public void setHasNote(boolean hasNote) {
@@ -47,10 +49,23 @@ public class IntakeIndexer extends SubsystemBase {
     intakeMotor.set(speed);
   }
 
+  public boolean getPhotogate() {
+    return photogate.get();
+  }
+
 
   public void stop() {
     feederMotor.set(0);
     intakeMotor.set(0);
+  }
+
+  public double getSpeed() {
+    return feederMotor.get();
+  }
+
+  public void intakeFromSource() {
+    setSpeed(-0.35);
+    System.out.println("AHHH");
   }
 
   public void toggle() {

@@ -48,6 +48,11 @@ public class Shooter extends SubsystemBase {
     bottomMotor.set(-speed);
   }
 
+  public void stop() {
+    topMotor.set(0);
+    bottomMotor.set(0);
+  }
+
   public void toggleShooter() {
     if(topMotor.get() != 0) {
       topMotor.set(0);
@@ -69,8 +74,8 @@ public class Shooter extends SubsystemBase {
   }
 
   public void intakeFromSource() {
-    topMotor.set(-0.5);
-    bottomMotor.set(0.5);
+    topMotor.set(-0.125);
+    bottomMotor.set(0.125);
   }
 
   public void setShooterAngle(double theta) {

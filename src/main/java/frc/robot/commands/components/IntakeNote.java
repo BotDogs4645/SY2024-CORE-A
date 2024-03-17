@@ -2,9 +2,8 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.components;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakeIndexer;
@@ -12,46 +11,30 @@ import frc.robot.subsystems.IntakeIndexer;
 public class IntakeNote extends Command {
   /** Creates a new IntakeNote. */
 
-  IntakeIndexer intakeIndexer;
-  boolean hasNoteAlready;
+  private IntakeIndexer intakeIndexer;
 
-  SlewRateLimiter slewRateLimiter = new SlewRateLimiter(0.33);
-
-  public IntakeNote(IntakeIndexer intakeIndexer, boolean hasNoteAlready) {
-    this.hasNoteAlready = hasNoteAlready;
+  public IntakeNote(IntakeIndexer intakeIndexer) {
     this.intakeIndexer = intakeIndexer;
-    // Use addRequirements() here to declare subsystem dependencies.
+
     addRequirements(intakeIndexer);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    if(Math.abs(intakeIndexer.getTripTime()) > 1) {
-      intakeIndexer.setSpeed(slewRateLimiter.calculate(Constants.Intake.intakeSpeed));
-      super.cancel();
-    } 
-
-    if(intakeIndexer.getLimitSwitch() && !hasNoteAlready) {
-      intakeIndexer.setSpeed(0);
-      intakeIndexer.setHasNote(true);
-      super.cancel();
-    } else {
-      intakeIndexer.setSpeed(slewRateLimiter.calculate(Constants.Intake.intakeSpeed));
-    }
+    intakeIndexer.setSpeed(Constants.Intake.intakeSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-      intakeIndexer.setSpeed(0);
-      intakeIndexer.resetSwitch();
+    intakeIndexer.setSpeed(0);
   }
 
   // Returns true when the command should end.
