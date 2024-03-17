@@ -7,6 +7,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -34,10 +35,12 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
 
+  private final Field2d playingField = new Field2d();
+
   private final CommandXboxController driveController = new CommandXboxController(Constants.kDriverControllerPort);
   private final CommandXboxController manipulatorController = new CommandXboxController(Constants.kManipulatorControllerPort);
 
-  private final Swerve drivetrain = new Swerve();
+  private final Swerve drivetrain = new Swerve(playingField);
   private final FrontLimelight frontLimelight = new FrontLimelight();
   private final BackLimelight backLimelight = new BackLimelight();
   private final Pneumatics pneumatics = new Pneumatics();
@@ -49,6 +52,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Shoot Speaker", CommandBuilder.ShootSpeaker(intakeIndexer, shooter));
     NamedCommands.registerCommand("Shoot Amp", CommandBuilder.ShootAmp(intakeIndexer, shooter, pneumatics));
     NamedCommands.registerCommand("Intake Note", CommandBuilder.IntakeNote(intakeIndexer));
+    NamedCommands.registerCommand("Automatically Intake Note", CommandBuilder.AutomaticNoteIntake(intakeIndexer, drivetrain, playingField, backLimelight));
 
     
 
@@ -77,8 +81,9 @@ public class RobotContainer {
     }, drivetrain));
 
     // Left red button - Intake
-    manipulatorController.leftBumper().toggleOnTrue(CommandBuilder.IntakeNote(intakeIndexer));
-
+    // manipulatorController.leftBumper().toggleOnTrue(CommandBuilder.IntakeNote(intakeIndexer));
+    manipulatorController.leftBumper().toggleOnTrue(CommandBuilder.AutomaticNoteIntake(intakeIndexer, drivetrain, playingField, backLimelight));
+    
     // Right red button - Source
     // manipulatorController.povDown().onTrue(new IntakeFromSource(intakeIndexer, shooter));
     manipulatorController.povDown().onTrue(CommandBuilder.IntakeFromSource(intakeIndexer, shooter));
