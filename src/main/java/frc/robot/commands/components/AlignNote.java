@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import frc.robot.Constants;
 import frc.robot.commands.CommandBuilder;
 import edu.wpi.first.math.geometry.Pose3d;
 
@@ -27,9 +28,13 @@ public class AlignNote extends Command {
 
     @Override
     public void initialize() {
-        OptionalDouble noteRotationalOffset = backLimelightInstance.determineTargetRotationalOffset();
-        if (noteRotationalOffset.isPresent()) {
-            advanceToTargetCommand = Optional.of(CommandBuilder.AdvanceToTarget(drivetrain, playingField, new Transform2d(playingField.getRobotPose().getTranslation(), new Rotation2d(noteRotationalOffset.getAsDouble(), 0))));
+        Optional<Pose3d> relativeTargetPose = backLimelightInstance.getTargetPoseRelative();
+        if (relativeTargetPose.isPresent() && Math.sqrt(Math.pow(relativeTargetPose.get().getX(), 2) + Math.pow(relativeTargetPose.get().getY(), 2)) < Constants.Vision.BackLimelight.maximumAlignmentDistance) {
+            advanceToTargetCommand = Optional.of(
+                CommandBuilder.AdvanceToTarget(drivetrain, playingField, new Transform2d(playingField.getRobotPose().getTranslation(), playingField.getRobotPose().getRotation().plus(relativeTargetPose.get().getRotation().toRotation2d()))).andThen(
+                    CommandBuilder.AdvanceToTarget(drivetrain, playingField, new Transform2d(playingField.getRobotPose().getTranslation().plus(relativeTargetPose.get().getTranslation().toTranslation2d()), playingField.getRobotPose().getRotation()))
+                )
+            );
         }
     }
 
@@ -37,8 +42,7 @@ public class AlignNote extends Command {
     public void execute() {
         if (advanceToTargetCommand.isEmpty()) {
             Optional<Pose3d> relativeTargetPose = backLimelightInstance.getTargetPoseRelative();
-            OptionalDouble noteRotationalOffset = backLimelightInstance.determineTargetRotationalOffset();
-            if (noteRotationalOffset.isPresent()) {
+            if (relativeTargetPose.isPresent() && Math.sqrt(Math.pow(relativeTargetPose.get().getX(), 2) + Math.pow(relativeTargetPose.get().getY(), 2)) < Constants.Vision.BackLimelight.maximumAlignmentDistance) {
                 advanceToTargetCommand = Optional.of(
                     CommandBuilder.AdvanceToTarget(drivetrain, playingField, new Transform2d(playingField.getRobotPose().getTranslation(), playingField.getRobotPose().getRotation().plus(relativeTargetPose.get().getRotation().toRotation2d()))).andThen(
                         CommandBuilder.AdvanceToTarget(drivetrain, playingField, new Transform2d(playingField.getRobotPose().getTranslation().plus(relativeTargetPose.get().getTranslation().toTranslation2d()), playingField.getRobotPose().getRotation()))

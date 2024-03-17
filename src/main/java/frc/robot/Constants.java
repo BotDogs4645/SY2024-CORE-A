@@ -80,6 +80,8 @@ public final class Constants {
       public static final double Pitch = 20;
       public static final double Yaw = 3.5;
       public static final double Roll = 0;
+
+      public static final double maximumAlignmentDistance = 1;
     }
 
   }
