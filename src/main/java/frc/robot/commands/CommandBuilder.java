@@ -59,8 +59,8 @@ public class CommandBuilder {
             intakeIndexer.intakeFromSource();
         }, shooter, intakeIndexer)
             .until(intakeIndexer::getPhotogate)
-            .andThen(() -> {intakeIndexer.setSpeed(-0.35); System.out.println(intakeIndexer.getSpeed());}, intakeIndexer)
+            .andThen(() -> {intakeIndexer.setSpeed(-0.35);}, intakeIndexer)
             .andThen(new WaitCommand(1.5))
-            .andThen(() -> {intakeIndexer.stop(); System.out.println("edge");}, intakeIndexer);
+            .andThen(() -> {intakeIndexer.stop(); shooter.stop();}, intakeIndexer,shooter);
     } 
 }

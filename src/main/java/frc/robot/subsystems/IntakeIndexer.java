@@ -65,7 +65,6 @@ public class IntakeIndexer extends SubsystemBase {
 
   public void intakeFromSource() {
     setSpeed(-0.35);
-    System.out.println("AHHH");
   }
 
   public void toggle() {
