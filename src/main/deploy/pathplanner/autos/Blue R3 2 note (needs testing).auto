@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 3.3971249486420887,
-      "y": 5.49228881953771
+      "x": 0.7414864393428608,
+      "y": 4.376858736265466
     },
-    "rotation": 0
+    "rotation": 120.0
   },
   "command": {
     "type": "sequential",
@@ -14,13 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Path Speaker Shoot Preload"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot Speaker"
+            "pathName": "BLUE R3 close note attempt"
           }
         }
       ]

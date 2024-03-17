@@ -20,7 +20,9 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -41,10 +43,11 @@ public class Swerve extends SubsystemBase {
 
   private Field2d field;
 
+
   public Swerve() {
     gyro = new Pigeon2(Constants.Swerve.pigeonID, "*");
     gyro.getConfigurator().apply(new Pigeon2Configuration());
-    zeroGyro();
+    //zeroGyro();
 
     mSwerveMods =
         new SwerveModule[] {
@@ -71,7 +74,7 @@ public class Swerve extends SubsystemBase {
         pathConfig,
         () -> DriverStation.getAlliance().filter(a -> a == DriverStation.Alliance.Red).isPresent(),
         this);
-
+   
     field = new Field2d();
     SmartDashboard.putData("Field", field);
   }
@@ -170,6 +173,8 @@ public class Swerve extends SubsystemBase {
 
   public void zeroGyro() {
     gyro.setYaw(0);
+    System.out.println("Gyro Reset");
+    Thread.dumpStack();
   }
 
   public Rotation2d getYaw() {
@@ -180,6 +185,14 @@ public class Swerve extends SubsystemBase {
 
   public Pigeon2 getGyro() {
     return gyro;
+  }
+
+  public ChassisSpeeds getRobotRelativeSpeeds() {
+    return Constants.Swerve.swerveKinematics.toChassisSpeeds(getStates());
+  }
+
+  public void setFromChasisSpeeds(ChassisSpeeds speeds) {
+    setModuleStates(Constants.Swerve.swerveKinematics.toSwerveModuleStates(speeds), false);
   }
 
   @Override

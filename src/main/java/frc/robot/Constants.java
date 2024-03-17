@@ -98,6 +98,9 @@ public final class Constants {
     public static final double speakerHeight = 1.984;
     public static final double trapHeight = 1.436;
 
+    public static final double speakerSpeed = 0.65;
+    public static final double ampSpeed = 0.1475;
+    
     public static final class PID {
       public static final double kP = 0;
       public static final double kI = 0;
