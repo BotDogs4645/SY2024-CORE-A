@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
-import frc.robot.commands.components.IntakeNote;
+import frc.robot.commands.components.StartIntakeNote;
 import frc.robot.commands.components.PrepareToShoot;
 import frc.robot.subsystems.IntakeIndexer;
 import frc.robot.subsystems.Pneumatics;
@@ -20,8 +20,11 @@ public class CommandBuilder {
 
 
     public static Command IntakeNote(IntakeIndexer intakeIndexer) {
-        return new IntakeNote(intakeIndexer)
-            .until(intakeIndexer::getLimitSwitch);
+        return new StartIntakeNote(intakeIndexer)
+            .until(intakeIndexer::getPhotogate)
+            .andThen(() -> {intakeIndexer.setSpeed(0.35);}, intakeIndexer)
+            .andThen(new WaitCommand(0.5))
+            .andThen(() -> {intakeIndexer.stop();}, intakeIndexer);
     }
 
     public static Command ShootSpeaker(IntakeIndexer intakeIndexer, Shooter shooter) {
