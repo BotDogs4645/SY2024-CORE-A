@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.lib.util.DistanceEstimation;
 import frc.robot.commands.CommandBuilder;
 import frc.robot.commands.components.TeleopSwerve;
 import frc.robot.subsystems.IntakeIndexer;
@@ -40,9 +41,11 @@ public class RobotContainer {
   private final CommandXboxController driveController = new CommandXboxController(Constants.kDriverControllerPort);
   private final CommandXboxController manipulatorController = new CommandXboxController(Constants.kManipulatorControllerPort);
 
+  private final DistanceEstimation distanceEstimation = new DistanceEstimation();
+
   private final Swerve drivetrain = new Swerve(playingField);
   private final FrontLimelight frontLimelight = new FrontLimelight();
-  private final BackLimelight backLimelight = new BackLimelight();
+  private final BackLimelight backLimelight = new BackLimelight(distanceEstimation);
   private final Pneumatics pneumatics = new Pneumatics();
   private final IntakeIndexer intakeIndexer = new IntakeIndexer();
   private final Shooter shooter = new Shooter();

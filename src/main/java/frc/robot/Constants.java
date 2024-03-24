@@ -28,6 +28,19 @@ import frc.lib.config.SwerveModuleConstants;
  */
 public final class Constants {
 
+  public static final class DistanceEstimation {
+    // Measured in metres
+    public static final double noteZOffset = 0;
+  }
+  
+  public static final class AdvanceToTarget {
+    public static final double speedDilutionFactor = 20;
+    public static final double accelerationDilutionFactor = 20;
+
+    // Measured in metres
+    public static final double minimumProjectedDistance = 1;
+  }
+
   public static final class PathPlanner {
     public static final double driveKP = 0.1;
     public static final double driveKI = 0.0;
@@ -81,7 +94,7 @@ public final class Constants {
       public static final double Yaw = 3.5;
       public static final double Roll = 0;
 
-      public static final double maximumAlignmentDistance = 1;
+      public static final double maximumAlignmentDistance = 100;
     }
 
   }

@@ -2,11 +2,10 @@
 package frc.robot.subsystems;
 
 import java.util.Optional;
-import java.util.OptionalDouble;
 
-import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.lib.util.DistanceEstimation;
 import frc.robot.LimelightHelpers;
 
 import frc.robot.Constants.Vision;
@@ -20,28 +19,41 @@ import frc.robot.Constants.Vision;
  */
 public class BackLimelight extends SubsystemBase {
 
-    public boolean hasTarget() {
-        return (LimelightHelpers.getTA(Vision.BackLimelight.Name) > 0.1) ? true : false;
+    private final DistanceEstimation distanceEstimation;
+
+    public BackLimelight(DistanceEstimation distanceEstimation) {
+        this.distanceEstimation = distanceEstimation;
     }
 
-    public Optional<Pose3d> getTargetPoseRelative() {
+    public boolean hasTarget() {
+        return LimelightHelpers.getTV(Vision.BackLimelight.Name);
+    }
+
+    /**
+     * Fetches the rotational offset of the current note target, if it
+     * is present, returning 'Optional.empty()' if such does not exist.
+     * 
+     * @return(s) the rotational offset to the current note target, 
+     * or 'Optional.empty()' if such does not exist.
+     */
+    public Optional<double[]> getTargetInformation() {
         try {
-            return Optional.of(LimelightHelpers.getTargetPose3d_RobotSpace(Vision.BackLimelight.Name));             
+            return Optional.of(new double[] {
+                    LimelightHelpers.getTX(Vision.BackLimelight.Name),
+                    LimelightHelpers.getTY(Vision.BackLimelight.Name),
+            });
         } catch (Exception e) {
             return Optional.empty();
         }
     }
 
-    /** 
-    * Calculates and @return(s) the relative rotational offset to the given 
-    * "targetPosition," based off of Limelight's estimation on where the robot is 
-    * currently positioned, as well as the location of the specified target.
-    *
-    * For a map of the game board and AprilTag positions, see
-    * {@link https://firstfrc.blob.core.windows.net/frc2024/FieldAssets/2024FieldDrawings.pdf},
-    * page 4.
-    */
-    public OptionalDouble determineTargetRotationalOffset() {
-        return OptionalDouble.of(getTargetPoseRelative().get().getRotation().getX());
+    public Optional<Pose2d> getEstimatedTargetPose() {
+        Optional<double[]> targetInformation = getTargetInformation();
+
+        if (targetInformation.isPresent()) {
+            return Optional.of(distanceEstimation.estimateNoteDistance(targetInformation.get()[0], targetInformation.get()[1]));
+        } else {
+            return Optional.empty();
+        }
     }
 }

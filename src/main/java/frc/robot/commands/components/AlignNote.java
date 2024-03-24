@@ -5,12 +5,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.BackLimelight;
 import frc.robot.subsystems.Swerve;
 import java.util.Optional;
-import java.util.OptionalDouble;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.Constants;
 import frc.robot.commands.CommandBuilder;
-import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 
 public class AlignNote extends Command {
 
@@ -28,11 +27,12 @@ public class AlignNote extends Command {
 
     @Override
     public void initialize() {
-        Optional<Pose3d> relativeTargetPose = backLimelightInstance.getTargetPoseRelative();
-        if (relativeTargetPose.isPresent() && Math.sqrt(Math.pow(relativeTargetPose.get().getX(), 2) + Math.pow(relativeTargetPose.get().getY(), 2)) < Constants.Vision.BackLimelight.maximumAlignmentDistance) {
+        Optional<Pose2d> relativeTargetPose = backLimelightInstance.getEstimatedTargetPose();
+
+        if (relativeTargetPose.isPresent() && Math.hypot(relativeTargetPose.get().getX(), relativeTargetPose.get().getY()) < Constants.Vision.BackLimelight.maximumAlignmentDistance) {
             advanceToTargetCommand = Optional.of(
-                CommandBuilder.AdvanceToTarget(drivetrain, playingField, new Transform2d(playingField.getRobotPose().getTranslation(), playingField.getRobotPose().getRotation().plus(relativeTargetPose.get().getRotation().toRotation2d()))).andThen(
-                    CommandBuilder.AdvanceToTarget(drivetrain, playingField, new Transform2d(playingField.getRobotPose().getTranslation().plus(relativeTargetPose.get().getTranslation().toTranslation2d()), playingField.getRobotPose().getRotation()))
+                CommandBuilder.AdvanceToTarget(drivetrain, playingField, new Pose2d(new Translation2d(), relativeTargetPose.get().getRotation())).andThen(
+                    CommandBuilder.AdvanceToTarget(drivetrain, playingField, new Pose2d(relativeTargetPose.get().getTranslation(), new Rotation2d()))
                 )
             );
         }
@@ -41,11 +41,13 @@ public class AlignNote extends Command {
     @Override
     public void execute() {
         if (advanceToTargetCommand.isEmpty()) {
-            Optional<Pose3d> relativeTargetPose = backLimelightInstance.getTargetPoseRelative();
-            if (relativeTargetPose.isPresent() && Math.sqrt(Math.pow(relativeTargetPose.get().getX(), 2) + Math.pow(relativeTargetPose.get().getY(), 2)) < Constants.Vision.BackLimelight.maximumAlignmentDistance) {
+            Optional<Pose2d> relativeTargetPose = backLimelightInstance.getEstimatedTargetPose();
+
+            if (relativeTargetPose.isPresent() && Math.hypot(relativeTargetPose.get().getX(), relativeTargetPose.get().getY()) < Constants.Vision.BackLimelight.maximumAlignmentDistance) {
+                
                 advanceToTargetCommand = Optional.of(
-                    CommandBuilder.AdvanceToTarget(drivetrain, playingField, new Transform2d(playingField.getRobotPose().getTranslation(), playingField.getRobotPose().getRotation().plus(relativeTargetPose.get().getRotation().toRotation2d()))).andThen(
-                        CommandBuilder.AdvanceToTarget(drivetrain, playingField, new Transform2d(playingField.getRobotPose().getTranslation().plus(relativeTargetPose.get().getTranslation().toTranslation2d()), playingField.getRobotPose().getRotation()))
+                    CommandBuilder.AdvanceToTarget(drivetrain, playingField, new Pose2d(new Translation2d(), relativeTargetPose.get().getRotation())).andThen(
+                        CommandBuilder.AdvanceToTarget(drivetrain, playingField, new Pose2d(relativeTargetPose.get().getTranslation(), new Rotation2d()))
                     )
                 );
             }
@@ -54,11 +56,17 @@ public class AlignNote extends Command {
 
      @Override
      public void end(boolean interrupted) {
-        advanceToTargetCommand.get().cancel();
+        if (advanceToTargetCommand.isPresent()) {
+            advanceToTargetCommand.get().cancel();
+        }
      }
 
      @Override
      public boolean isFinished() {
-        return advanceToTargetCommand.isEmpty() || advanceToTargetCommand.get().isFinished();
+        if (advanceToTargetCommand.isPresent()) {
+            return advanceToTargetCommand.get().isFinished();
+        } else {
+            return false;
+        }
      }
 }

@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -67,8 +68,8 @@ public class CommandBuilder {
             .andThen(() -> {intakeIndexer.stop(); System.out.println("edge");}, intakeIndexer);
     } 
 
-    public static Command AdvanceToTarget(Swerve swervedrive, Field2d playingField, Transform2d targetPosition) {
-        return new AdvanceToTarget(swervedrive, playingField, targetPosition);
+    public static Command AdvanceToTarget(Swerve swervedrive, Field2d playingField, Pose2d targetPose) {
+        return new AdvanceToTarget(swervedrive, playingField, targetPose);
     }
 
     public static Command AlignNote(Swerve drivetrain, Field2d playingField, BackLimelight backLimelightInstance) {

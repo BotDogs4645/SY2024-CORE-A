@@ -6,8 +6,8 @@ package frc.robot.commands.components;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import java.util.Optional;
 
@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.math.controller.PIDController;
 import java.util.List;
@@ -29,18 +28,18 @@ public class AdvanceToTarget extends Command {
 
     private Swerve swerveDrive;
     private Field2d playingField;
-    private Optional<Transform2d> targetPosition;
-    public Optional<SequentialCommandGroup> currentTargetCommand = Optional.empty();
+    private Optional<Pose2d> targetPose;
+    public Optional<SwerveControllerCommand> swerveControllerCommand = Optional.empty();
 
     private SlewRateLimiter translationLimiter = new SlewRateLimiter(3.0);
     private SlewRateLimiter strafeLimiter = new SlewRateLimiter(3.0);
     private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3.0);
 
-    public AdvanceToTarget(Swerve swerveDrive, Field2d playingField, Transform2d targetPosition) {
+    public AdvanceToTarget(Swerve swerveDrive, Field2d playingField, Pose2d targetPose) {
         this.swerveDrive = swerveDrive;
         this.playingField = playingField;
         
-        this.targetPosition = Optional.of(targetPosition);
+        this.targetPose = Optional.of(targetPose);
 
         addRequirements(swerveDrive);
     }
@@ -48,12 +47,13 @@ public class AdvanceToTarget extends Command {
     @Override
     public void initialize() {
         Optional<Pose2d> currentPosition = Optional.of(playingField.getRobotPose());
-        if (currentPosition.isEmpty() || targetPosition.isEmpty()) {
+        if (currentPosition.isEmpty() || targetPose.isEmpty() || (Math.hypot(targetPose.get().getX(), targetPose.get().getY()) < Constants.AdvanceToTarget.minimumProjectedDistance)) {
+            super.cancel();
             return;
         }
 
-        // List<Translation2d> trajectoryWaypoints = List.of(new Translation2d(1, 1), new Translation2d(2, -1), targetPosition.get().getTranslation().toTranslation2d());
-        List<Translation2d> trajectoryWaypoints = List.of(targetPosition.get().getTranslation());
+        List<Translation2d> trajectoryWaypoints = List.of();
+        
 
         // for (Translation2d currentWaypoint : trajectoryWaypoints) {
         //     if (!ObstacleDetection.continueAlongPath(currentPosition.get().getTranslation(), (currentWaypoint.getY() - currentPosition.get().getY()) / (currentWaypoint.getX() - currentPosition.get().getX()))) {
@@ -64,17 +64,16 @@ public class AdvanceToTarget extends Command {
 
         TrajectoryConfig trajectoryConfig =
             new TrajectoryConfig(
-                    Constants.Swerve.maxSpeed / 8,
-                    Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared / 8)
+                    Constants.Swerve.maxSpeed / Constants.AdvanceToTarget.speedDilutionFactor,
+                    Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared / Constants.AdvanceToTarget.accelerationDilutionFactor)
                 // Add kinematics to ensure max speed is actually obeyed
                 .setKinematics(Constants.Swerve.swerveKinematics);
     
         Trajectory projectedTrajectory =
             TrajectoryGenerator.generateTrajectory(
-                // new Pose2d(0, 0, new Rotation2d(0)),
-                new Pose2d(currentPosition.get().getTranslation(), currentPosition.get().getRotation()),
+                new Pose2d(0, 0, new Rotation2d(0)),
                 trajectoryWaypoints,
-                new Pose2d(targetPosition.get().getTranslation(), targetPosition.get().getRotation()),
+                targetPose.get(),
                 trajectoryConfig);
     
         var thetaController =
@@ -82,7 +81,7 @@ public class AdvanceToTarget extends Command {
                 Constants.AutoConstants.kPThetaController, 0, 0, Constants.AutoConstants.kThetaControllerConstraints);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
     
-        SwerveControllerCommand swerveControllerCommand =
+        swerveControllerCommand = Optional.of(
             new SwerveControllerCommand(
                 projectedTrajectory,
                 swerveDrive::getPose, // Functional interface to feed supplier
@@ -93,21 +92,21 @@ public class AdvanceToTarget extends Command {
                 new PIDController(Constants.AutoConstants.kPYController, 0, 0),
                 thetaController,
                 states -> swerveDrive.setModuleStates(states, false),
-                swerveDrive);
-    
-        // Run path following command, then stop at the end.
-        currentTargetCommand = Optional.of(swerveControllerCommand.andThen(() -> swerveDrive.drive(
+                swerveDrive));
+
+        swerveControllerCommand.get().finallyDo(() -> swerveDrive.drive(
             new Translation2d(0, 0),
             0,
             false,
-            true)).andThen(() -> this.targetPosition = Optional.empty()));
+            true));
 
-        currentTargetCommand.get().schedule();
+
+        swerveControllerCommand.get().schedule();
     }
 
     @Override
     public void end(boolean interrupted) {
-        currentTargetCommand.get().cancel();
+        swerveControllerCommand.get().cancel();
         
         swerveDrive.drive(
             new Translation2d(0, 0),
@@ -118,6 +117,10 @@ public class AdvanceToTarget extends Command {
 
     @Override
     public boolean isFinished() {
-        return targetPosition.isEmpty() || currentTargetCommand.isEmpty() || currentTargetCommand.get().isFinished();
+        if (swerveControllerCommand.isPresent()) {
+            return swerveControllerCommand.get().isFinished();
+        } else {
+            return false;
+        }
     }
 }
