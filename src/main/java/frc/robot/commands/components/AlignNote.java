@@ -29,11 +29,17 @@ public class AlignNote extends Command {
     public void initialize() {
         Optional<Pose2d> relativeTargetPose = backLimelightInstance.getEstimatedTargetPose();
 
+        // if (relativeTargetPose.isPresent() && Math.hypot(relativeTargetPose.get().getX(), relativeTargetPose.get().getY()) < Constants.Vision.BackLimelight.maximumAlignmentDistance) {
+        //     advanceToTargetCommand = Optional.of(
+        //         CommandBuilder.AdvanceToTarget(drivetrain, playingField, new Pose2d(new Translation2d(), relativeTargetPose.get().getRotation())).andThen(
+        //             CommandBuilder.AdvanceToTarget(drivetrain, playingField, new Pose2d(relativeTargetPose.get().getTranslation(), new Rotation2d()))
+        //         )
+        //     );
+        // }
+
         if (relativeTargetPose.isPresent() && Math.hypot(relativeTargetPose.get().getX(), relativeTargetPose.get().getY()) < Constants.Vision.BackLimelight.maximumAlignmentDistance) {
             advanceToTargetCommand = Optional.of(
-                CommandBuilder.AdvanceToTarget(drivetrain, playingField, new Pose2d(new Translation2d(), relativeTargetPose.get().getRotation())).andThen(
-                    CommandBuilder.AdvanceToTarget(drivetrain, playingField, new Pose2d(relativeTargetPose.get().getTranslation(), new Rotation2d()))
-                )
+                CommandBuilder.AdvanceToTarget(drivetrain, playingField, relativeTargetPose.get())
             );
         }
     }
@@ -43,12 +49,18 @@ public class AlignNote extends Command {
         if (advanceToTargetCommand.isEmpty()) {
             Optional<Pose2d> relativeTargetPose = backLimelightInstance.getEstimatedTargetPose();
 
-            if (relativeTargetPose.isPresent() && Math.hypot(relativeTargetPose.get().getX(), relativeTargetPose.get().getY()) < Constants.Vision.BackLimelight.maximumAlignmentDistance) {
+            // if (relativeTargetPose.isPresent() && Math.hypot(relativeTargetPose.get().getX(), relativeTargetPose.get().getY()) < Constants.Vision.BackLimelight.maximumAlignmentDistance) {
                 
+            //     advanceToTargetCommand = Optional.of(
+            //         CommandBuilder.AdvanceToTarget(drivetrain, playingField, new Pose2d(new Translation2d(), relativeTargetPose.get().getRotation())).andThen(
+            //             CommandBuilder.AdvanceToTarget(drivetrain, playingField, new Pose2d(relativeTargetPose.get().getTranslation(), new Rotation2d()))
+            //         )
+            //     );
+            // }
+
+            if (relativeTargetPose.isPresent() && Math.hypot(relativeTargetPose.get().getX(), relativeTargetPose.get().getY()) < Constants.Vision.BackLimelight.maximumAlignmentDistance) {
                 advanceToTargetCommand = Optional.of(
-                    CommandBuilder.AdvanceToTarget(drivetrain, playingField, new Pose2d(new Translation2d(), relativeTargetPose.get().getRotation())).andThen(
-                        CommandBuilder.AdvanceToTarget(drivetrain, playingField, new Pose2d(relativeTargetPose.get().getTranslation(), new Rotation2d()))
-                    )
+                    CommandBuilder.AdvanceToTarget(drivetrain, playingField, relativeTargetPose.get())
                 );
             }
         }
