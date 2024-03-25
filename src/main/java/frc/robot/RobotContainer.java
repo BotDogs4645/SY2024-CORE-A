@@ -138,4 +138,8 @@ public class RobotContainer {
   public Swerve getDrivetrain() {
       return drivetrain;
   }
+
+  public DistanceEstimation getDistanceEstimation() {
+      return distanceEstimation;
+  }
 }
