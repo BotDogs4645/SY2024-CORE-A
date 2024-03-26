@@ -30,7 +30,9 @@ public final class Constants {
 
   public static final class DistanceEstimation {
     // Measured in metres
-    public static final double noteZOffset = 0;
+    public static final double noteZOffset = Vision.BackLimelight.offsetToGround - 0.0508;
+
+    public static final double baseLimelightYRotation = 20;
   }
   
   public static final class AdvanceToTarget {
@@ -88,6 +90,8 @@ public final class Constants {
       public static final double Forward = -0.325;
       public static final double Right = -0.09;
       public static final double Up = 0.31;
+
+      public static final double offsetToGround = 0.75;
 
       // Measured in degrees
       public static final double Pitch = 20;

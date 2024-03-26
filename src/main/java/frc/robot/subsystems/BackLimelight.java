@@ -34,19 +34,32 @@ public class BackLimelight extends SubsystemBase {
      * is present, returning 'Optional.empty()' if such does not exist.
      * 
      * @return(s) the rotational offset to the current note target, 
-     * or 'Optional.empty()' if such does not exist.
+     * or 'Optional.empty(),' if such does not exist.
      */
     public Optional<double[]> getTargetInformation() {
-        try {
-            return Optional.of(new double[] {
-                    LimelightHelpers.getTX(Vision.BackLimelight.Name),
-                    LimelightHelpers.getTY(Vision.BackLimelight.Name),
-            });
-        } catch (Exception e) {
+        Optional<double[]> targetRotationalOffset = Optional.of(new double[] {
+            LimelightHelpers.getTX(Vision.BackLimelight.Name),
+            LimelightHelpers.getTY(Vision.BackLimelight.Name)
+        });
+
+        System.out.println("Note rotational offset (x,y): " + "(" + targetRotationalOffset.get()[0] + ", " + targetRotationalOffset.get()[1] + ")");
+
+        if (targetRotationalOffset.get()[0] != 0 && targetRotationalOffset.get()[1] != 0) {
+            return targetRotationalOffset;
+        } else {
             return Optional.empty();
         }
     }
 
+    /**
+     * Fetches a calculation pertaining to the rotational offset of the 
+     * current 'target note' from the 'DistanceEstimation' class, @return(ing)
+     * it in order to condense data related to such into this subsystem, 
+     * as opposed to being forced to query it from a different area of the program.
+     * 
+     * @return(s) the estimated spatial offset of the current target note to the 
+     * robot, or 'Optional.empty()' if such is not present.
+     */
     public Optional<Pose2d> getEstimatedTargetPose() {
         Optional<double[]> targetInformation = getTargetInformation();
 
