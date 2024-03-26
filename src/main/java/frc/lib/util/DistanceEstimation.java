@@ -8,9 +8,9 @@ import frc.robot.Constants;
 public class DistanceEstimation {
 
     public Pose2d estimateNoteDistance(double xAngularOffset, double yAngularOffset) {
-        double yOffset = Constants.DistanceEstimation.noteZOffset * Math.tan(yAngularOffset + Constants.DistanceEstimation.baseLimelightYRotation);
-        double xOffset = yOffset * Math.tan(xAngularOffset);
+        double yOffset = Constants.DistanceEstimation.noteZOffset * Math.tan(Math.toRadians(Math.abs(Constants.DistanceEstimation.baseLimelightYRotation + yAngularOffset)));
+        double xOffset = yOffset * Math.tan(Math.toRadians(Math.abs(xAngularOffset)));
 
-        return new Pose2d(new Translation2d(xOffset, yOffset), new Rotation2d(xAngularOffset, yAngularOffset + Constants.DistanceEstimation.baseLimelightYRotation));
+        return new Pose2d(new Translation2d(xOffset, yOffset), new Rotation2d(xAngularOffset, Constants.DistanceEstimation.baseLimelightYRotation + yAngularOffset));
     }
 }

@@ -18,6 +18,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.vision.VisionPipeline;
 import frc.lib.config.SwerveModuleConstants;
 
 /**
@@ -29,10 +30,12 @@ import frc.lib.config.SwerveModuleConstants;
 public final class Constants {
 
   public static final class DistanceEstimation {
-    // Measured in metres
+    // The value below is measured in metres
     public static final double noteZOffset = Vision.BackLimelight.offsetToGround - 0.0508;
 
-    public static final double baseLimelightYRotation = 20;
+    // The measurement below, in degrees, relates to the angle which exists 
+    // between the floor and the middle of the Limelight's camera
+    public static final double baseLimelightYRotation = 90 - Vision.BackLimelight.Pitch;
   }
   
   public static final class AdvanceToTarget {
