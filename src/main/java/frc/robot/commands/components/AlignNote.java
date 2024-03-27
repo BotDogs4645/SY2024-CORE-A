@@ -5,11 +5,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.BackLimelight;
 import frc.robot.subsystems.Swerve;
 import java.util.Optional;
-import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.Constants;
 import frc.robot.commands.CommandBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 
 public class AlignNote extends Command {
 

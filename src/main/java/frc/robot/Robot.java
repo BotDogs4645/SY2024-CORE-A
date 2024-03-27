@@ -31,6 +31,8 @@ public class Robot extends TimedRobot {
     Optional<Pose2d> estimatedNotePose = m_robotContainer.getBackLimelight().getEstimatedTargetPose();
     if (estimatedNotePose.isPresent()) {
       System.out.println("Estimated 'note' offset (x, y): (" + estimatedNotePose.get().getX() + ", " + estimatedNotePose.get().getY() + ")");
+
+      System.out.println("Estimated Limelight pitch: " + m_robotContainer.getDistanceEstimation().calculateLimelightPitch(1, m_robotContainer.getBackLimelight().getTargetInformation().get()[1]));
     }
   }
 
@@ -42,7 +44,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledExit() {
-    System.out.println("re enabled");
+    System.out.println("Re-enabled");
   }
 
   @Override

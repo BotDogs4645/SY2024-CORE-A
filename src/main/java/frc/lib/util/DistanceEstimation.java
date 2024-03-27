@@ -18,9 +18,7 @@ public class DistanceEstimation {
         return new Pose2d(new Translation2d(xOffset, yOffset), new Rotation2d(xAngularOffset, Constants.DistanceEstimation.baseLimelightYRotation + yAngularOffset));
     }
 
-    public static double calculateLimelightPitch(double currentNoteYDistance, double currentYOffset) {
-        System.out.println("Calculated Limelight pitch: " + Math.toDegrees(Math.atan(currentNoteYDistance / Constants.DistanceEstimation.noteZOffset)));
-        
+    public double calculateLimelightPitch(double currentNoteYDistance, double currentYOffset) {        
         return Math.atan(currentNoteYDistance / Constants.DistanceEstimation.noteZOffset) - currentYOffset;
     }
 }

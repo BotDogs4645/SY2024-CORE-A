@@ -43,8 +43,6 @@ public class BackLimelight extends SubsystemBase {
             LimelightHelpers.getTY(Vision.BackLimelight.Name)
         });
 
-        System.out.println("Note rotational offset (x,y): " + "(" + targetRotationalOffset.get()[0] + ", " + targetRotationalOffset.get()[1] + ")");
-
         if (targetRotationalOffset.get()[0] != 0 && targetRotationalOffset.get()[1] != 0) {
             return targetRotationalOffset;
         } else {

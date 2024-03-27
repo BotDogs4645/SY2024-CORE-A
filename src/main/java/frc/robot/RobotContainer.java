@@ -142,4 +142,8 @@ public class RobotContainer {
   public DistanceEstimation getDistanceEstimation() {
       return distanceEstimation;
   }
+
+  public Field2d getPlayingField() {
+      return playingField;
+  }
 }

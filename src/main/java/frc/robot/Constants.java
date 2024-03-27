@@ -34,6 +34,9 @@ public final class Constants {
     // between the floor and the middle of the Limelight's camera
     public static final double baseLimelightYRotation = 70;
 
+    // The measurement below, in degrees, relates to the rotation 
+    // at which the "back" Limelight's target will be centered,
+    // in relation to the robot.
     public static final double limelightXRotationalOffset = 30;
   }
   
