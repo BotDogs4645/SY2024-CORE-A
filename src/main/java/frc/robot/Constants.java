@@ -9,8 +9,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import com.pathplanner.lib.util.PIDConstants;
-import com.revrobotics.*;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -27,6 +25,25 @@ import frc.lib.config.SwerveModuleConstants;
  * cleanliness.
  */
 public final class Constants {
+
+  public static final class DistanceEstimation {
+    // The value below is measured in metres
+    public static final double noteZOffset = Vision.BackLimelight.offsetToGround - 0.0508;
+
+    // The measurement below, in degrees, relates to the angle which exists 
+    // between the floor and the middle of the Limelight's camera
+    public static final double baseLimelightYRotation = 70;
+
+    public static final double limelightXRotationalOffset = 30;
+  }
+  
+  public static final class AdvanceToTarget {
+    public static final double speedDilutionFactor = 20;
+    public static final double accelerationDilutionFactor = 20;
+
+    // Measured in metres
+    public static final double minimumProjectedDistance = 0.1;
+  }
 
   public static final class PathPlanner {
     public static final double driveKP = 0.1;
@@ -76,10 +93,14 @@ public final class Constants {
       public static final double Right = -0.09;
       public static final double Up = 0.31;
 
+      public static final double offsetToGround = 0.75;
+
       // Measured in degrees
       public static final double Pitch = 20;
       public static final double Yaw = 3.5;
       public static final double Roll = 0;
+
+      public static final double maximumAlignmentDistance = 100;
     }
 
   }
