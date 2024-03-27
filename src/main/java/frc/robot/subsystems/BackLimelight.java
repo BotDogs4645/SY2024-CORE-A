@@ -6,6 +6,7 @@ import java.util.Optional;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.DistanceEstimation;
+import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 
 import frc.robot.Constants.Vision;
@@ -64,7 +65,7 @@ public class BackLimelight extends SubsystemBase {
         Optional<double[]> targetInformation = getTargetInformation();
 
         if (targetInformation.isPresent()) {
-            return Optional.of(distanceEstimation.estimateNoteDistance(targetInformation.get()[0], targetInformation.get()[1]));
+            return Optional.of(distanceEstimation.estimateNoteDistance(targetInformation.get()[0] - Constants.DistanceEstimation.limelightXRotationalOffset, targetInformation.get()[1]));
         } else {
             return Optional.empty();
         }

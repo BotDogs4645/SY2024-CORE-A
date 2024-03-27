@@ -9,8 +9,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import com.pathplanner.lib.util.PIDConstants;
-import com.revrobotics.*;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,7 +16,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.vision.VisionPipeline;
 import frc.lib.config.SwerveModuleConstants;
 
 /**
@@ -35,7 +32,9 @@ public final class Constants {
 
     // The measurement below, in degrees, relates to the angle which exists 
     // between the floor and the middle of the Limelight's camera
-    public static final double baseLimelightYRotation = 90 - Vision.BackLimelight.Pitch;
+    public static final double baseLimelightYRotation = 70;
+
+    public static final double limelightXRotationalOffset = 30;
   }
   
   public static final class AdvanceToTarget {
