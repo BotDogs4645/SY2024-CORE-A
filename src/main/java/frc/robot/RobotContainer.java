@@ -26,7 +26,6 @@ import frc.robot.subsystems.FrontLimelight;
 import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Swerve;
 
-
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -74,6 +73,7 @@ public class RobotContainer {
     autoChooser = AutoBuilder.buildAutoChooser();
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
+    SmartDashboard.putData("Field", field);
 
 
     configureBindings();
