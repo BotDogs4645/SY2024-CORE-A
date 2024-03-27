@@ -20,22 +20,11 @@ import frc.lib.config.SwerveModuleConstants;
 
 /**
  * The Constants class contains constant values. Generally, when there are magic
- * numbers within your code (numbers that are not derived from a formula in the
+ * numbers within your code, (ones that are not derived from a formula in the
  * code, like calibration values) they should go here. This encourages
  * cleanliness.
  */
 public final class Constants {
-
-  public static final class DistanceEstimation {
-    // The value below is measured in metres
-    public static final double noteZOffset = Vision.BackLimelight.offsetToGround - 0.0508;
-
-    // The measurement below, in degrees, relates to the angle which exists 
-    // between the floor and the middle of the Limelight's camera
-    public static final double baseLimelightYRotation = 70;
-
-    public static final double limelightXRotationalOffset = 30;
-  }
   
   public static final class AdvanceToTarget {
     public static final double speedDilutionFactor = 20;
@@ -80,6 +69,8 @@ public final class Constants {
       public static final double Pitch = 16;
       public static final double Yaw = 0;
       public static final double Roll = 1.5;
+
+      public static final double maximumPoseCalculationDistance = 3;
     }
 
     public static final class BackLimelight {
@@ -100,7 +91,7 @@ public final class Constants {
       public static final double Yaw = 3.5;
       public static final double Roll = 0;
 
-      public static final double maximumAlignmentDistance = 100;
+      public static final double maximumAlignmentDistance = 10;
     }
 
   }

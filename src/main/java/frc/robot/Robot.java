@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
 
 import java.util.Optional;
@@ -32,11 +33,12 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
 
-    Optional<Pose2d> limelightPose = m_robotContainer.getAprilTag().determinePosition()
+    Optional<Pose2d> limelightPose = m_robotContainer.getLimelightInterface().determinePosition()
         .map(currentPose -> currentPose.toPose2d());
     Pose2d swervePose = m_robotContainer.getDrivetrain().getPose();
 
-    if (limelightPose.isPresent()) {
+    Optional<Double> limelightTargetDistance = m_robotContainer.getLimelightInterface().calculateDistanceToTarget();
+    if (limelightPose.isPresent() && limelightTargetDistance.isPresent() && limelightTargetDistance.get() < Constants.Vision.FrontLimelight.maximumPoseCalculationDistance) {
       limelightOffset = limelightPose.get().minus(swervePose);
     }
 

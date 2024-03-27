@@ -14,7 +14,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.lib.util.AprilTag;
+import frc.lib.util.LimelightInterface;
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
 

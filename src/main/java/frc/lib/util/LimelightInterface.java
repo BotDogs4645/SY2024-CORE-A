@@ -18,11 +18,11 @@ import frc.robot.subsystems.FrontLimelight;
 import frc.robot.subsystems.Shooter;
 
 /**
- * The AprilTag class, harnessed in order to calculate and execute various
+ * The LimelightInterface class, harnessed in order to calculate and execute various
  * 'vision'-related processes within FIRST Team 4645, the Chicago Style
  * Bot Dogs' robot for the FIRST Robotics 2024 competition, Crescendo.
  */
-public class AprilTag {
+public class LimelightInterface {
 
   public static final NetworkTable TABLE = NetworkTableInstance.getDefault().getTable("limelight");
 
@@ -30,7 +30,7 @@ public class AprilTag {
   public final NodeStorage nodeStorageInstance;
   public final Shooter shooterInstance;
 
-  public AprilTag(FrontLimelight limelightInstance, NodeStorage nodeStorageInstance, Shooter shooterInstance) {
+  public LimelightInterface(FrontLimelight limelightInstance, NodeStorage nodeStorageInstance, Shooter shooterInstance) {
     this.limelightInstance = limelightInstance;
     this.nodeStorageInstance = nodeStorageInstance;
     this.shooterInstance = shooterInstance;
@@ -38,6 +38,16 @@ public class AprilTag {
 
   public Optional<Pose3d> getTargetPoseRobotRelative() {
     return limelightInstance.getTargetPoseRobotRelative();
+  }
+
+  public Optional<Double> calculateDistanceToTarget() {
+    Optional<Pose3d> relativeTargetPose = getTargetPoseRobotRelative();
+
+    if (relativeTargetPose.isPresent()) {
+      return Optional.of(Math.sqrt(Math.pow(relativeTargetPose.get().getX(), 2) + Math.pow(relativeTargetPose.get().getY(), 2) + Math.pow(relativeTargetPose.get().getZ(), 2)));
+    } else {
+      return Optional.empty();
+    }
   }
 
   /**
@@ -54,10 +64,7 @@ public class AprilTag {
     Optional<Pose3d> currentRobotPose = determinePosition();
 
     if (currentRobotPose.isPresent() && targetPose.isPresent()) {
-      return Optional.of(
-          Math.sqrt(Math.pow(targetPose.get().getX() - currentRobotPose.get().getX(), 2)
-              + Math.pow(targetPose.get().getY() - currentRobotPose.get().getY(), 2)
-              + Math.pow(targetPose.get().getZ() - currentRobotPose.get().getZ(), 2)));
+      return Optional.of(currentRobotPose.get().getTranslation().getDistance(targetPose.get().getTranslation()));
     } else {
       return Optional.empty();
     }
@@ -81,8 +88,7 @@ public class AprilTag {
    *         within the method's parameters on a 2D plane.
    */
   public Optional<Double> calculatePlanarDistance(Translation2d originPosition, Translation2d targetPosition) {
-    return Optional
-        .of(Math.hypot(targetPosition.getX() - originPosition.getX(), targetPosition.getY() - originPosition.getY()));
+    return Optional.of(originPosition.getDistance(targetPosition));
   }
 
   /**

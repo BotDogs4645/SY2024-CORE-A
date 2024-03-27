@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.lib.util.AprilTag;
+import frc.lib.util.LimelightInterface;
 import frc.lib.util.NodeStorage;
 import frc.robot.commands.CommandBuilder;
 import frc.robot.commands.components.TeleopSwerve;
@@ -44,13 +44,13 @@ public class RobotContainer {
   private final CommandXboxController manipulatorController = new CommandXboxController(Constants.kManipulatorControllerPort);
 
   private final Swerve drivetrain = new Swerve(playingField);
-    private final NodeStorage nodeStorage = new NodeStorage(drivetrain, playingField);
   private final FrontLimelight frontLimelight = new FrontLimelight();
   private final BackLimelight backLimelight = new BackLimelight();
   private final Pneumatics pneumatics = new Pneumatics();
   private final IntakeIndexer intakeIndexer = new IntakeIndexer();
   private final Shooter shooter = new Shooter();
-  private final AprilTag aprilTag = new AprilTag(frontLimelight, nodeStorage, shooter);
+  private final NodeStorage nodeStorage = new NodeStorage(drivetrain, playingField, intakeIndexer, shooter, pneumatics);
+  private final LimelightInterface limelightInterface = new LimelightInterface(frontLimelight, nodeStorage, shooter);
 
 
   public RobotContainer() {
@@ -142,7 +142,7 @@ public class RobotContainer {
       return playingField;
   }
 
-  public AprilTag getAprilTag() {
-      return aprilTag;
+  public LimelightInterface getLimelightInterface() {
+      return limelightInterface;
   }
 }

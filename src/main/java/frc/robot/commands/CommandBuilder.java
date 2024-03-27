@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.lib.util.AprilTag;
+import frc.lib.util.LimelightInterface;
 import frc.lib.util.NodeStorage;
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
@@ -75,7 +75,7 @@ public class CommandBuilder {
         return new AdvanceToTarget(swerveDrive, playingField, targetPose);
     }
 
-    public static Command NodalTaskExecution(AprilTag aprilTag, Field2d playingField, NodeStorage nodeStorage) {
+    public static Command NodalTaskExecution(LimelightInterface aprilTag, Field2d playingField, NodeStorage nodeStorage) {
         return new NodalTaskExecution(aprilTag, playingField, nodeStorage);
     }
 }
