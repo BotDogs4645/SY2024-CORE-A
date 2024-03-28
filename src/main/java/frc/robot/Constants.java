@@ -32,6 +32,8 @@ public final class Constants {
 
     // Measured in metres
     public static final double minimumProjectedDistance = 0.1;
+
+    public static final double halfRobotLength = 0.5; 
   }
 
   public static final class PathPlanner {

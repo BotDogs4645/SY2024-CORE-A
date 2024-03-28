@@ -1,10 +1,13 @@
 package frc.lib.util;
 
+import frc.robot.Constants;
 import frc.robot.commands.CommandBuilder;
 import frc.robot.subsystems.IntakeIndexer;
 import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -18,28 +21,28 @@ public class NodeStorage {
       initalizeNode(
       0, 
       new SequentialCommandGroup(
-        CommandBuilder.AdvanceToTarget(swerveDrive, playingField, null), 
+        CommandBuilder.AdvanceToTarget(swerveDrive, playingField, new Pose2d(1.8415, 8.2042 - Constants.AdvanceToTarget.halfRobotLength, new Rotation2d(-90, 0))), 
         CommandBuilder.ShootAmp(intakeIndexer, shooter, pneumatics)
       ),
-      new Translation2d(), 
+      new Translation2d(1.8415, 8.2042 - Constants.AdvanceToTarget.halfRobotLength),
       0.75
       ),
       initalizeNode(
         1, 
         new SequentialCommandGroup(
-          CommandBuilder.AdvanceToTarget(swerveDrive, playingField, null),
+          CommandBuilder.AdvanceToTarget(swerveDrive, playingField, new Pose2d(-0.0381 + 0.917575 + Constants.AdvanceToTarget.halfRobotLength, 5.547868, new Rotation2d(-180, 0))),
           CommandBuilder.ShootSpeaker(intakeIndexer, shooter)
         ), 
-        new Translation2d(), 
+        new Translation2d(-0.0381 + 0.917575 + Constants.AdvanceToTarget.halfRobotLength, 5.547868), 
         0.75
       ),
       initalizeNode(
         2, 
         new SequentialCommandGroup(
-          CommandBuilder.AdvanceToTarget(swerveDrive, playingField, null),
+          CommandBuilder.AdvanceToTarget(swerveDrive, playingField, new Pose2d(15.079472 - Constants.AdvanceToTarget.halfRobotLength, 0.245872 + Constants.AdvanceToTarget.halfRobotLength, new Rotation2d(60, 0))),
           CommandBuilder.IntakeFromSource(intakeIndexer, shooter)
         ), 
-        new Translation2d(), 
+        new Translation2d(15.079472 - Constants.AdvanceToTarget.halfRobotLength, 0.245872 + Constants.AdvanceToTarget.halfRobotLength),
         0.75
       )
     };
@@ -48,28 +51,28 @@ public class NodeStorage {
       initalizeNode(
       3, 
       new SequentialCommandGroup(
-        CommandBuilder.AdvanceToTarget(swerveDrive, playingField, null), 
+        CommandBuilder.AdvanceToTarget(swerveDrive, playingField, new Pose2d(14.700758, 8.2042 - Constants.AdvanceToTarget.halfRobotLength, new Rotation2d(-90, 0))), 
         CommandBuilder.ShootAmp(intakeIndexer, shooter, pneumatics)
       ),
-      new Translation2d(), 
+      new Translation2d(14.700758, 8.2042 - Constants.AdvanceToTarget.halfRobotLength), 
       0.75
       ),
       initalizeNode(
         4, 
         new SequentialCommandGroup(
-          CommandBuilder.AdvanceToTarget(swerveDrive, playingField, null),
+          CommandBuilder.AdvanceToTarget(swerveDrive, playingField, new Pose2d(16.579342 - 0.917575 - Constants.AdvanceToTarget.halfRobotLength, 5.547868, new Rotation2d(0, 0))),
           CommandBuilder.ShootSpeaker(intakeIndexer, shooter)
         ), 
-        new Translation2d(), 
+        new Translation2d(16.579342 - 0.917575 - Constants.AdvanceToTarget.halfRobotLength, 5.547868), 
         0.75
       ),
       initalizeNode(
         5, 
         new SequentialCommandGroup(
-          CommandBuilder.AdvanceToTarget(swerveDrive, playingField, null),
+          CommandBuilder.AdvanceToTarget(swerveDrive, playingField, new Pose2d(0.356108 + Constants.AdvanceToTarget.halfRobotLength, 0.883666 + Constants.AdvanceToTarget.halfRobotLength, new Rotation2d(120, 0))),
           CommandBuilder.IntakeFromSource(intakeIndexer, shooter)
         ), 
-        new Translation2d(), 
+        new Translation2d(0.356108 + Constants.AdvanceToTarget.halfRobotLength, 0.883666 + Constants.AdvanceToTarget.halfRobotLength), 
         0.75
       )
     };
