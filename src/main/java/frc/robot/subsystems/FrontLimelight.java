@@ -151,6 +151,8 @@ public class FrontLimelight extends SubsystemBase {
         try {
             SmartDashboard.putNumber("LL From Pose X", getTargetPoseRobotRealative().get().getX());
             SmartDashboard.putNumber("LL From Pose Y", getTargetPoseRobotRealative().get().getY());
+            SmartDashboard.putNumber("CRACKLL From Pose X", getTargetPoseRobotRealative().get().getX() + 2.16);
+            SmartDashboard.putNumber("CRACKLL From Pose Y", getTargetPoseRobotRealative().get().getY() - 0.31);
             SmartDashboard.putNumber("LL From Pose Z", getTargetPoseRobotRealative().get().getZ());
         } catch (Exception e) {}
     }                                                                                        
