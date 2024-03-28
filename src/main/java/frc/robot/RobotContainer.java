@@ -51,7 +51,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Shoot Amp", CommandBuilder.ShootAmp(intakeIndexer, shooter, pneumatics));
     NamedCommands.registerCommand("Intake Note", CommandBuilder.IntakeNote(intakeIndexer));
 
-    
+    // hi :)
 
     drivetrain.setDefaultCommand(
         new TeleopSwerve(
