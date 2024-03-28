@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class IntakeIndexer extends SubsystemBase {
   /** Creates a new IntakeIndexer. */
@@ -34,10 +35,12 @@ public class IntakeIndexer extends SubsystemBase {
     intakeMotor.setInverted(Constants.Intake.invertIntakeMotor);
     noteDetectionSwitch = new DigitalInput(Constants.Intake.noteDetectionSwitchDIOPort);
     photogate = new DigitalInput(2);
+    SmartDashboard.putBoolean("has note", getPhotogate());
   }
 
   public void setHasNote(boolean hasNote) {
     this.hasNote = hasNote;
+    SmartDashboard.putBoolean("has note", hasNote);
   }
 
   public boolean hasNote() {
