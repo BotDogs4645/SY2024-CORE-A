@@ -19,27 +19,14 @@ public class Shooter extends SubsystemBase {
 
   private TalonFX topMotor;
   private TalonFX bottomMotor;
-  private CANcoder absEncoder;
   private CANSparkMax positionMotor;
 
-  private PIDController controller;
-
-  private double theta = 0;
-
   public Shooter() {
-    absEncoder = new CANcoder(Constants.Launcher.absEncoderId, "*");
-
     topMotor = new TalonFX(Constants.Launcher.topMotorID, "*");
 
     bottomMotor = new TalonFX(Constants.Launcher.bottomMotorID, "*");
 
     positionMotor = new CANSparkMax(Constants.Launcher.angleMotorID, MotorType.kBrushless);
-
-    controller = new PIDController(
-      Constants.Launcher.PID.kP,
-      Constants.Launcher.PID.kI,
-      Constants.Launcher.PID.kD
-    );
 
   }
 
@@ -86,9 +73,5 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("shooter angle power", positionMotor.get());
-    SmartDashboard.putNumber("Shooter abs Encoder", absEncoder.getAbsolutePosition().getValue());
-    // positionMotor.set(controller.calculate(
-    //   absEncoder.getAbsolutePosition().getValue(), theta
-    // ));
   }
 }

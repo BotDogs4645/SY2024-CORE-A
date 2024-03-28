@@ -9,6 +9,8 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,13 +20,16 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
 
 /**
  * Controls the Swerve subsystem.
@@ -38,7 +43,7 @@ import frc.robot.Constants;
 public class Swerve extends SubsystemBase {
   private final Pigeon2 gyro;
 
-  private SwerveDriveOdometry swerveOdometry;
+  private SwerveDrivePoseEstimator swerveOdometry;
   private SwerveModule[] mSwerveMods;
 
   private Field2d field;
@@ -57,7 +62,7 @@ public class Swerve extends SubsystemBase {
           new SwerveModule(3, Constants.Swerve.Mod3.constants)
         };
 
-    swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions());
+    swerveOdometry = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions(), LimelightHelpers.getBotPose2d_wpiBlue("limelight-front"));
 
     var pathConfig = new HolonomicPathFollowerConfig(
         new PIDConstants(Constants.PathPlanner.driveKP, Constants.PathPlanner.driveKI, Constants.PathPlanner.driveKD),
@@ -108,10 +113,14 @@ public class Swerve extends SubsystemBase {
    *                   loop; if not, this will use PID for speed control
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
+    
+    ChassisSpeeds oldSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(translation.getX(), translation.getY(), rotation, getYaw());
+    ChassisSpeeds newSpeeds = ChassisSpeeds.discretize(oldSpeeds, 0.02);
+    
     SwerveModuleState[] states =
         Constants.Swerve.swerveKinematics.toSwerveModuleStates(
             fieldRelative
-                ? ChassisSpeeds.fromFieldRelativeSpeeds(translation.getX(), translation.getY(), rotation, getYaw())
+                ? newSpeeds
                 : new ChassisSpeeds(translation.getX(), translation.getY(), rotation));
 
     setModuleStates(states, isOpenLoop);
@@ -137,11 +146,50 @@ public class Swerve extends SubsystemBase {
     }
   }
 
+  public void updateOdometryWithVision() {
+
+    Pose2d botpose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-front");
+    double pipelineLatency = LimelightHelpers.getLatency_Pipeline("limelight-front");
+    
+    if(botpose.getX() == 0.0) {
+      return;
+    }
+
+    double poseDelta = swerveOdometry.getEstimatedPosition()
+      .getTranslation()
+      .getDistance(botpose.getTranslation());
+
+    //has valid targets
+    if(LimelightHelpers.getTA("limelight-front") > 0.05) {
+      double xyStdDev;
+      double thetaStdDev;
+      double numTargets = LimelightHelpers.getBotPose_wpiBlue("limelight-front")[5];
+      if (numTargets >= 2) {
+        xyStdDev = 0.5;
+        thetaStdDev = 6;
+      } else if (LimelightHelpers.getTA("limelight-front") > 0.8 && poseDelta < 0.5) {
+        xyStdDev = 1;
+        thetaStdDev = 12;
+      } else if (LimelightHelpers.getTA("limelight-front") > 0.1 && poseDelta < 0.3) {
+        xyStdDev = 2;
+        thetaStdDev = 30;
+      } else {
+        return;
+      }
+
+      swerveOdometry.setVisionMeasurementStdDevs(
+        VecBuilder.fill(xyStdDev, xyStdDev, Units.degreesToRadians(thetaStdDev))
+      );
+
+      swerveOdometry.addVisionMeasurement(botpose, Timer.getFPGATimestamp() - pipelineLatency);
+    }
+  }
+
   /**
    * @return the robot position as estimated by the Swerve odometry
    */
   public Pose2d getPose() {
-    return swerveOdometry.getPoseMeters();
+    return swerveOdometry.getEstimatedPosition();
   }
 
   /**
@@ -199,6 +247,8 @@ public class Swerve extends SubsystemBase {
   public void periodic() {
     swerveOdometry.update(getYaw(), getModulePositions());
     field.setRobotPose(getPose());
+
+    updateOdometryWithVision();
 
     for (SwerveModule mod : mSwerveMods) {
       SmartDashboard.putNumber(

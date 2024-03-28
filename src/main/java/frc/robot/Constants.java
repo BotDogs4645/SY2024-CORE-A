@@ -33,7 +33,7 @@ public final class Constants {
     public static final double driveKI = 0.0;
     public static final double driveKD = 0.0;
     public static final double turnKP = 0.01;
-    public static final double turnKI = 0.0;
+    public static final double turnKI = 0.001;
     public static final double turnKD = 0.0;
   }
 
@@ -97,7 +97,7 @@ public final class Constants {
     public static final double trapHeight = 1.436;
 
     public static final double speakerSpeed = 0.65;
-    public static final double ampSpeed = 0.1475;
+    public static final double ampSpeed = 0.15;
     
     public static final class PID {
       public static final double kP = 0;
@@ -122,8 +122,8 @@ public final class Constants {
     public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
 
     /* Drivetrain Constants */
-    public static final double trackWidth = Units.inchesToMeters(26);
-    public static final double wheelBase = Units.inchesToMeters(26);
+    public static final double trackWidth = Units.inchesToMeters(28);
+    public static final double wheelBase = Units.inchesToMeters(28);
     public static final double wheelDiameter = Units.inchesToMeters(4.0);
     public static final double wheelCircumference = wheelDiameter * Math.PI;
 
@@ -147,15 +147,15 @@ public final class Constants {
     public static final int driveContinuousCurrentLimit = 80;
 
     /* Angle Motor PID Values */
-    public static final double angleKP = 0.01;
+    public static final double angleKP = 0.01; //.3
     public static final double angleKI = 0.0;
-    public static final double angleKD = 0.0;
+    public static final double angleKD = 0.0; // 1
     public static final double angleKFF = 0.0;
 
     /* Drive Motor PID Values */
-    public static final double driveKP = 0.1;
+    public static final double driveKP = 0.1; //0.05
     public static final double driveKI = 0.0;
-    public static final double driveKD = 0.0;
+    public static final double driveKD = 0.0; //12
     public static final double driveKFF = 0.0;
 
     /* Drive Motor Characterization Values */
