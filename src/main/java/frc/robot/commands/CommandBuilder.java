@@ -43,11 +43,12 @@ public class CommandBuilder {
     public static Command ShootAmp(IntakeIndexer intakeIndexer, Shooter shooter, Pneumatics pneumatics) {
         return new PrepareToShoot(shooter, Constants.Launcher.ampSpeed)
             .alongWith(
-                new WaitCommand(0.5).andThen(() -> {intakeIndexer.setSpeed(0.5);}, intakeIndexer),
-                new InstantCommand(() -> {pneumatics.extendAmpGuide();}, pneumatics)
+                new WaitCommand(0.5).andThen(() -> { System.out.println("intake"); intakeIndexer.setSpeed(0.5);}, intakeIndexer),
+                new InstantCommand(() -> { System.out.println("piston"); pneumatics.extendAmpGuide();}, pneumatics)
             )
             .raceWith(new WaitCommand(2))
             .andThen(() -> {
+                System.out.println("Stopped");
                 intakeIndexer.stop();
                 shooter.stop();
             });
@@ -63,4 +64,8 @@ public class CommandBuilder {
             .andThen(new WaitCommand(1.5))
             .andThen(() -> {intakeIndexer.stop(); shooter.stop();}, intakeIndexer,shooter);
     } 
+
+    public static Command ShootAcrossField(IntakeIndexer intakeIndexer, Shooter shooter) {
+        return new InstantCommand();
+    }
 }

@@ -5,17 +5,16 @@
 package frc.robot.commands.components;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Shooter;
 
-public class PrepareToShoot extends Command {
-  /** Creates a new ShooterToMaxAngle. */
-
+public class ShooterToCrossFieldPos extends Command {
+  /** Creates a new ShooterToCrossFieldPos. */
+  
   private Shooter shooter;
   private double shooterSpeed;
 
-  public PrepareToShoot(Shooter shooter, double shooterSpeed) {
-    // Use addRequirements() here to declare subsystem dependencies.
+
+  public ShooterToCrossFieldPos(Shooter shooter, double shooterSpeed) {
     this.shooter = shooter;
     this.shooterSpeed = shooterSpeed;
 
@@ -24,10 +23,7 @@ public class PrepareToShoot extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    shooter.setShooterAngle(0.15);
-    shooter.setShooterSpeed(shooterSpeed);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -40,6 +36,6 @@ public class PrepareToShoot extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return false;
   }
 }
