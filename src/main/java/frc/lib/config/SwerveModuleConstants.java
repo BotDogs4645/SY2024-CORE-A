@@ -8,6 +8,7 @@ public class SwerveModuleConstants {
   public final int cancoderID;
   public final Rotation2d angleOffset;
   public final boolean driveIsInverted;
+  public final int contCurrentLimit;
   // public final double currentLimitAmperes;
 
   /**
@@ -17,12 +18,12 @@ public class SwerveModuleConstants {
    *                    measurements in the relevant Swerve module
    */
   public SwerveModuleConstants(
-      int driveMotorID, int angleMotorID, int canCoderID, Rotation2d angleOffset, boolean driveIsInverted) {
+      int driveMotorID, int angleMotorID, int canCoderID, Rotation2d angleOffset, boolean driveIsInverted, int contCurrentLimit) {
     this.driveIsInverted = driveIsInverted;
     this.driveMotorID = driveMotorID;
     this.angleMotorID = angleMotorID;
     this.cancoderID = canCoderID;
     this.angleOffset = angleOffset;
-    
+    this.contCurrentLimit = contCurrentLimit;    
   }
 }
