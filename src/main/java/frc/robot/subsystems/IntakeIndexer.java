@@ -40,7 +40,7 @@ public class IntakeIndexer extends SubsystemBase {
 
   public void setHasNote(boolean hasNote) {
     this.hasNote = hasNote;
-    SmartDashboard.putBoolean("has note", hasNote);
+    SmartDashboard.putBoolean("has note", this.hasNote);
   }
 
   public boolean hasNote() {
@@ -80,7 +80,7 @@ public class IntakeIndexer extends SubsystemBase {
 
   public void startSpittingNote() {
     setSpeed(-1);
-    this.hasNote = false;
+    setHasNote(false);
   }
 
   public boolean getLimitSwitch() {

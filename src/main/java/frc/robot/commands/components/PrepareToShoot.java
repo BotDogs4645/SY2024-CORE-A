@@ -6,6 +6,7 @@ package frc.robot.commands.components;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Shooter;
 
 public class PrepareToShoot extends Command {
@@ -25,8 +26,14 @@ public class PrepareToShoot extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooter.setShooterAngle(0.15);
-    shooter.setShooterSpeed(shooterSpeed);
+    if(shooter.getMode()) {
+      shooter.setShooterAngle(-0.15);
+      shooter.setShooterSpeed(0.75);
+    } else {
+      shooter.setShooterAngle(0.15);
+      shooter.setShooterSpeed(shooterSpeed);
+    }
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.

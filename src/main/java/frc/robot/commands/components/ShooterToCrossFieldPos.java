@@ -25,7 +25,7 @@ public class ShooterToCrossFieldPos extends Command {
   @Override
   public void initialize() {
     shooter.setShooterSpeed(shooterSpeed);
-    shooter.setShooterAngle(0.15);
+    shooter.setShooterAngle(-0.15);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

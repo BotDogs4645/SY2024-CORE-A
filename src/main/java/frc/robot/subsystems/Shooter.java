@@ -13,6 +13,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new Launcher. */
@@ -20,6 +21,7 @@ public class Shooter extends SubsystemBase {
   private TalonFX topMotor;
   private TalonFX bottomMotor;
   private CANSparkMax positionMotor;
+  private boolean mode;
 
   public Shooter() {
     topMotor = new TalonFX(Constants.Launcher.topMotorID, "*");
@@ -27,6 +29,8 @@ public class Shooter extends SubsystemBase {
     bottomMotor = new TalonFX(Constants.Launcher.bottomMotorID, "*");
 
     positionMotor = new CANSparkMax(Constants.Launcher.angleMotorID, MotorType.kBrushless);
+
+    mode = false;
 
   }
 
@@ -69,9 +73,13 @@ public class Shooter extends SubsystemBase {
     // this.theta = theta;
     positionMotor.set(theta);
   }
+  public boolean getMode() {
+    return mode;
+  }
 
   @Override
   public void periodic() {
+    mode = RobotContainer.manipulatorController.a().getAsBoolean();
     SmartDashboard.putNumber("shooter angle power", positionMotor.get());
   }
 }
