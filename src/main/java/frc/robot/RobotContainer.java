@@ -35,8 +35,8 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
 
-  private final CommandXboxController driveController = new CommandXboxController(Constants.kDriverControllerPort);
-  private final CommandXboxController manipulatorController = new CommandXboxController(Constants.kManipulatorControllerPort);
+  public static final CommandXboxController driveController = new CommandXboxController(Constants.kDriverControllerPort);
+  public static final CommandXboxController manipulatorController = new CommandXboxController(Constants.kManipulatorControllerPort);
 
   private final Swerve drivetrain = new Swerve();
   private final FrontLimelight frontLimelight = new FrontLimelight();
@@ -47,11 +47,9 @@ public class RobotContainer {
 
   public RobotContainer() {
 
-    NamedCommands.registerCommand("Shoot Speaker", CommandBuilder.ShootSpeaker(intakeIndexer, shooter));
+    NamedCommands.registerCommand("Shoot Speaker", CommandBuilder.Shoot(intakeIndexer, shooter));
     NamedCommands.registerCommand("Shoot Amp", CommandBuilder.ShootAmp(intakeIndexer, shooter, pneumatics));
     NamedCommands.registerCommand("Intake Note", CommandBuilder.IntakeNote(intakeIndexer));
-
-    
 
     drivetrain.setDefaultCommand(
         new TeleopSwerve(
@@ -86,7 +84,7 @@ public class RobotContainer {
     manipulatorController.b().onTrue(CommandBuilder.ShootAmp(intakeIndexer, shooter, pneumatics));
 
     // Right yellow button - Shoot
-    manipulatorController.rightBumper().onTrue(CommandBuilder.ShootSpeaker(intakeIndexer, shooter));
+    manipulatorController.rightBumper().onTrue(CommandBuilder.Shoot(intakeIndexer, shooter));
 
     // Top blue button - Climb
     manipulatorController.y().onTrue(

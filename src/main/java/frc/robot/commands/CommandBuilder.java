@@ -9,8 +9,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.commands.components.StartIntakeNote;
 import frc.robot.commands.components.PrepareToShoot;
+import frc.robot.commands.components.ShooterToCrossFieldPos;
 import frc.robot.subsystems.IntakeIndexer;
 import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Shooter;
@@ -27,9 +29,16 @@ public class CommandBuilder {
             .andThen(() -> {intakeIndexer.stop();}, intakeIndexer);
     }
 
-    public static Command ShootSpeaker(IntakeIndexer intakeIndexer, Shooter shooter) {
-        return new PrepareToShoot(shooter, Constants.Launcher.speakerSpeed)
-            .alongWith(
+    public static Command Shoot(IntakeIndexer intakeIndexer, Shooter shooter) {
+        Command cmd;
+
+        if(RobotContainer.manipulatorController.a().getAsBoolean()) {
+            cmd = new ShooterToCrossFieldPos(shooter, 0.75);
+        } else {
+            cmd = new PrepareToShoot(shooter, Constants.Launcher.speakerSpeed);
+        }
+
+        return cmd.alongWith(
                 new WaitCommand(0.5).andThen(() -> {intakeIndexer.toggle();}, intakeIndexer)
             )
             .andThen(new WaitCommand(1))
