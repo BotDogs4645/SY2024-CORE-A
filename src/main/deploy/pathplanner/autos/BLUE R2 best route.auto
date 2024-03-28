@@ -31,9 +31,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "BLUE R2 intake note"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BLUE R2 intake note"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake Note"
+                }
+              }
+            ]
           }
         },
         {
@@ -68,9 +81,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "BLUE R2 sucky middle"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BLUE R2 sucky middle"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake Note"
+                }
+              }
+            ]
           }
         },
         {

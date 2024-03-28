@@ -31,9 +31,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "BLUE R3 sucky middle"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BLUE R3 sucky middle"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake Note"
+                }
+              }
+            ]
           }
         },
         {
